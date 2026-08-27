@@ -1,0 +1,10 @@
+# Uploads de usuários (manter pasta com .htaccess)
+uploads/*
+!uploads/.htaccess
+
+# Sistema / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
