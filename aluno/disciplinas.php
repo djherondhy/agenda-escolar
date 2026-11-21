@@ -62,7 +62,7 @@ require __DIR__ . '/../includes/header.php';
             ?>
             <a class="discipline-card" href="<?= BASE_URL ?>/aluno/disciplina.php?materia=<?= urlencode($disciplina['materia']) ?>">
                 <h2><?= e(rotuloMateria($disciplina['materia'])) ?></h2>
-                <p class="agenda-meta"><?= e(implode(', ', $nomes) ?: 'Professor não informado') ?></p>
+                <p class="agenda-meta"><?= e(implode(', ', $nomes) ?: 'Quem ministra não informado') ?></p>
                 <div class="discipline-meta">
                     <span><?= $pendentes ?> pendente<?= $pendentes === 1 ? '' : 's' ?> da turma</span>
                     <span><?= count($pessoais) ?> pessoal<?= count($pessoais) === 1 ? '' : 'is' ?></span>

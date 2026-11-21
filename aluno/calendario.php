@@ -31,17 +31,14 @@ $proximo = (clone $inicioMes)->modify('+1 month');
 $inicioSemana = (int) $inicioMes->format('N');
 
 $stmt = $pdo->prepare(
-    'SELECT e.id, e.titulo, e.tipo, e.data_evento, e.hora, e.descricao,
-            COALESCE(ae.concluido, 0) AS concluido
+    'SELECT e.id, e.titulo, e.tipo, e.data_evento, e.hora, e.descricao, e.concluido
      FROM eventos e
-     LEFT JOIN aluno_eventos ae ON ae.evento_id = e.id AND ae.aluno_id = :aluno_id
      WHERE e.turma_id = :turma_id
        AND MONTH(e.data_evento) = :mes
        AND YEAR(e.data_evento) = :ano
      ORDER BY e.data_evento ASC, e.hora ASC'
 );
 $stmt->execute([
-    'aluno_id' => $aluno['id'],
     'turma_id' => $aluno['turma_id'],
     'mes'      => $mes,
     'ano'      => $ano,
@@ -116,21 +113,20 @@ require __DIR__ . '/../includes/header.php';
                     'turma_id'   => (int) $aluno['turma_id'],
                     'turma_nome' => $evento['tipo'] === 'pessoal' ? ($evento['materia'] ?: 'Pessoal') : $aluno['turma_nome'],
                     'origem'     => $evento['tipo'] === 'pessoal' ? 'pessoal' : 'turma',
+                    'concluido'  => (int) ($evento['concluido'] ?? 0),
                 ];
             }
             ?>
-            <div class="cal-day <?= $ehHoje ? 'is-today' : '' ?> <?= $eventosDoDia ? 'has-events' : '' ?>">
-                <button
-                    type="button"
-                    class="cal-num <?= $eventosDoDia ? 'is-button' : '' ?>"
-                    <?php if ($eventosDoDia): ?>
-                        data-modal="dia"
-                        data-dia="<?= e(formatarData($data)) ?>"
-                        data-itens="<?= e(json_encode($resumo, JSON_UNESCAPED_UNICODE)) ?>"
-                    <?php endif; ?>
-                ><?= $dia ?></button>
+            <div
+                class="cal-day is-clickable <?= $ehHoje ? 'is-today' : '' ?> <?= $eventosDoDia ? 'has-events' : '' ?>"
+                data-modal="dia"
+                data-dia="<?= e(formatarData($data)) ?>"
+                data-data="<?= e($data) ?>"
+                data-itens="<?= e(json_encode($resumo, JSON_UNESCAPED_UNICODE)) ?>"
+            >
+                <span class="cal-num"><?= $dia ?></span>
                 <?php foreach ($eventosDoDia as $evento): ?>
-                    <button class="cal-event tipo-<?= $evento['tipo'] === 'pessoal' ? 'outro' : e($evento['tipo']) ?>"
+                    <button class="cal-event <?= !empty($evento['concluido']) ? 'is-done' : 'is-pending' ?> tipo-<?= $evento['tipo'] === 'pessoal' ? 'outro' : e($evento['tipo']) ?>"
                        type="button"
                        data-modal="<?= $evento['tipo'] === 'pessoal' ? 'pessoal' : 'evento' ?>"
                        data-id="<?= (int) $evento['id'] ?>"

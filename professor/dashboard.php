@@ -56,7 +56,7 @@ require __DIR__ . '/../includes/header.php';
 ?>
 
 <section class="hello">
-    <h2 class="display-name">Olá, Professor <?= e(primeiroNome($professor['nome'])) ?></h2>
+    <h2 class="display-name">Olá, <?= e(primeiroNome($professor['nome'])) ?></h2>
     <p>O que a turma precisa saber agora.</p>
 </section>
 
@@ -95,7 +95,7 @@ require __DIR__ . '/../includes/header.php';
 
     <?php if (!$proximas): ?>
         <div class="empty-state">
-            <p>Nenhuma atividade futura ainda. Cadastre a próxima prova ou tarefa da turma.</p>
+            <p>Nenhuma atividade futura ainda. Cadastre a próxima prova ou atividade da turma.</p>
             <a class="btn btn-stamp empty-action" href="<?= BASE_URL ?>/professor/adicionar_evento.php">Nova atividade</a>
         </div>
     <?php endif; ?>

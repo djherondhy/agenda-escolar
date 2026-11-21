@@ -61,11 +61,16 @@ if ($id > 0) {
         'hora'        => $dados['hora'],
         'materia'     => $dados['materia'],
     ]);
+    $id = (int) $pdo->lastInsertId();
 }
 
+$errosArquivo = [];
+salvarAnexosNaTabela($pdo, 'aluno_atividade_anexos', 'atividade_id', $id, 'pessoais/' . $id, $_FILES['anexos'] ?? [], $errosArquivo);
+
+$extra = 'ok=pessoal' . ($errosArquivo ? '&aviso=anexo' : '');
 if (str_contains($voltar, '?')) {
-    header('Location: ' . $voltar . (str_contains($voltar, 'ok=') ? '' : '&ok=pessoal'));
+    header('Location: ' . $voltar . (str_contains($voltar, 'ok=') ? '' : '&' . $extra));
 } else {
-    header('Location: ' . $voltar . '?ok=pessoal');
+    header('Location: ' . $voltar . '?' . $extra);
 }
 exit;

@@ -1,6 +1,6 @@
-# Sistema de Calendário Estudantil
+# Agenda Acadêmica
 
-Sistema web para organização da rotina escolar. Professores cadastram provas, trabalhos e tarefas para suas turmas. Alunos acompanham prazos no calendário e marcam atividades como concluídas.
+Sistema web para organização da rotina escolar. Representantes de turma cadastram provas, trabalhos, atividades e a grade de horários. Alunos acompanham prazos no calendário e marcam as próprias atividades como concluídas. Desenvolvedores e conselheiros administram usuários e turmas.
 
 ## Requisitos
 
@@ -10,61 +10,38 @@ Sistema web para organização da rotina escolar. Professores cadastram provas, 
 - XAMPP
 - Navegador
 
-## Instalação
+## Instalação e configuração
 
-1. Instale o XAMPP.
-2. Ative o Apache e o MySQL no painel do XAMPP.
-3. Copie o projeto para:
+O banco é configurado automaticamente por `config/env.php`, nesta ordem:
 
-```text
-C:\xampp\htdocs\c-estudantil
-```
+1. Variáveis de ambiente do servidor (`DATABASE_URL`, `MYSQL_URL`, `DB_*`, `MYSQL*`)
+2. Arquivo `.env` na raiz do projeto
+3. Padrão do XAMPP local (`root`, sem senha, banco `calendario_estudantil`)
 
-4. Crie o banco `calendario_estudantil` e importe os dados:
+### Produção (Hostinger)
 
-- Abra o phpMyAdmin: `http://localhost/phpmyadmin`
-- Importe o arquivo `database/calendario_estudantil.sql`
+1. Publique os arquivos (por exemplo em `public_html`).
+2. Confira o `.env` com `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER` e `DB_PASS`.
+3. Acesse o site. Na primeira requisição as tabelas são criadas, as contas de teste antigas são removidas e o administrador padrão é garantido.
 
-Ou, no Prompt de Comando:
+O `BASE_URL` é detectado sozinho; use `APP_BASE_URL` no `.env` apenas se precisar forçar um valor.
 
-```text
-C:\xampp\mysql\bin\mysql.exe -u root --default-character-set=utf8mb4 < C:\xampp\htdocs\c-estudantil\database\calendario_estudantil.sql
-```
+### Local (XAMPP)
 
-5. Confira as credenciais do banco em `config/database.php`.
+1. Copie o projeto para `C:\xampp\htdocs\c-estudantil` e ative Apache e MySQL.
+2. Renomeie/remova o `.env` (ou aponte-o para o MySQL local).
+3. Acesse `http://localhost/c-estudantil`. O banco é criado na primeira execução.
 
-O padrão do XAMPP é:
+## Acesso inicial
 
-```php
-DB_HOST = localhost
-DB_NAME = calendario_estudantil
-DB_USER = root
-DB_PASS = (vazio)
-```
+| E-mail | Senha | Perfil |
+| --- | --- | --- |
+| admin@admin.com | adminadmin | Administrador |
 
-Se a pasta do projeto for diferente de `c-estudantil`, ajuste também o `BASE_URL` nesse arquivo.
-
-6. Acesse:
-
-```text
-http://localhost/c-estudantil
-```
-
-## Usuários de teste
-
-| Nome | E-mail | Senha | Perfil |
-| --- | --- | --- | --- |
-| Administrador | admin@admin.com | admin | Administrador |
-| João da Silva | joao@escola.com | senha123 | Professor |
-| Maria Oliveira | maria@escola.com | senha123 | Professor |
-| Carlos Souza | carlos@escola.com | senha123 | Aluno |
-| Ana Pereira | ana@escola.com | senha123 | Aluno |
-| Pedro Santos | pedro@escola.com | senha123 | Aluno |
-| Lucas Almeida | lucas@escola.com | senha123 | Aluno |
-
+Altere a senha após o primeiro acesso. Alunos e representantes são cadastrados pelo administrador.
 ## Funcionalidades
 
-### Professor
+### Representante de turma
 
 - Login e dashboard com totais da turma
 - Visualização das turmas associadas

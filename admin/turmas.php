@@ -107,7 +107,7 @@ require __DIR__ . '/../includes/header.php';
                         <th>Turma</th>
                         <th>Ano</th>
                         <th>Alunos</th>
-                        <th>Professores</th>
+                        <th>Representantes</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
@@ -119,7 +119,7 @@ require __DIR__ . '/../includes/header.php';
                             </td>
                             <td data-label="Ano"><?= e($turma['ano'] ?: '—') ?></td>
                             <td data-label="Alunos"><?= (int) $turma['total_alunos'] ?></td>
-                            <td data-label="Professores"><?= (int) $turma['total_professores'] ?></td>
+                            <td data-label="Representantes"><?= (int) $turma['total_professores'] ?></td>
                             <td data-label="Ações">
                                 <div class="row-actions">
                                     <a class="btn btn-ghost" href="<?= BASE_URL ?>/admin/turma.php?id=<?= (int) $turma['id'] ?>">Abrir</a>

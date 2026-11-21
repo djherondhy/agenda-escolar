@@ -50,7 +50,7 @@ $base = BASE_URL . '/admin/usuarios.php';
 <nav class="filter-bar" aria-label="Filtrar usuários">
     <a class="<?= $filtro === 'todos' ? 'is-active' : '' ?>" href="<?= $base ?>">Todos</a>
     <a class="<?= $filtro === 'aluno' ? 'is-active' : '' ?>" href="<?= $base ?>?tipo=aluno">Alunos</a>
-    <a class="<?= $filtro === 'professor' ? 'is-active' : '' ?>" href="<?= $base ?>?tipo=professor">Professores</a>
+    <a class="<?= $filtro === 'professor' ? 'is-active' : '' ?>" href="<?= $base ?>?tipo=professor">Representantes</a>
     <a class="<?= $filtro === 'administrador' ? 'is-active' : '' ?>" href="<?= $base ?>?tipo=administrador">Administradores</a>
 </nav>
 

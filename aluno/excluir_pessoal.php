@@ -21,6 +21,9 @@ $id = (int) ($_POST['id'] ?? 0);
 $existente = obterAtividadePessoal($pdo, $id, (int) $aluno['id']);
 
 if ($existente) {
+    foreach (listarAnexosDaLinha($pdo, 'aluno_atividade_anexos', 'atividade_id', $id) as $anexo) {
+        apagarArquivoUpload($anexo['caminho']);
+    }
     $stmt = $pdo->prepare('DELETE FROM aluno_atividades WHERE id = :id AND aluno_id = :aluno_id');
     $stmt->execute([
         'id'       => $id,

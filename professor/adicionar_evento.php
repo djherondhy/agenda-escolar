@@ -20,7 +20,7 @@ $dados = [
     'descricao'   => '',
     'tipo'        => '',
     'turma_id'    => '',
-    'data_evento' => '',
+    'data_evento' => preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) ($_GET['data'] ?? '')) ? $_GET['data'] : '',
     'hora'        => '',
     'materia'     => '',
 ];
@@ -47,6 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
 
         $eventoId = (int) $pdo->lastInsertId();
+        notificarAlunosNovaAtividade($pdo, $eventoId, (int) $validacao['dados']['turma_id']);
         if (!empty($_FILES['anexos'])) {
             salvarAnexosEvento($pdo, $eventoId, $_FILES['anexos'], $erros);
         }

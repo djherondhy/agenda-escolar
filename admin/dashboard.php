@@ -28,7 +28,7 @@ require __DIR__ . '/../includes/header.php';
 
 <section class="hello">
     <h2 class="display-name">Administração</h2>
-    <p>Cadastre alunos, professores e outros administradores da escola.</p>
+    <p>Cadastre alunos, representantes de turma e conselheiros da escola.</p>
 </section>
 
 <section class="stat-row stat-row-4">
@@ -38,7 +38,7 @@ require __DIR__ . '/../includes/header.php';
     </a>
     <a class="stat" href="<?= BASE_URL ?>/admin/usuarios.php?tipo=professor">
         <span class="stat-value"><?= $totalProfessores ?></span>
-        <span class="stat-label">Professores</span>
+        <span class="stat-label">Representantes</span>
     </a>
     <a class="stat" href="<?= BASE_URL ?>/admin/usuarios.php?tipo=administrador">
         <span class="stat-value"><?= $totalAdmins ?></span>
@@ -52,7 +52,7 @@ require __DIR__ . '/../includes/header.php';
 
 <nav class="dash-shortcuts" aria-label="Cadastros">
     <a href="<?= BASE_URL ?>/admin/adicionar_usuario.php?tipo=aluno">Cadastrar aluno</a>
-    <a href="<?= BASE_URL ?>/admin/adicionar_usuario.php?tipo=professor">Cadastrar professor</a>
+    <a href="<?= BASE_URL ?>/admin/adicionar_usuario.php?tipo=professor">Cadastrar representante</a>
     <a href="<?= BASE_URL ?>/admin/adicionar_usuario.php?tipo=administrador">Cadastrar administrador</a>
 </nav>
 

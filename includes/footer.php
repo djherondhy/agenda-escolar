@@ -24,7 +24,7 @@
         ?>
         <dialog class="app-dialog" id="modal-pessoal" aria-labelledby="pessoal-titulo">
             <div class="modal-card">
-                <form method="post" action="<?= BASE_URL ?>/aluno/salvar_pessoal.php" id="form-pessoal">
+                <form method="post" action="<?= BASE_URL ?>/aluno/salvar_pessoal.php" id="form-pessoal" enctype="multipart/form-data">
                     <button class="modal-close" type="button" data-modal-close>Fechar</button>
                     <h2 id="pessoal-titulo">Nova atividade pessoal</h2>
                     <p class="panel-lead">Para revisão, provas extras ou tarefas que só você precisa lembrar.</p>
@@ -56,6 +56,12 @@
                             <label for="pessoal-descricao">Observação</label>
                             <textarea id="pessoal-descricao" name="descricao" rows="3" maxlength="1000"></textarea>
                         </div>
+                        <div class="field span-2">
+                            <label for="pessoal-anexos">Imagens, PDF, Word e slides</label>
+                            <input id="pessoal-anexos" name="anexos[]" type="file" multiple accept="<?= aceitaAnexos() ?>">
+                            <small class="field-help">Até 5 MB cada.</small>
+                            <div id="pessoal-arquivos" class="anexo-lista" hidden></div>
+                        </div>
                     </div>
                     <div class="modal-actions">
                         <button class="btn btn-stamp" type="submit">Salvar</button>
@@ -70,6 +76,8 @@
     <?php if (!empty($usarEditor)): ?>
         <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
     <?php endif; ?>
-    <script src="<?= BASE_URL ?>/assets/js/script.js"></script>
+    <script src="<?= asset('assets/js/script.js') ?>"></script>
+    <script src="<?= asset('assets/js/viva.js') ?>"></script>
+    <script src="<?= asset('assets/js/tema.js') ?>"></script>
 </body>
 </html>

@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($dados['tipo'] === 'professor') {
         $dados['turma_ids'] = array_values(array_intersect($dados['turma_ids'], $idsTurmas));
         if (!$dados['turma_ids']) {
-            $erros[] = 'Selecione pelo menos uma turma para o professor.';
+            $erros[] = 'Selecione pelo menos uma turma para o representante.';
         }
     }
 
@@ -114,10 +114,10 @@ require __DIR__ . '/../includes/header.php';
                 <label for="tipo">Perfil</label>
                 <select id="tipo" name="tipo" data-tipo-select required>
                     <option value="aluno" <?= $dados['tipo'] === 'aluno' ? 'selected' : '' ?>>Aluno</option>
-                    <option value="professor" <?= $dados['tipo'] === 'professor' ? 'selected' : '' ?>>Professor</option>
-                    <option value="administrador" <?= $dados['tipo'] === 'administrador' ? 'selected' : '' ?>>Administrador</option>
+                    <option value="professor" <?= $dados['tipo'] === 'professor' ? 'selected' : '' ?>>Representante de turma</option>
+                    <option value="administrador" <?= $dados['tipo'] === 'administrador' ? 'selected' : '' ?>>Desenvolvedor / Conselheiro</option>
                 </select>
-                <small class="field-help">Aluno usa uma turma. Professor pode ter várias.</small>
+                <small class="field-help">Aluno usa uma turma. O representante pode ter várias.</small>
             </div>
 
             <div class="field">

@@ -42,7 +42,7 @@ echo json_encode([
     'professor'    => $evento['professor_nome'],
     'descricao'    => descricaoHtml($evento['descricao']),
     'anexos'       => $anexos,
-    'pode_editar'  => !empty($evento['pode_editar']),
-    'concluido'    => !empty($evento['concluido']),
-    'eh_aluno'     => $usuario['tipo'] === 'aluno',
+    'pode_editar'    => !empty($evento['pode_editar']),
+    'pode_concluir'  => !empty($evento['pode_concluir']),
+    'concluido'      => !empty($evento['concluido']),
 ]);

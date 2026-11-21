@@ -26,7 +26,7 @@ require __DIR__ . '/../includes/header.php';
 
 <section class="hello">
     <h2 class="display-name">Grade da semana</h2>
-    <p><?= e($aluno['turma_nome']) ?> · aulas cadastradas pelos professores.</p>
+    <p><?= e($aluno['turma_nome']) ?> · aulas cadastradas pelo representante.</p>
 </section>
 
 <?php if ($proxima): ?>
@@ -44,7 +44,7 @@ require __DIR__ . '/../includes/header.php';
 <section class="panel">
     <?php if (!$horarios): ?>
         <div class="empty-state">
-            <p>Os horários desta turma ainda não foram definidos. Peça ao professor ou ao administrador para cadastrar a grade.</p>
+            <p>Os horários desta turma ainda não foram definidos. Peça ao representante de turma para cadastrar a grade.</p>
             <a class="btn btn-ghost empty-action" href="<?= BASE_URL ?>/aluno/disciplinas.php">Ver disciplinas</a>
         </div>
     <?php else: ?>

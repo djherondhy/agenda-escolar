@@ -7,6 +7,14 @@ function e(?string $texto): string
     return htmlspecialchars((string) $texto, ENT_QUOTES, 'UTF-8');
 }
 
+function asset(string $caminho): string
+{
+    $arquivo = dirname(__DIR__) . '/' . ltrim($caminho, '/');
+    $versao = is_file($arquivo) ? (string) filemtime($arquivo) : '1';
+
+    return BASE_URL . '/' . ltrim($caminho, '/') . '?v=' . $versao;
+}
+
 function primeiroNome(string $nome): string
 {
     $partes = preg_split('/\s+/', trim($nome));
@@ -45,18 +53,19 @@ function formatarHora(?string $hora): string
 function rotuloTipo(string $tipo): string
 {
     return match ($tipo) {
-        'prova'     => 'Prova',
-        'trabalho'  => 'Trabalho',
-        'tarefa'    => 'Tarefa',
-        default     => 'Outro',
+        'prova'      => 'Prova',
+        'trabalho'   => 'Trabalho',
+        'atividade'  => 'Atividade',
+        'reuniao'    => 'Reunião',
+        default      => 'Atividade',
     };
 }
 
 function rotuloPerfil(string $tipo): string
 {
     return match ($tipo) {
-        'professor'     => 'Professor',
-        'administrador' => 'Administrador',
+        'professor'     => 'Representante de turma',
+        'administrador' => 'Desenvolvedor / Conselheiro',
         default         => 'Aluno',
     };
 }
@@ -240,6 +249,72 @@ function listarProfessores(PDO $pdo): array
          INNER JOIN usuarios u ON u.id = p.usuario_id
          ORDER BY u.nome'
     )->fetchAll();
+}
+
+function notificarAlunosNovaAtividade(PDO $pdo, int $eventoId, int $turmaId): void
+{
+    $stmt = $pdo->prepare('INSERT INTO notificacoes (aluno_id, evento_id) VALUES (:aluno_id, :evento_id)');
+    foreach (listarAlunosDaTurma($pdo, $turmaId) as $aluno) {
+        $stmt->execute([
+            'aluno_id'  => (int) $aluno['id'],
+            'evento_id' => $eventoId,
+        ]);
+    }
+
+    require_once __DIR__ . '/push.php';
+    try {
+        enviarPushNovaAtividade($pdo, $eventoId, $turmaId);
+    } catch (Throwable $e) {
+        // O aviso dentro do sistema continua mesmo se o push do celular falhar.
+    }
+}
+
+function contarNotificacoesNaoLidas(PDO $pdo, int $alunoId): int
+{
+    $stmt = $pdo->prepare('SELECT COUNT(*) FROM notificacoes WHERE aluno_id = :aluno_id AND lida = 0');
+    $stmt->execute(['aluno_id' => $alunoId]);
+
+    return (int) $stmt->fetchColumn();
+}
+
+function listarNotificacoesAluno(PDO $pdo, int $alunoId): array
+{
+    $stmt = $pdo->prepare(
+        'SELECT n.id, n.lida, n.data_criacao, e.id AS evento_id, e.titulo, e.tipo, e.data_evento, u.nome AS professor_nome
+         FROM notificacoes n
+         INNER JOIN eventos e ON e.id = n.evento_id
+         INNER JOIN professores p ON p.id = e.professor_id
+         INNER JOIN usuarios u ON u.id = p.usuario_id
+         WHERE n.aluno_id = :aluno_id
+         ORDER BY n.lida ASC, n.data_criacao DESC
+         LIMIT 40'
+    );
+    $stmt->execute(['aluno_id' => $alunoId]);
+
+    return $stmt->fetchAll();
+}
+
+function marcarNotificacaoLida(PDO $pdo, int $notificacaoId, int $alunoId): ?int
+{
+    $stmt = $pdo->prepare(
+        'SELECT evento_id FROM notificacoes WHERE id = :id AND aluno_id = :aluno_id LIMIT 1'
+    );
+    $stmt->execute([
+        'id'       => $notificacaoId,
+        'aluno_id' => $alunoId,
+    ]);
+    $eventoId = $stmt->fetchColumn();
+    if (!$eventoId) {
+        return null;
+    }
+
+    $atualizar = $pdo->prepare('UPDATE notificacoes SET lida = 1 WHERE id = :id AND aluno_id = :aluno_id');
+    $atualizar->execute([
+        'id'       => $notificacaoId,
+        'aluno_id' => $alunoId,
+    ]);
+
+    return (int) $eventoId;
 }
 
 function listarAlunosDaTurma(PDO $pdo, int $turmaId): array
@@ -454,7 +529,7 @@ function agruparEventosPorData(array $eventos): array
 function validarEvento(array $dados, array $turmasPermitidas): array
 {
     $erros = [];
-    $tipos = ['prova', 'trabalho', 'tarefa', 'outro'];
+    $tipos = ['prova', 'trabalho', 'atividade', 'reuniao'];
 
     $titulo     = trim($dados['titulo'] ?? '');
     $descricao  = trim($dados['descricao'] ?? '');
@@ -606,12 +681,12 @@ function tiposAnexoPermitidos(): array
         'gif'  => ['image/gif'],
         'webp' => ['image/webp'],
         'pdf'  => ['application/pdf'],
-        'doc'  => ['application/msword'],
-        'docx' => ['application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
-        'xls'  => ['application/vnd.ms-excel'],
-        'xlsx' => ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
-        'ppt'  => ['application/vnd.ms-powerpoint'],
-        'pptx' => ['application/vnd.openxmlformats-officedocument.presentationml.presentation'],
+        'doc'  => ['application/msword', 'application/octet-stream', 'application/zip', 'application/x-zip-compressed'],
+        'docx' => ['application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/zip', 'application/x-zip-compressed', 'application/octet-stream'],
+        'xls'  => ['application/vnd.ms-excel', 'application/octet-stream', 'application/zip', 'application/x-zip-compressed'],
+        'xlsx' => ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/zip', 'application/x-zip-compressed', 'application/octet-stream'],
+        'ppt'  => ['application/vnd.ms-powerpoint', 'application/octet-stream', 'application/zip', 'application/x-zip-compressed'],
+        'pptx' => ['application/vnd.openxmlformats-officedocument.presentationml.presentation', 'application/zip', 'application/x-zip-compressed', 'application/octet-stream'],
         'txt'  => ['text/plain'],
         'zip'  => ['application/zip'],
     ];
@@ -633,6 +708,11 @@ function listarAnexos(PDO $pdo, int $eventoId): array
 function anexoEhImagem(string $mime): bool
 {
     return str_starts_with($mime, 'image/');
+}
+
+function aceitaAnexos(): string
+{
+    return '.jpg,.jpeg,.png,.gif,.webp,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip';
 }
 
 function salvarArquivoEnviado(array $arquivo, string $pastaRelativa, array &$erros): ?array
@@ -688,6 +768,95 @@ function salvarArquivoEnviado(array $arquivo, string $pastaRelativa, array &$err
         'tipo_mime'     => $mime,
         'tamanho'       => (int) $arquivo['size'],
     ];
+}
+
+function apagarArquivoUpload(string $caminhoRelativo): void
+{
+    if ($caminhoRelativo === '' || str_contains($caminhoRelativo, '..') || str_starts_with($caminhoRelativo, 'exemplos/')) {
+        return;
+    }
+
+    $caminho = UPLOAD_PATH . DIRECTORY_SEPARATOR . str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $caminhoRelativo);
+    if (is_file($caminho)) {
+        unlink($caminho);
+    }
+}
+
+function salvarAnexosNaTabela(PDO $pdo, string $tabela, string $coluna, int $id, string $pasta, array $files, array &$erros): void
+{
+    $permitidas = [
+        'aluno_atividade_anexos' => 'atividade_id',
+        'mural_anexos'           => 'post_id',
+        'salas_anexos'           => 'post_id',
+    ];
+
+    if (($permitidas[$tabela] ?? '') !== $coluna || $id <= 0 || empty($files['name']) || !is_array($files['name'])) {
+        return;
+    }
+
+    $insert = $pdo->prepare(
+        "INSERT INTO {$tabela} ({$coluna}, nome_original, caminho, tipo_mime, tamanho)
+         VALUES (:id, :nome_original, :caminho, :tipo_mime, :tamanho)"
+    );
+
+    foreach ($files['name'] as $i => $nome) {
+        $salvo = salvarArquivoEnviado([
+            'name'     => $nome,
+            'type'     => $files['type'][$i] ?? '',
+            'tmp_name' => $files['tmp_name'][$i] ?? '',
+            'error'    => $files['error'][$i] ?? UPLOAD_ERR_NO_FILE,
+            'size'     => $files['size'][$i] ?? 0,
+        ], $pasta, $erros);
+
+        if (!$salvo) {
+            continue;
+        }
+
+        $insert->execute([
+            'id'            => $id,
+            'nome_original' => $salvo['nome_original'],
+            'caminho'       => $salvo['caminho'],
+            'tipo_mime'     => $salvo['tipo_mime'],
+            'tamanho'       => $salvo['tamanho'],
+        ]);
+    }
+}
+
+function listarAnexosDaLinha(PDO $pdo, string $tabela, string $coluna, int $id): array
+{
+    $permitidas = [
+        'aluno_atividade_anexos' => 'atividade_id',
+        'mural_anexos'           => 'post_id',
+        'salas_anexos'           => 'post_id',
+    ];
+
+    if (($permitidas[$tabela] ?? '') !== $coluna || $id <= 0) {
+        return [];
+    }
+
+    $stmt = $pdo->prepare("SELECT * FROM {$tabela} WHERE {$coluna} = :id ORDER BY id");
+    $stmt->execute(['id' => $id]);
+
+    return $stmt->fetchAll();
+}
+
+function listarAnexosPessoais(PDO $pdo, int $alunoId): array
+{
+    $stmt = $pdo->prepare(
+        'SELECT a.*
+         FROM aluno_atividade_anexos a
+         INNER JOIN aluno_atividades p ON p.id = a.atividade_id
+         WHERE p.aluno_id = :aluno_id
+         ORDER BY a.id'
+    );
+    $stmt->execute(['aluno_id' => $alunoId]);
+    $mapa = [];
+
+    foreach ($stmt->fetchAll() as $anexo) {
+        $mapa[(int) $anexo['atividade_id']][] = $anexo;
+    }
+
+    return $mapa;
 }
 
 function salvarAnexosEvento(PDO $pdo, int $eventoId, array $files, array &$erros): void
@@ -846,6 +1015,7 @@ function usuarioPodeVerEvento(PDO $pdo, array $usuario, int $eventoId): ?array
 
         if ((int) $evento['professor_id'] === (int) $professor['id'] || professorTemTurma($pdo, (int) $professor['id'], (int) $evento['turma_id'])) {
             $evento['pode_editar'] = (int) $evento['professor_id'] === (int) $professor['id'];
+            $evento['pode_concluir'] = (int) $evento['professor_id'] === (int) $professor['id'];
             return $evento;
         }
 
@@ -854,7 +1024,7 @@ function usuarioPodeVerEvento(PDO $pdo, array $usuario, int $eventoId): ?array
 
     $aluno = obterAlunoPorUsuario($pdo, (int) $usuario['id']);
     if ($aluno && (int) $aluno['turma_id'] === (int) $evento['turma_id']) {
-        $evento['concluido'] = eventoConcluido($pdo, (int) $aluno['id'], $eventoId);
+        $evento['pode_concluir'] = false;
         return $evento;
     }
 
@@ -899,6 +1069,20 @@ function listarDisciplinasDaTurma(PDO $pdo, int $turmaId): array
     }
 
     return array_values($grupos);
+}
+
+function listarHorariosDoProfessor(PDO $pdo, int $professorId): array
+{
+    $stmt = $pdo->prepare(
+        'SELECT h.*, t.nome AS turma_nome
+         FROM horarios_aula h
+         INNER JOIN turmas t ON t.id = h.turma_id
+         WHERE h.professor_id = :professor_id
+         ORDER BY h.dia_semana, h.hora_inicio'
+    );
+    $stmt->execute(['professor_id' => $professorId]);
+
+    return $stmt->fetchAll();
 }
 
 function listarHorariosDaTurma(PDO $pdo, int $turmaId, ?string $materia = null): array
@@ -965,6 +1149,41 @@ function proximaAulaHoje(array $horarios): ?array
     return $candidata;
 }
 
+function proximaAula(array $horarios): ?array
+{
+    if (!$horarios) {
+        return null;
+    }
+
+    $agora = new DateTime();
+    $hoje = (int) $agora->format('N');
+    $hora = $agora->format('H:i:s');
+    $melhor = null;
+    $melhorChave = null;
+
+    foreach ($horarios as $aula) {
+        $dia = (int) $aula['dia_semana'];
+        if ($dia < 1 || $dia > 7) {
+            continue;
+        }
+
+        $delta = ($dia - $hoje + 7) % 7;
+        $fim = $aula['hora_fim'] ?: $aula['hora_inicio'];
+        if ($delta === 0 && $fim < $hora) {
+            $delta = 7;
+        }
+
+        $chave = sprintf('%d-%s', $delta, $aula['hora_inicio']);
+        if ($melhorChave === null || $chave < $melhorChave) {
+            $melhorChave = $chave;
+            $aula['dias_ate'] = $delta;
+            $melhor = $aula;
+        }
+    }
+
+    return $melhor;
+}
+
 function listarEventosDaDisciplina(PDO $pdo, int $turmaId, int $alunoId, string $materia): array
 {
     $ids = [];
@@ -975,13 +1194,10 @@ function listarEventosDaDisciplina(PDO $pdo, int $turmaId, int $alunoId, string 
         }
     }
 
-    $sql = 'SELECT e.id, e.titulo, e.tipo, e.data_evento, e.hora, e.materia,
-                   COALESCE(ae.concluido, 0) AS concluido
+    $sql = 'SELECT e.id, e.titulo, e.tipo, e.data_evento, e.hora, e.materia, e.concluido
             FROM eventos e
-            LEFT JOIN aluno_eventos ae ON ae.evento_id = e.id AND ae.aluno_id = :aluno_id
             WHERE e.turma_id = :turma_id';
     $params = [
-        'aluno_id' => $alunoId,
         'turma_id' => $turmaId,
     ];
 
@@ -1221,3 +1437,5 @@ function destinovoltarAluno(?string $voltar): string
 
     return $voltar;
 }
+
+require_once __DIR__ . '/comunidade.php';

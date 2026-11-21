@@ -124,6 +124,41 @@ function exigirLogin(): void
     }
 }
 
+/**
+ * Representante de turma: conta de professor (várias turmas) ou aluno marcado como representante,
+ * com uma única turma e os mesmos poderes de controle da turma.
+ */
+function ehRepresentantePorUsuario(PDO $pdo, int $usuarioId, string $tipo): bool
+{
+    if ($tipo === 'professor') {
+        return true;
+    }
+
+    if ($tipo !== 'aluno') {
+        return false;
+    }
+
+    $stmt = $pdo->prepare(
+        'SELECT 1
+         FROM alunos a
+         INNER JOIN professores p ON p.usuario_id = a.usuario_id
+         WHERE a.usuario_id = :usuario_id AND a.representante = 1
+         LIMIT 1'
+    );
+    $stmt->execute(['usuario_id' => $usuarioId]);
+
+    return (bool) $stmt->fetchColumn();
+}
+
+function usuarioEhRepresentante(): bool
+{
+    if (!usuarioLogado()) {
+        return false;
+    }
+
+    return ehRepresentantePorUsuario(getPDO(), (int) $_SESSION['usuario_id'], (string) $_SESSION['usuario_tipo']);
+}
+
 function exigirProfessor(): void
 {
     iniciarSessaoNome(SESSAO_USER);
@@ -132,7 +167,7 @@ function exigirProfessor(): void
         redirecionar('/login.php');
     }
 
-    if ($_SESSION['usuario_tipo'] !== 'professor') {
+    if (!usuarioEhRepresentante()) {
         redirecionar(destinoPorTipo($_SESSION['usuario_tipo']));
     }
 }
@@ -146,6 +181,19 @@ function exigirAluno(): void
     }
 
     if ($_SESSION['usuario_tipo'] !== 'aluno') {
+        redirecionar(destinoPorTipo($_SESSION['usuario_tipo']));
+    }
+}
+
+function exigirEscola(): void
+{
+    iniciarSessaoNome(SESSAO_USER);
+
+    if (!usuarioLogado()) {
+        redirecionar('/login.php');
+    }
+
+    if (!in_array($_SESSION['usuario_tipo'], ['aluno', 'professor'], true)) {
         redirecionar(destinoPorTipo($_SESSION['usuario_tipo']));
     }
 }

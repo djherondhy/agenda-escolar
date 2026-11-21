@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $existe->execute(['id' => $professorId]);
 
         if (!$existe->fetchColumn()) {
-            $erros[] = 'Selecione um professor.';
+            $erros[] = 'Selecione um representante.';
         } elseif (!$materias) {
             $erros[] = 'Informe pelo menos uma matéria.';
         } else {
@@ -87,7 +87,7 @@ require __DIR__ . '/../includes/header.php';
 <p class="back-link"><a href="<?= BASE_URL ?>/admin/turmas.php">Turmas</a></p>
 
 <?php if (($_GET['ok'] ?? '') === 'vinculo'): ?>
-    <div class="alert alert-ok" role="status">Matéria vinculada ao professor.</div>
+    <div class="alert alert-ok" role="status">Matéria vinculada ao representante.</div>
 <?php elseif (($_GET['ok'] ?? '') === 'existe'): ?>
     <div class="alert alert-ok" role="status">Esse vínculo já existia.</div>
 <?php elseif (($_GET['ok'] ?? '') === 'removido'): ?>
@@ -111,24 +111,24 @@ require __DIR__ . '/../includes/header.php';
     <p>
         <?= e($turma['ano'] ?: 'Ano não informado') ?>
         · <?= count($alunos) ?> aluno<?= count($alunos) === 1 ? '' : 's' ?>
-        · <?= count($professores) ?> professor<?= count($professores) === 1 ? '' : 'es' ?>
+        · <?= count($professores) ?> representante<?= count($professores) === 1 ? '' : 's' ?>
     </p>
 </section>
 
 <section class="panel">
     <div class="panel-head">
-        <h2>Professores</h2>
+        <h2>Representantes</h2>
     </div>
-    <p class="panel-lead">O mesmo professor pode dar mais de uma matéria nesta turma.</p>
+    <p class="panel-lead">O mesmo representante pode cuidar de mais de uma matéria nesta turma.</p>
 
     <?php if (!$professores): ?>
-        <p class="empty">Nenhum professor vinculado ainda.</p>
+        <p class="empty">Nenhum representante vinculado ainda.</p>
     <?php else: ?>
         <div class="table-wrap">
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Professor</th>
+                        <th>Representante</th>
                         <th>E-mail</th>
                         <th>Matérias</th>
                     </tr>
@@ -136,14 +136,14 @@ require __DIR__ . '/../includes/header.php';
                 <tbody>
                     <?php foreach ($professores as $professor): ?>
                         <tr>
-                            <td data-label="Professor"><?= e($professor['nome']) ?></td>
+                            <td data-label="Representante"><?= e($professor['nome']) ?></td>
                             <td data-label="E-mail"><?= e($professor['email']) ?></td>
                             <td data-label="Matérias">
                                 <div class="materia-list">
                                     <?php foreach ($professor['materias'] as $item): ?>
                                         <span class="materia-item">
                                             <span class="chip chip-professor"><?= e(rotuloMateria($item['materia'])) ?></span>
-                                            <form method="post" action="<?= BASE_URL ?>/admin/turma.php?id=<?= $turmaId ?>" data-confirm="Remover esta matéria deste professor?">
+                                            <form method="post" action="<?= BASE_URL ?>/admin/turma.php?id=<?= $turmaId ?>" data-confirm="Remover esta matéria deste representante?">
                                                 <input type="hidden" name="acao" value="remover">
                                                 <input type="hidden" name="turma_id" value="<?= $turmaId ?>">
                                                 <input type="hidden" name="vinculo_id" value="<?= (int) $item['id'] ?>">
@@ -167,7 +167,7 @@ require __DIR__ . '/../includes/header.php';
             <h3 class="section-title">Adicionar matéria</h3>
             <div class="form-grid">
                 <div class="field">
-                    <label for="professor_id">Professor</label>
+                    <label for="professor_id">Representante</label>
                     <select id="professor_id" name="professor_id" required>
                         <option value="">Selecione</option>
                         <?php foreach ($todosProfessores as $professor): ?>

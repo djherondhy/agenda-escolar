@@ -46,7 +46,7 @@ require __DIR__ . '/../includes/header.php';
 
 <section class="hello">
     <h2 class="display-name"><?= e(rotuloMateria($materia)) ?></h2>
-    <p><?= e(implode(', ', $nomes) ?: 'Professor não informado') ?> · <?= e($aluno['turma_nome']) ?></p>
+    <p><?= e(implode(', ', $nomes) ?: 'Quem ministra não informado') ?> · <?= e($aluno['turma_nome']) ?></p>
 </section>
 
 <section class="panel">
@@ -75,7 +75,7 @@ require __DIR__ . '/../includes/header.php';
         <p class="empty">Nenhuma atividade da turma nesta disciplina.</p>
     <?php endif; ?>
     <?php foreach ($eventos as $evento): ?>
-        <button class="agenda-item <?= $evento['concluido'] ? 'is-done' : '' ?>" type="button" data-modal="evento" data-id="<?= (int) $evento['id'] ?>">
+        <button class="agenda-item <?= $evento['concluido'] ? 'is-done' : 'is-pending' ?>" type="button" data-modal="evento" data-id="<?= (int) $evento['id'] ?>">
             <span class="agenda-mark mark-<?= e($evento['tipo']) ?>"></span>
             <div>
                 <div class="agenda-title"><?= e($evento['titulo']) ?></div>
@@ -100,7 +100,7 @@ require __DIR__ . '/../includes/header.php';
         <p class="empty">Nada pessoal nesta disciplina. Use para provas extras, revisão ou tarefas de casa.</p>
     <?php endif; ?>
     <?php foreach ($pessoais as $atividade): ?>
-        <button class="agenda-item <?= $atividade['concluido'] ? 'is-done' : '' ?>" type="button" data-modal="pessoal" data-id="<?= (int) $atividade['id'] ?>">
+        <button class="agenda-item <?= $atividade['concluido'] ? 'is-done' : 'is-pending' ?>" type="button" data-modal="pessoal" data-id="<?= (int) $atividade['id'] ?>">
             <span class="agenda-mark mark-outro"></span>
             <div>
                 <div class="agenda-title"><?= e($atividade['titulo']) ?></div>

@@ -32,9 +32,9 @@ if (!$materiasPorTurma && !empty($turmas)) {
             <select id="tipo" name="tipo" required>
                 <option value="">Selecione</option>
                 <option value="prova" <?= $dados['tipo'] === 'prova' ? 'selected' : '' ?>>Prova</option>
+                <option value="atividade" <?= $dados['tipo'] === 'atividade' ? 'selected' : '' ?>>Atividade</option>
                 <option value="trabalho" <?= $dados['tipo'] === 'trabalho' ? 'selected' : '' ?>>Trabalho</option>
-                <option value="tarefa" <?= $dados['tipo'] === 'tarefa' ? 'selected' : '' ?>>Tarefa</option>
-                <option value="outro" <?= $dados['tipo'] === 'outro' ? 'selected' : '' ?>>Outro</option>
+                <option value="reuniao" <?= $dados['tipo'] === 'reuniao' ? 'selected' : '' ?>>Reunião</option>
             </select>
         </div>
 
@@ -43,7 +43,8 @@ if (!$materiasPorTurma && !empty($turmas)) {
             <select id="turma_id" name="turma_id" required data-materias-turmas="<?= e(json_encode($materiasPorTurma ?? new stdClass(), JSON_UNESCAPED_UNICODE)) ?>">
                 <option value="">Selecione</option>
                 <?php foreach ($turmas as $turma): ?>
-                    <option value="<?= (int) $turma['id'] ?>" <?= (string) $dados['turma_id'] === (string) $turma['id'] ? 'selected' : '' ?>>
+                    <?php $turmaSelecionada = (string) $dados['turma_id'] === (string) $turma['id'] || (count($turmas) === 1 && (string) $dados['turma_id'] === ''); ?>
+                    <option value="<?= (int) $turma['id'] ?>" <?= $turmaSelecionada ? 'selected' : '' ?>>
                         <?= e($turma['nome']) ?>
                     </option>
                 <?php endforeach; ?>
@@ -70,8 +71,8 @@ if (!$materiasPorTurma && !empty($turmas)) {
 
         <div class="field span-2">
             <label for="anexos">Imagens e anexos</label>
-            <input id="anexos" name="anexos[]" type="file" multiple accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip">
-            <small class="field-help">PDF, imagens, Word, Excel, PowerPoint ou ZIP. Até 5 MB cada.</small>
+            <input id="anexos" name="anexos[]" type="file" multiple accept="<?= aceitaAnexos() ?>">
+            <small class="field-help">Imagens, PDF, Word e slides. Até 5 MB cada.</small>
         </div>
 
         <?php if ($anexos): ?>

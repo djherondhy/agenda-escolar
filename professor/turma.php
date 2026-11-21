@@ -76,24 +76,24 @@ require __DIR__ . '/../includes/header.php';
 </section>
 
 <section class="panel">
-    <h2>Professores</h2>
+    <h2>Representantes</h2>
     <p class="panel-lead">Um professor pode dar mais de uma matéria nesta turma.</p>
 
     <?php if (!$professores): ?>
-        <p class="empty">Nenhum professor vinculado.</p>
+        <p class="empty">Nenhum representante vinculado.</p>
     <?php else: ?>
         <div class="table-wrap">
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Professor</th>
+                        <th>Representante</th>
                         <th>Matérias</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($professores as $item): ?>
                         <tr>
-                            <td data-label="Professor">
+                            <td data-label="Representante">
                                 <?= e($item['nome']) ?>
                                 <?php if ((int) $item['professor_id'] === (int) $professor['id']): ?>
                                     <span class="chip chip-ok">Você</span>

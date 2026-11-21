@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Documento de Engenharia de Software — Calendário Escolar</title>
+<style>
+  @page {
+    size: A4;
+    margin: 16mm 15mm 18mm 15mm;
+    @bottom-left {
+      content: "Calendário Escolar  ·  Documento de Engenharia de Software  ·  v1.0";
+      font-family: "Segoe UI", sans-serif;
+      font-size: 8.5pt;
+      color: #6b7a90;
+    }
+    @bottom-right {
+      content: counter(page);
+      font-family: "Segoe UI", sans-serif;
+      font-size: 8.5pt;
+      color: #6b7a90;
+    }
+  }
+  @page capa {
+    margin: 0;
+    @bottom-left { content: none; }
+    @bottom-right { content: none; }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", "Calibri", sans-serif;
+    font-size: 11pt;
+    line-height: 1.45;
+    color: #0f1728;
+    background: #fff;
+  }
+  h1, h2, h3, h4 { line-height: 1.25; color: #0f1728; page-break-after: avoid; }
+  h1 { font-size: 18pt; margin: 0 0 8px; letter-spacing: -0.02em; }
+  h2 {
+    font-size: 14.5pt;
+    margin: 22px 0 8px;
+    padding-top: 4px;
+    border-top: 2px solid #1d4ed8;
+    page-break-before: always;
+  }
+  h2.primeiro { page-break-before: auto; border-top: 2px solid #1d4ed8; }
+  h3 { font-size: 12.5pt; margin: 16px 0 6px; color: #153eb0; }
+  h4 { font-size: 11.5pt; margin: 12px 0 4px; }
+  p { margin: 0 0 8px; }
+  ul, ol { margin: 0 0 10px; padding-left: 18px; }
+  li { margin: 0 0 3px; }
+  a { color: #1d4ed8; text-decoration: none; }
+  strong { font-weight: 650; }
+  code, .mono { font-family: Consolas, "Courier New", monospace; font-size: 9.5pt; }
+  .capa {
+    page: capa;
+    min-height: 297mm;
+    background: #0f1728;
+    color: #fff;
+    padding: 22mm 18mm 18mm;
+    display: flex;
+    flex-direction: column;
+    page-break-after: always;
+  }
+  .capa-kicker {
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-size: 9.5pt;
+    color: #93c5fd;
+    margin: 0 0 18mm;
+  }
+  .capa h1 {
+    color: #fff;
+    font-size: 32pt;
+    font-weight: 700;
+    margin: 0 0 8px;
+    max-width: 150mm;
+  }
+  .capa .sub {
+    font-size: 16pt;
+    color: #dbe7ff;
+    margin: 0 0 10mm;
+    max-width: 150mm;
+  }
+  .capa .linha {
+    width: 42mm;
+    height: 3px;
+    background: #1d4ed8;
+    margin: 0 0 10mm;
+  }
+  .capa-meta { margin-top: auto; }
+  .capa-meta p { margin: 0 0 3px; color: #e8effc; font-size: 11.5pt; }
+  .capa-meta span { color: #93c5fd; display: inline-block; width: 38mm; }
+  .bloco { page-break-inside: avoid; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 6px 0 12px;
+    font-size: 9.5pt;
+    page-break-inside: auto;
+  }
+  th, td {
+    border: 1px solid #d5deea;
+    padding: 4px 6px;
+    vertical-align: top;
+    text-align: left;
+  }
+  th { background: #e8effc; color: #153eb0; font-weight: 650; }
+  tr { page-break-inside: avoid; }
+  caption {
+    caption-side: bottom;
+    text-align: left;
+    font-size: 8.5pt;
+    color: #6b7a90;
+    padding-top: 3px;
+  }
+  .toc { list-style: none; padding: 0; margin: 0; }
+  .toc li {
+    display: flex;
+    gap: 8px;
+    border-bottom: 1px dotted #d5deea;
+    padding: 4px 0;
+    font-size: 11pt;
+  }
+  .toc .n { color: #1d4ed8; font-weight: 650; width: 12mm; flex: none; }
+  .nota {
+    background: #f6f8fb;
+    border-left: 3px solid #1d4ed8;
+    padding: 8px 10px;
+    margin: 8px 0 12px;
+    font-size: 10pt;
+  }
+  .aviso {
+    background: #fffaeb;
+    border-left: 3px solid #b54708;
+    padding: 8px 10px;
+    margin: 8px 0 12px;
+    font-size: 10pt;
+  }
+  figure {
+    margin: 8px 0 12px;
+    page-break-inside: avoid;
+  }
+  figcaption {
+    font-size: 9pt;
+    color: #3d4b63;
+    margin-top: 4px;
+  }
+  svg { width: 100%; height: auto; display: block; }
+  .ent { fill: #fff; stroke: #1d4ed8; stroke-width: 1.3; }
+  .hd { fill: #1d4ed8; }
+  .ht { fill: #fff; font: 700 12px "Segoe UI", sans-serif; }
+  .at { fill: #0f1728; font: 11px "Segoe UI", sans-serif; }
+  .pk { text-decoration: underline; }
+  .fk { font-style: italic; }
+  .ln { stroke: #334155; stroke-width: 1.15; fill: none; }
+  .lb { fill: #153eb0; font: 600 10px "Segoe UI", sans-serif; }
+  .card { fill: #3d4b63; font: 11px "Segoe UI", sans-serif; }
+  .dia { fill: #e8effc; stroke: #1d4ed8; stroke-width: 1.2; }
+  .dt { fill: #153eb0; font: 600 10px "Segoe UI", sans-serif; }
+  .uc { fill: #fff; stroke: #1d4ed8; stroke-width: 1.2; }
+  .ut { fill: #0f1728; font: 11px "Segoe UI", sans-serif; }
+  .sys { fill: #f8fafc; stroke: #94a3b8; stroke-width: 1.2; }
+  .st { fill: #475569; font: 700 11px "Segoe UI", sans-serif; }
+  .actor { fill: none; stroke: #0f1728; stroke-width: 1.4; }
+  .an { fill: #0f1728; font: 600 11px "Segoe UI", sans-serif; }
+  .et { fill: #0f1728; font: 700 12px "Segoe UI", sans-serif; }
+  .leg { font-size: 9pt; color: #3d4b63; margin: 0 0 8px; }
+  .id { font-family: Consolas, monospace; color: #153eb0; font-weight: 700; white-space: nowrap; }
+  .pequena { font-size: 10pt; }
+</style>
+</head>
+<body>
+
+<section class="capa">
+  <p class="capa-kicker">Engenharia de software</p>
+  <h1>Calendário Escolar</h1>
+  <p class="sub">Documento de requisitos, modelagem e arquitetura do sistema de organização da rotina escolar.</p>
+  <div class="linha"></div>
+  <p style="max-width:145mm;color:#cbd5e1;font-size:12pt;">Contexto, escopo, linguagens e ferramentas, requisitos funcionais e não funcionais, regras de negócio, casos de uso, modelo e diagrama entidade-relacionamento, modelo relacional e limitações.</p>
+  <div class="capa-meta">
+    <p><span>Sistema</span> c-estudantil</p>
+    <p><span>Documento</span> DES-CE-001</p>
+    <p><span>Versão</span> 1.0</p>
+    <p><span>Data</span> 26 de outubro de 2026</p>
+    <p><span>Estado</span> Documentação do sistema implementado</p>
+    <p><span>Base de dados</span> calendario_estudantil</p>
+  </div>
+</section>
+
+<h2 class="primeiro">Identificação e histórico</h2>
+<p>Este documento descreve o <strong>Calendário Escolar</strong>, aplicação web que organiza a rotina acadêmica de uma escola: o administrador mantém pessoas e turmas, o professor publica atividades e horários, e o aluno acompanha prazos, conclui o que já fez e registra compromissos pessoais.</p>
+<p>O texto foi elaborado a partir do código, do esquema SQL e do comportamento das telas em outubro de 2026. Ele registra o sistema como está construído, e não um plano anterior à implementação.</p>
+
+<table>
+  <thead><tr><th>Versão</th><th>Data</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td>1.0</td><td>26/10/2026</td><td>Versão inicial do documento de engenharia de software, cobrindo requisitos, casos de uso, MER, DER, modelo relacional, arquitetura e limitações.</td></tr>
+  </tbody>
+</table>
+
+<h3>Sumário</h3>
+<ol class="toc">
+  <li><span class="n">1</span> Introdução</li>
+  <li><span class="n">2</span> Escopo</li>
+  <li><span class="n">3</span> Visão do produto e atores</li>
+  <li><span class="n">4</span> Linguagens, ferramentas e ambiente</li>
+  <li><span class="n">5</span> Arquitetura</li>
+  <li><span class="n">6</span> Requisitos funcionais</li>
+  <li><span class="n">7</span> Requisitos não funcionais</li>
+  <li><span class="n">8</span> Regras de negócio</li>
+  <li><span class="n">9</span> Casos de uso</li>
+  <li><span class="n">10</span> Modelo entidade-relacionamento (MER)</li>
+  <li><span class="n">11</span> Diagrama entidade-relacionamento (DER)</li>
+  <li><span class="n">12</span> Modelo relacional e dicionário de dados</li>
+  <li><span class="n">13</span> Rastreabilidade</li>
+  <li><span class="n">14</span> Segurança</li>
+  <li><span class="n">15</span> Limitações e evolução</li>
+  <li><span class="n">16</span> Considerações finais</li>
+  <li><span class="n">17</span> Referências</li>
+</ol>
+
+<h2>1. Introdução</h2>
+
+<h3>1.1 Contexto</h3>
+<p>Em uma rotina escolar, provas, trabalhos, tarefas e reuniões nascem em conversas de corredor, grupos de mensagem e avisos soltos. O aluno da turma precisa reunir esses prazos num único lugar, e o professor precisa publicar o aviso uma vez para a turma inteira, sem controlar o caderno de cada estudante.</p>
+<p>O Calendário Escolar responde a esse contexto com três áreas separadas por perfil. A escola cadastra turmas, alunos e professores. Cada professor publica atividades apenas nas turmas em que leciona. Cada aluno vê o calendário da própria turma, marca o que já concluiu sem alterar o status dos colegas e ainda guarda atividades pessoais, que não aparecem para a turma.</p>
+<p>O cenário de demonstração do banco cobre o ano letivo de 2026, com turmas de Informática, Administração e Agropecuária, professores vinculados a matérias e um conjunto inicial de provas, trabalhos, atividades e uma reunião.</p>
+
+<h3>1.2 Problema</h3>
+<p>Sem um registro comum, três falhas se repetem:</p>
+<ul>
+  <li>o aluno descobre o prazo tarde, porque o aviso ficou num canal que ele não consulta;</li>
+  <li>o professor não tem uma lista única do que já publicou para cada turma;</li>
+  <li>a conclusão de um aluno, se fosse gravada na atividade da turma, apagaria o controle dos demais.</li>
+</ul>
+<p>O sistema separa o fato acadêmico (a atividade existe para a turma) do progresso individual (este aluno já concluiu). Essa separação é a decisão central do produto.</p>
+
+<h3>1.3 Objetivos</h3>
+<p><strong>Objetivo geral.</strong> Oferecer um sistema web em que a escola publique e acompanhe a agenda acadêmica da turma, com acesso distinto para administrador, professor e aluno.</p>
+<p><strong>Objetivos específicos.</strong></p>
+<ul>
+  <li>Autenticar usuários e conduzir cada perfil ao seu painel.</li>
+  <li>Cadastrar usuários, turmas, vínculos de aluno e matérias do professor.</li>
+  <li>Permitir que o professor crie, edite, anexe arquivos e encerre atividades da turma.</li>
+  <li>Permitir que o aluno filtre, consulte e conclua atividades sem efeito sobre os colegas.</li>
+  <li>Exibir calendário mensal, grade de horários, disciplinas e notificações de novas atividades.</li>
+  <li>Permitir que o aluno mantenha uma agenda pessoal, visível só para ele.</li>
+</ul>
+
+<h3>1.4 Público-alvo</h3>
+<p>O uso previsto é uma escola de ensino médio ou técnico, com turmas nomeadas por ano e curso. Os operadores diretos são a secretaria ou coordenação (administrador), o corpo docente e os estudantes. O documento também serve a quem for manter o código: a organização das pastas, o esquema e as regras estão descritos para esse leitor.</p>
+
+<h3>1.5 Glossário</h3>
+<table>
+  <thead><tr><th>Termo</th><th>Significado neste sistema</th></tr></thead>
+  <tbody>
+    <tr><td>Atividade / evento</td><td>Compromisso publicado pelo professor para uma turma. Tipos: prova, trabalho, atividade e reunião.</td></tr>
+    <tr><td>Conclusão da turma</td><td>Marca do professor em <span class="mono">eventos.concluido</span>. Indica que a atividade, como item da turma, foi encerrada.</td></tr>
+    <tr><td>Conclusão individual</td><td>Marca do aluno em <span class="mono">aluno_eventos</span>. Não altera a conclusão dos colegas nem a marca do professor.</td></tr>
+    <tr><td>Atividade pessoal</td><td>Compromisso criado pelo próprio aluno. Não é visível ao professor nem aos colegas.</td></tr>
+    <tr><td>Matéria</td><td>Nome da disciplina informado no vínculo professor–turma. Não existe cadastro próprio de disciplinas.</td></tr>
+    <tr><td>Notificação</td><td>Aviso interno, criado para cada aluno da turma quando uma atividade nova é publicada.</td></tr>
+    <tr><td>MER</td><td>Modelo entidade-relacionamento: visão conceitual, independente do SGBD.</td></tr>
+    <tr><td>DER</td><td>Diagrama do modelo entidade-relacionamento já próximo do esquema lógico.</td></tr>
+    <tr><td>Perfil</td><td>Papel do usuário: administrador, professor ou aluno. Um usuário tem exatamente um perfil.</td></tr>
+  </tbody>
+</table>
+
+<h2>2. Escopo</h2>
+
+<h3>2.1 Dentro do escopo</h3>
+<ul>
+  <li>Página inicial pública e autenticação por e-mail e senha.</li>
+  <li>Sessões separadas para o administrador e para professor ou aluno, no mesmo navegador.</li>
+  <li>CRUD de usuários e de turmas, com vínculo de aluno a uma turma e de professor a várias turmas e matérias.</li>
+  <li>CRUD de atividades da turma, com tipo, data, hora opcional, matéria, descrição formatada e anexos.</li>
+  <li>Conclusão pelo professor (âmbito da turma) e conclusão pelo aluno (âmbito individual).</li>
+  <li>Calendário mensal, listagem com filtros, painéis e detalhe da atividade.</li>
+  <li>Grade semanal de aulas, consulta de disciplinas da turma e próxima aula.</li>
+  <li>Agenda pessoal do aluno.</li>
+  <li>Notificações internas de atividade nova, com contagem de não lidas.</li>
+  <li>Criação automática do banco e ajustes de esquema na primeira execução.</li>
+</ul>
+
+<h3>2.2 Fora do escopo</h3>
+<ul>
+  <li>Notas, frequência, boletim, diário de classe e plano de ensino.</li>
+  <li>Matrícula institucional, histórico escolar e vários anos letivos convivendo como períodos formais.</li>
+  <li>Auto-cadastro, recuperação de senha e confirmação por e-mail.</li>
+  <li>Aplicativo móvel nativo, API pública e integração com Google Classroom ou SIGAA.</li>
+  <li>Chat, fórum, entrega de trabalho com correção e detecção de plágio.</li>
+  <li>Múltiplas escolas no mesmo banco (multi-inquilino).</li>
+  <li>Envio de e-mail, SMS ou notificação push. O aviso existe só dentro do sistema.</li>
+  <li>Relatórios gerenciais exportados (PDF, planilha) e trilha de auditoria.</li>
+</ul>
+
+<div class="nota">O limite do produto é a agenda: o que vai acontecer, para quem, até quando, e se a pessoa já deu aquilo por feito. Avaliação e vida acadêmica formal ficam de fora.</div>
+
+<h2>3. Visão do produto e atores</h2>
+<p>O visitante vê a página institucional e a tela de entrada. Depois do login, o sistema escolhe o painel pelo campo <span class="mono">usuarios.tipo</span>. Administrador, professor e aluno não compartilham menu. Um administrador não administra turmas “por dentro” da área do professor: ele cadastra a estrutura; quem publica a atividade é o professor.</p>
+
+<table>
+  <thead><tr><th>Ator</th><th>Descrição</th><th>Área</th></tr></thead>
+  <tbody>
+    <tr><td>Visitante</td><td>Pessoa sem sessão, ou com sessão que ainda não foi retomada. Acessa a página inicial e o login.</td><td><span class="mono">/</span> e <span class="mono">/login.php</span></td></tr>
+    <tr><td>Administrador</td><td>Mantém usuários e turmas. Não publica atividades.</td><td><span class="mono">/admin</span></td></tr>
+    <tr><td>Professor</td><td>Publica atividades, anexos e horários nas turmas em que está vinculado.</td><td><span class="mono">/professor</span></td></tr>
+    <tr><td>Aluno</td><td>Consulta a agenda da própria turma, conclui itens e mantém a agenda pessoal.</td><td><span class="mono">/aluno</span></td></tr>
+    <tr><td>Sistema</td><td>Cria o banco na primeira carga, gera notificações e aplica migrações leves de esquema.</td><td><span class="mono">config/database.php</span></td></tr>
+  </tbody>
+</table>
+
+<p>Há uma especialização total e disjunta de usuário: todo cadastro é exatamente um entre administrador, professor e aluno. Administrador não possui tabela filha. Professor e aluno possuem, porque carregam vínculos que o administrador não tem (turmas e, no caso do aluno, uma turma obrigatória).</p>
+
+<h2>4. Linguagens, ferramentas e ambiente</h2>
+
+<h3>4.1 Stack</h3>
+<table>
+  <thead><tr><th>Camada</th><th>Tecnologia</th><th>Papel</th></tr></thead>
+  <tbody>
+    <tr><td>Servidor HTTP</td><td>Apache (XAMPP)</td><td>Publica a pasta do projeto em <span class="mono">http://localhost/c-estudantil</span>.</td></tr>
+    <tr><td>Linguagem de servidor</td><td>PHP 8 ou superior</td><td>Páginas, regras, sessão, validação e acesso a dados. Usa <span class="mono">match</span>, tipos e PDO.</td></tr>
+    <tr><td>Banco de dados</td><td>MySQL ou MariaDB</td><td>Base <span class="mono">calendario_estudantil</span>, charset <span class="mono">utf8mb4</span>.</td></tr>
+    <tr><td>Acesso a dados</td><td>PDO com prepared statements</td><td>Consultas parametrizadas e exceções em erro de SQL.</td></tr>
+    <tr><td>Interface</td><td>HTML5, CSS3, JavaScript</td><td>Telas renderizadas no servidor. Script próprio em <span class="mono">assets/js/script.js</span>.</td></tr>
+    <tr><td>Editor de texto</td><td>Quill 1.3.7 (CDN)</td><td>Descrição rica da atividade do professor.</td></tr>
+    <tr><td>Tipografia</td><td>Inter (Google Fonts) e ícone SVG</td><td>Identidade visual das telas. O ícone é <span class="mono">assets/img/lapis.svg</span>.</td></tr>
+    <tr><td>Controle de versão</td><td>Git</td><td>Histórico do código-fonte do projeto.</td></tr>
+    <tr><td>Ambiente de desenvolvimento</td><td>XAMPP no Windows</td><td>Apache e MySQL locais. Usuário padrão do banco: <span class="mono">root</span> sem senha.</td></tr>
+  </tbody>
+</table>
+
+<p>Não há framework PHP, empacotador de front-end nem ORM. A aplicação é um monólito de páginas PHP. Isso reduz a instalação a copiar a pasta, subir o Apache e o MySQL e abrir o endereço local. O custo é a ausência de roteador, migrações versionadas e suíte de testes.</p>
+
+<h3>4.2 Organização do código</h3>
+<table>
+  <thead><tr><th>Caminho</th><th>Responsabilidade</th></tr></thead>
+  <tbody>
+    <tr><td><span class="mono">index.php</span>, <span class="mono">login.php</span>, <span class="mono">logout.php</span></td><td>Entrada pública, autenticação e encerramento da sessão do contexto atual.</td></tr>
+    <tr><td><span class="mono">admin/</span></td><td>Painel, usuários e turmas.</td></tr>
+    <tr><td><span class="mono">professor/</span></td><td>Painel, atividades, horários e turmas do docente.</td></tr>
+    <tr><td><span class="mono">aluno/</span></td><td>Painel, calendário, atividades, disciplinas, horários e notificações.</td></tr>
+    <tr><td><span class="mono">ajax/</span></td><td>JSON de detalhe de atividade, atividade pessoal, turma e upload de imagem do editor.</td></tr>
+    <tr><td><span class="mono">includes/auth.php</span></td><td>Sessão, guarda de perfil e redirecionamento.</td></tr>
+    <tr><td><span class="mono">includes/functions.php</span></td><td>Regras, consultas, validação, anexos e formatação.</td></tr>
+    <tr><td><span class="mono">includes/header.php</span> e <span class="mono">footer.php</span></td><td>Casca visual e menu por perfil.</td></tr>
+    <tr><td><span class="mono">config/database.php</span></td><td>Conexão, criação do banco e migrações leves.</td></tr>
+    <tr><td><span class="mono">database/</span></td><td>Script inicial e scripts auxiliares de evolução.</td></tr>
+    <tr><td><span class="mono">uploads/</span></td><td>Arquivos de atividades e imagens do editor. Fora do versionamento de conteúdo do usuário.</td></tr>
+    <tr><td><span class="mono">assets/</span></td><td>CSS, JavaScript e ícone.</td></tr>
+  </tbody>
+</table>
+
+<h3>4.3 Ambiente de execução</h3>
+<ol>
+  <li>Instalar o XAMPP e iniciar Apache e MySQL.</li>
+  <li>Colocar o projeto em <span class="mono">C:\xampp\htdocs\c-estudantil</span>.</li>
+  <li>Na primeira página acessada, <span class="mono">instalarBancoSeNecessario()</span> cria a base e importa <span class="mono">database/calendario_estudantil.sql</span> se a tabela <span class="mono">usuarios</span> ainda não existir.</li>
+  <li>Ajustar <span class="mono">DB_HOST</span>, <span class="mono">DB_NAME</span>, <span class="mono">DB_USER</span>, <span class="mono">DB_PASS</span> e <span class="mono">BASE_URL</span> em <span class="mono">config/database.php</span> quando o ambiente não for o padrão do XAMPP.</li>
+</ol>
+<p>O script SQL também insere turmas, professores, alunos e atividades de demonstração. As senhas desses usuários ficam armazenadas apenas como hash gerado por <span class="mono">password_hash()</span>.</p>
+
+<h2>5. Arquitetura</h2>
+<p>A arquitetura é em três camadas lógicas, todas no mesmo processo PHP. Não há fila, cache distribuído nem serviço separado de arquivos: o upload grava disco local e o caminho relativo fica no MySQL.</p>
+
+<figure>
+<svg viewBox="0 0 760 250" role="img" aria-label="Arquitetura em camadas">
+  <rect x="40" y="16" width="680" height="58" rx="6" fill="#1d4ed8"/>
+  <text x="380" y="40" text-anchor="middle" fill="#fff" font-family="Segoe UI" font-size="14" font-weight="700">Apresentação</text>
+  <text x="380" y="58" text-anchor="middle" fill="#dbe7ff" font-family="Segoe UI" font-size="11">Páginas PHP por perfil, header, CSS, JavaScript e respostas JSON em ajax/</text>
+  <rect x="40" y="96" width="680" height="58" rx="6" fill="#153eb0"/>
+  <text x="380" y="120" text-anchor="middle" fill="#fff" font-family="Segoe UI" font-size="14" font-weight="700">Aplicação</text>
+  <text x="380" y="138" text-anchor="middle" fill="#dbe7ff" font-family="Segoe UI" font-size="11">auth.php (sessão e perfil) e functions.php (validação, permissão, notificações, anexos)</text>
+  <rect x="40" y="176" width="680" height="58" rx="6" fill="#0f1728"/>
+  <text x="380" y="200" text-anchor="middle" fill="#fff" font-family="Segoe UI" font-size="14" font-weight="700">Persistência</text>
+  <text x="380" y="218" text-anchor="middle" fill="#cbd5e1" font-family="Segoe UI" font-size="11">MySQL calendario_estudantil via PDO  ·  arquivos em uploads/</text>
+</svg>
+<figcaption>Figura 1. Camadas lógicas. A seta de dependência aponta sempre para baixo: a página chama a função, e a função usa o PDO.</figcaption>
+</figure>
+
+<h3>5.1 Fluxo de uma requisição</h3>
+<ol>
+  <li>A página inclui <span class="mono">auth.php</span> e chama <span class="mono">exigirAdministrador()</span>, <span class="mono">exigirProfessor()</span> ou <span class="mono">exigirAluno()</span>.</li>
+  <li>A guarda abre o cookie de sessão correto (<span class="mono">ce_admin</span> ou <span class="mono">ce_user</span>). Sem login, redireciona para <span class="mono">/login.php</span>. Com perfil errado, redireciona ao painel daquele perfil.</li>
+  <li>A página obtém o PDO, carrega o professor ou o aluno vinculado ao usuário e consulta só os registros autorizados.</li>
+  <li>O HTML é montado com <span class="mono">header.php</span>. Texto exibido passa por <span class="mono">htmlspecialchars()</span>. Descrição rica passa por uma lista fechada de tags.</li>
+  <li>Ações de escrita chegam por POST. O detalhe rápido de uma atividade chega por GET em <span class="mono">ajax/evento.php</span>, que devolve JSON só se <span class="mono">usuarioPodeVerEvento()</span> autorizar.</li>
+</ol>
+
+<h3>5.2 Mapa de navegação</h3>
+<table>
+  <thead><tr><th>Perfil</th><th>Menu</th></tr></thead>
+  <tbody>
+    <tr><td>Administrador</td><td>Dashboard, Usuários, Turmas. Ações: novo usuário, editar, excluir, abrir a turma.</td></tr>
+    <tr><td>Professor</td><td>Dashboard, Horários, Atividades, Turmas. Ações: nova atividade, editar, excluir, concluir, anexar.</td></tr>
+    <tr><td>Aluno</td><td>Dashboard, Horários, Disciplinas, Atividades, Calendário, sino de notificações. Ações: concluir, nova atividade pessoal.</td></tr>
+  </tbody>
+</table>
+
+<h3>5.3 Decisões de arquitetura</h3>
+<ul>
+  <li><strong>Página por caso de uso, não por roteador.</strong> Cada arquivo em <span class="mono">admin</span>, <span class="mono">professor</span> e <span class="mono">aluno</span> é uma tela ou uma ação POST. O endereço é estável e fácil de proteger.</li>
+  <li><strong>Duas sessões no mesmo navegador.</strong> O administrador usa o nome de sessão <span class="mono">ce_admin</span>; professor e aluno usam <span class="mono">ce_user</span>. Dá para entrar com os dois contextos sem derrubar o outro. Professor e aluno compartilham o mesmo cookie e, portanto, não ficam logados ao mesmo tempo.</li>
+  <li><strong>Esquema que se completa sozinho.</strong> Se a base antiga não tiver coluna <span class="mono">materia</span>, tabela <span class="mono">notificacoes</span>, <span class="mono">horarios_aula</span> ou <span class="mono">aluno_atividades</span>, a conexão tenta criá-las. Falha de migração não impede o login.</li>
+  <li><strong>Matéria como texto, não como entidade.</strong> O nome da disciplina vive no vínculo, na atividade, no horário e na atividade pessoal. Evita um cadastro extra e aceita o mesmo professor com várias matérias na mesma turma.</li>
+</ul>
+
+<h2>6. Requisitos funcionais</h2>
+<p>Os requisitos abaixo são os que o sistema implementa. A prioridade é a importância para o uso escolar: essencial é o que impede o produto de cumprir o objetivo; importante é o que completa a rotina; desejável é apoio.</p>
+
+<table>
+  <thead><tr><th>ID</th><th>Requisito</th><th>Prioridade</th></tr></thead>
+  <tbody>
+    <tr><td class="id">RF01</td><td>O visitante autentica-se com e-mail e senha. Credencial inválida ou campo vazio produz mensagem, sem revelar qual dos dois falhou.</td><td>Essencial</td></tr>
+    <tr><td class="id">RF02</td><td>Após o login, o sistema abre o painel do perfil: administrador, professor ou aluno.</td><td>Essencial</td></tr>
+    <tr><td class="id">RF03</td><td>Se já houver sessão, a página inicial e o login oferecem continuar naquele perfil ou entrar com outro.</td><td>Importante</td></tr>
+    <tr><td class="id">RF04</td><td>O usuário encerra apenas a sessão do contexto atual (administrador ou usuário comum).</td><td>Essencial</td></tr>
+    <tr><td class="id">RF05</td><td>A página inicial explica o produto e leva ao login, sem exigir cadastro público.</td><td>Importante</td></tr>
+    <tr><td class="id">RF06</td><td>O administrador cadastra aluno, professor ou outro administrador, com nome, e-mail único e senha.</td><td>Essencial</td></tr>
+    <tr><td class="id">RF07</td><td>O administrador edita dados do usuário, troca o perfil e, se informar nova senha, substitui o hash.</td><td>Essencial</td></tr>
+    <tr><td class="id">RF08</td><td>O administrador exclui usuário. O sistema recusa excluir ou rebaixar o último administrador.</td><td>Essencial</td></tr>
+    <tr><td class="id">RF09</td><td>Ao salvar um aluno, o administrador informa exatamente uma turma. Ao salvar um professor, informa uma ou mais turmas e, em cada uma, as matérias separadas por vírgula.</td><td>Essencial</td></tr>
+    <tr><td class="id">RF10</td><td>O administrador cadastra, edita e exclui turmas (nome e ano). Turma com alunos não é excluída.</td><td>Essencial</td></tr>
+    <tr><td class="id">RF11</td><td>O painel do administrador mostra totais de alunos, professores, administradores e turmas, e os últimos cadastros.</td><td>Importante</td></tr>
+    <tr><td class="id">RF12</td><td>O painel do professor mostra turmas vinculadas, atividades dos próximos sete dias, próximas atividades e a atividade mais próxima.</td><td>Importante</td></tr>
+    <tr><td class="id">RF13</td><td>O professor cadastra atividade com título, tipo (prova, trabalho, atividade ou reunião), turma autorizada, data, hora opcional, matéria e descrição.</td><td>Essencial</td></tr>
+    <tr><td class="id">RF14</td><td>O professor edita e exclui somente atividades que ele mesmo publicou. A exclusão pede confirmação e apaga anexos no disco.</td><td>Essencial</td></tr>
+    <tr><td class="id">RF15</td><td>O professor anexa arquivos à atividade e remove anexos já gravados.</td><td>Importante</td></tr>
+    <tr><td class="id">RF16</td><td>O professor alterna a conclusão da atividade no âmbito da turma.</td><td>Importante</td></tr>
+    <tr><td class="id">RF17</td><td>Ao publicar uma atividade, o sistema cria uma notificação para cada aluno da turma de destino.</td><td>Importante</td></tr>
+    <tr><td class="id">RF18</td><td>O professor consulta as turmas em que leciona, com matérias e alunos.</td><td>Importante</td></tr>
+    <tr><td class="id">RF19</td><td>O professor inclui, altera e remove horários de aula (dia, início, fim opcional e matéria) nas suas turmas.</td><td>Importante</td></tr>
+    <tr><td class="id">RF20</td><td>O painel do aluno mostra o progresso da turma, as próximas atividades da turma e as pessoais, e a próxima aula do dia.</td><td>Importante</td></tr>
+    <tr><td class="id">RF21</td><td>O aluno consulta um calendário mensal com indicadores nos dias que têm atividade.</td><td>Essencial</td></tr>
+    <tr><td class="id">RF22</td><td>O aluno lista atividades da turma com filtro por tipo e por situação, e abre o detalhe com descrição e anexos.</td><td>Essencial</td></tr>
+    <tr><td class="id">RF23</td><td>O aluno marca ou desmarca a própria conclusão. A operação não muda a conclusão de outro aluno.</td><td>Essencial</td></tr>
+    <tr><td class="id">RF24</td><td>O aluno cadastra, edita, exclui e conclui atividades pessoais, opcionalmente ligadas a uma matéria da turma.</td><td>Importante</td></tr>
+    <tr><td class="id">RF25</td><td>O aluno consulta as disciplinas da turma (matéria e professor) e a grade de horários.</td><td>Importante</td></tr>
+    <tr><td class="id">RF26</td><td>O aluno vê a quantidade de notificações não lidas, a lista e, ao abrir um aviso, o sistema marca como lido e leva à atividade.</td><td>Importante</td></tr>
+    <tr><td class="id">RF27</td><td>Telas de detalhe podem carregar atividade, atividade pessoal ou resumo da turma via JSON, somente se o usuário puder ver aquele registro.</td><td>Desejável</td></tr>
+    <tr><td class="id">RF28</td><td>Na primeira execução, o sistema cria a base, as tabelas e os dados de demonstração se <span class="mono">usuarios</span> não existir, e completa colunas ou tabelas que faltem em bases antigas.</td><td>Essencial</td></tr>
+  </tbody>
+</table>
+
+<h2>7. Requisitos não funcionais</h2>
+
+<table>
+  <thead><tr><th>ID</th><th>Categoria</th><th>Requisito</th></tr></thead>
+  <tbody>
+    <tr><td class="id">RNF01</td><td>Usabilidade</td><td>Interface em português, com rótulos de prazo relativos (hoje, amanhã, ontem, em N dias) e cor por tipo de atividade.</td></tr>
+    <tr><td class="id">RNF02</td><td>Usabilidade</td><td>Em viewport estreita, o menu lateral recolhe e abre por um botão, com foco e rótulos acessíveis nos controles principais.</td></tr>
+    <tr><td class="id">RNF03</td><td>Segurança</td><td>Senha armazenada com <span class="mono">password_hash()</span> e conferida com <span class="mono">password_verify()</span>. A senha nova tem no mínimo 5 caracteres.</td></tr>
+    <tr><td class="id">RNF04</td><td>Segurança</td><td>Consultas com parâmetros vinculados. Saída HTML escapada. Descrição rica restrita a um conjunto de tags, sem atributos de evento nem URLs <span class="mono">javascript:</span>.</td></tr>
+    <tr><td class="id">RNF05</td><td>Segurança</td><td>Cookie de sessão com <span class="mono">HttpOnly</span> e <span class="mono">SameSite=Lax</span>. O identificador de sessão é regenerado no login.</td></tr>
+    <tr><td class="id">RNF06</td><td>Segurança</td><td>Cada página interna exige o perfil. Professor só altera evento próprio. Aluno só lê evento da própria turma e atividade pessoal própria.</td></tr>
+    <tr><td class="id">RNF07</td><td>Segurança</td><td>Upload aceita até 5 MB, confere extensão e o MIME real, e grava o arquivo com nome aleatório.</td></tr>
+    <tr><td class="id">RNF08</td><td>Integridade</td><td>Chaves estrangeiras com <span class="mono">ON DELETE CASCADE</span> onde o filho não faz sentido sem o pai. Unicidade de e-mail, de conclusão aluno–evento e de professor–turma–matéria.</td></tr>
+    <tr><td class="id">RNF09</td><td>Confiabilidade</td><td>Falha ao completar o esquema de uma base antiga não derruba login nem as telas já suportadas.</td></tr>
+    <tr><td class="id">RNF10</td><td>Desempenho</td><td>Uso previsto é uma escola em servidor local ou de pequena carga. Listas do painel limitam-se às próximas atividades (até seis) e notificações às 40 mais recentes.</td></tr>
+    <tr><td class="id">RNF11</td><td>Compatibilidade</td><td>PHP 8+, MySQL com <span class="mono">utf8mb4</span>, Apache e navegador atual. Datas internas em ISO; exibição em <span class="mono">dd/mm/aaaa</span>.</td></tr>
+    <tr><td class="id">RNF12</td><td>Manutenibilidade</td><td>Regras compartilhadas ficam em <span class="mono">includes/functions.php</span> e a sessão em <span class="mono">includes/auth.php</span>, para as páginas não duplicarem SQL de permissão.</td></tr>
+    <tr><td class="id">RNF13</td><td>Portabilidade</td><td>O endereço base é a constante <span class="mono">BASE_URL</span>. Mudar a pasta do projeto exige alterar essa constante e as credenciais do banco.</td></tr>
+    <tr><td class="id">RNF14</td><td>Disponibilidade</td><td>Não há meta formal de disponibilidade. O sistema depende do Apache, do MySQL e do disco de uploads estarem no mesmo hospedeiro.</td></tr>
+    <tr><td class="id">RNF15</td><td>Acessibilidade</td><td>Formulários usam <span class="mono">label</span> associado, alerta de login com <span class="mono">role="alert"</span> e o sino de notificações tem nome acessível com a contagem.</td></tr>
+  </tbody>
+</table>
+
+<h2>8. Regras de negócio</h2>
+<table>
+  <thead><tr><th>ID</th><th>Regra</th></tr></thead>
+  <tbody>
+    <tr><td class="id">RN01</td><td>Um usuário tem exatamente um perfil: administrador, professor ou aluno.</td></tr>
+    <tr><td class="id">RN02</td><td>O e-mail é único em toda a base, independentemente do perfil.</td></tr>
+    <tr><td class="id">RN03</td><td>Aluno pertence a exatamente uma turma. Professor pode pertencer a várias.</td></tr>
+    <tr><td class="id">RN04</td><td>O mesmo professor pode lecionar várias matérias na mesma turma. O trio professor, turma e matéria não se repete.</td></tr>
+    <tr><td class="id">RN05</td><td>Matéria vazia é permitida no vínculo, para o caso de o professor estar na turma sem disciplina nomeada.</td></tr>
+    <tr><td class="id">RN06</td><td>Atividade da turma tem um professor autor e uma turma. O professor só escolhe turma à qual está vinculado.</td></tr>
+    <tr><td class="id">RN07</td><td>Tipos válidos de atividade: prova, trabalho, atividade e reunião. Hora é opcional; data é obrigatória.</td></tr>
+    <tr><td class="id">RN08</td><td>A conclusão individual é um registro por par aluno–atividade. O primeiro clique cria o registro como concluído; o seguinte alterna.</td></tr>
+    <tr><td class="id">RN09</td><td>A conclusão feita pelo professor não substitui a conclusão individual, e o inverso também não.</td></tr>
+    <tr><td class="id">RN10</td><td>Atividade pessoal só existe para o aluno que a criou. A matéria, se preenchida, precisa ser uma disciplina da turma dele.</td></tr>
+    <tr><td class="id">RN11</td><td>Notificação nasce para todos os alunos da turma no momento da publicação. Marcar como lida não apaga o aviso.</td></tr>
+    <tr><td class="id">RN12</td><td>Horário de aula tem dia de segunda a sábado, hora de início e hora de fim opcional. Se o fim existir, precisa ser depois do início.</td></tr>
+    <tr><td class="id">RN13</td><td>Turma com pelo menos um aluno não pode ser excluída. Turma sem aluno pode; os eventos dessa turma são removidos junto com os arquivos.</td></tr>
+    <tr><td class="id">RN14</td><td>Deve permanecer ao menos um administrador.</td></tr>
+    <tr><td class="id">RN15</td><td>Anexo de atividade: no máximo 5 MB; tipos aceitos são imagem, PDF, documento Office, texto e ZIP. Imagem do editor segue a mesma regra e ainda precisa ser imagem.</td></tr>
+    <tr><td class="id">RN16</td><td>Ao trocar o perfil de um usuário, os vínculos do perfil anterior são removidos e os do perfil novo são gravados.</td></tr>
+  </tbody>
+</table>
+
+<h2>9. Casos de uso</h2>
+<p>Os casos de uso descrevem o que cada ator obtém do sistema. “Manter” reúne cadastrar, consultar, alterar e excluir; os fluxos alternativos separam essas operações. Os diagramas usam a fronteira do sistema, o ator e a elipse do caso de uso, no estilo UML.</p>
+
+<h3>9.1 Acesso e administração</h3>
+<figure>
+<svg viewBox="0 0 760 430" role="img" aria-label="Casos de uso de acesso e administração">
+  <rect class="sys" x="150" y="16" width="460" height="398" rx="8"/>
+  <text class="st" x="380" y="38" text-anchor="middle">Calendário Escolar</text>
+  <ellipse class="uc" cx="310" cy="78" rx="108" ry="22"/><text class="ut" x="310" y="82" text-anchor="middle">UC01 Página inicial</text>
+  <ellipse class="uc" cx="310" cy="132" rx="108" ry="22"/><text class="ut" x="310" y="136" text-anchor="middle">UC02 Autenticar</text>
+  <ellipse class="uc" cx="310" cy="186" rx="108" ry="22"/><text class="ut" x="310" y="190" text-anchor="middle">UC03 Encerrar sessão</text>
+  <ellipse class="uc" cx="530" cy="250" rx="118" ry="22"/><text class="ut" x="530" y="254" text-anchor="middle">UC04 Painel admin.</text>
+  <ellipse class="uc" cx="530" cy="308" rx="118" ry="22"/><text class="ut" x="530" y="312" text-anchor="middle">UC05 Manter usuários</text>
+  <ellipse class="uc" cx="530" cy="366" rx="118" ry="22"/><text class="ut" x="530" y="370" text-anchor="middle">UC06 Manter turmas</text>
+  <circle class="actor" cx="48" cy="118" r="13"/><line class="actor" x1="48" y1="131" x2="48" y2="168"/><line class="actor" x1="28" y1="146" x2="68" y2="146"/><line class="actor" x1="48" y1="168" x2="32" y2="196"/><line class="actor" x1="48" y1="168" x2="64" y2="196"/>
+  <text class="an" x="48" y="214" text-anchor="middle">Visitante</text>
+  <line class="ln" x1="70" y1="150" x2="202" y2="78"/><line class="ln" x1="70" y1="160" x2="202" y2="132"/>
+  <circle class="actor" cx="48" cy="330" r="13"/><line class="actor" x1="48" y1="343" x2="48" y2="378"/><line class="actor" x1="28" y1="356" x2="68" y2="356"/><line class="actor" x1="48" y1="378" x2="32" y2="404"/><line class="actor" x1="48" y1="378" x2="64" y2="404"/>
+  <text class="an" x="48" y="420" text-anchor="middle">Administrador</text>
+  <line class="ln" x1="68" y1="330" x2="202" y2="186"/>
+  <line class="ln" x1="68" y1="340" x2="412" y2="250"/>
+  <line class="ln" x1="68" y1="352" x2="412" y2="308"/>
+  <line class="ln" x1="68" y1="364" x2="412" y2="366"/>
+</svg>
+<figcaption>Figura 2. Casos de uso do visitante e do administrador. O administrador também autentica e encerra sessão.</figcaption>
+</figure>
+
+<h3>9.2 Professor</h3>
+<figure>
+<svg viewBox="0 0 760 390" role="img" aria-label="Casos de uso do professor">
+  <rect class="sys" x="170" y="16" width="520" height="360" rx="8"/>
+  <text class="st" x="420" y="38" text-anchor="middle">Área do professor</text>
+  <ellipse class="uc" cx="360" cy="78" rx="130" ry="22"/><text class="ut" x="360" y="82" text-anchor="middle">UC07 Painel do professor</text>
+  <ellipse class="uc" cx="360" cy="132" rx="130" ry="22"/><text class="ut" x="360" y="136" text-anchor="middle">UC08 Manter atividades</text>
+  <ellipse class="uc" cx="560" cy="186" rx="90" ry="20"/><text class="ut" x="560" y="190" text-anchor="middle">UC09 Anexos</text>
+  <ellipse class="uc" cx="360" cy="230" rx="140" ry="22"/><text class="ut" x="360" y="234" text-anchor="middle">UC10 Concluir na turma</text>
+  <ellipse class="uc" cx="320" cy="284" rx="115" ry="22"/><text class="ut" x="320" y="288" text-anchor="middle">UC11 Manter horários</text>
+  <ellipse class="uc" cx="575" cy="284" rx="80" ry="20"/><text class="ut" x="575" y="288" text-anchor="middle">UC12 Ver turmas</text>
+  <circle class="actor" cx="52" cy="160" r="13"/><line class="actor" x1="52" y1="173" x2="52" y2="210"/><line class="actor" x1="32" y1="188" x2="72" y2="188"/><line class="actor" x1="52" y1="210" x2="36" y2="238"/><line class="actor" x1="52" y1="210" x2="68" y2="238"/>
+  <text class="an" x="52" y="256" text-anchor="middle">Professor</text>
+  <line class="ln" x1="74" y1="170" x2="230" y2="78"/>
+  <line class="ln" x1="74" y1="180" x2="230" y2="132"/>
+  <line class="ln" x1="74" y1="190" x2="220" y2="230"/>
+  <line class="ln" x1="74" y1="200" x2="205" y2="284"/>
+  <polyline class="ln" points="74,230 140,340 575,340 575,304"/>
+  <path class="ln" d="M490 142 C 530 142, 540 160, 540 166" stroke-dasharray="4 3"/>
+  <text class="lb" x="492" y="136">«include»</text>
+</svg>
+<figcaption>Figura 3. Casos de uso do professor. Anexar arquivo está incluído na manutenção da atividade.</figcaption>
+</figure>
+
+<h3>9.3 Aluno</h3>
+<figure>
+<svg viewBox="0 0 760 400" role="img" aria-label="Casos de uso do aluno">
+  <rect class="sys" x="200" y="12" width="420" height="372" rx="8"/>
+  <text class="st" x="410" y="34" text-anchor="middle">Área do aluno</text>
+  <ellipse class="uc" cx="410" cy="72" rx="155" ry="20"/><text class="ut" x="410" y="76" text-anchor="middle">UC13 Painel do aluno</text>
+  <ellipse class="uc" cx="410" cy="124" rx="155" ry="20"/><text class="ut" x="410" y="128" text-anchor="middle">UC14 Calendário</text>
+  <ellipse class="uc" cx="410" cy="176" rx="155" ry="20"/><text class="ut" x="410" y="180" text-anchor="middle">UC15 Consultar e concluir</text>
+  <ellipse class="uc" cx="410" cy="228" rx="155" ry="20"/><text class="ut" x="410" y="232" text-anchor="middle">UC16 Agenda pessoal</text>
+  <ellipse class="uc" cx="410" cy="280" rx="155" ry="20"/><text class="ut" x="410" y="284" text-anchor="middle">UC17 Disciplinas e horários</text>
+  <ellipse class="uc" cx="410" cy="332" rx="155" ry="20"/><text class="ut" x="410" y="336" text-anchor="middle">UC18 Notificações</text>
+  <circle class="actor" cx="56" cy="180" r="13"/><line class="actor" x1="56" y1="193" x2="56" y2="230"/><line class="actor" x1="36" y1="208" x2="76" y2="208"/><line class="actor" x1="56" y1="230" x2="40" y2="258"/><line class="actor" x1="56" y1="230" x2="72" y2="258"/>
+  <text class="an" x="56" y="276" text-anchor="middle">Aluno</text>
+  <line class="ln" x1="78" y1="168" x2="255" y2="72"/>
+  <line class="ln" x1="78" y1="176" x2="255" y2="124"/>
+  <line class="ln" x1="78" y1="184" x2="255" y2="176"/>
+  <line class="ln" x1="78" y1="192" x2="255" y2="228"/>
+  <line class="ln" x1="78" y1="200" x2="255" y2="280"/>
+  <line class="ln" x1="78" y1="208" x2="255" y2="332"/>
+</svg>
+<figcaption>Figura 4. Casos de uso do aluno. A publicação da atividade, feita pelo professor, é o que gera a notificação.</figcaption>
+</figure>
+
+<h3>9.4 Especificação</h3>
+<p>Pré-condição comum das áreas internas: usuário autenticado no perfil do caso. Onde o fluxo não repetir isso, a pré-condição está na tabela.</p>
+
+<h4>UC01 — Visualizar página inicial</h4>
+<table>
+  <tbody>
+    <tr><th style="width:34mm">Ator</th><td>Visitante</td></tr>
+    <tr><th>Pré-condição</th><td>Nenhuma.</td></tr>
+    <tr><th>Fluxo principal</th><td>1. O visitante abre a raiz do sistema. 2. O sistema exibe a proposta do produto e o caminho para entrar. 3. Se existir exatamente uma sessão, o sistema redireciona ao painel daquele perfil. 4. Se existirem duas sessões, a página oferece continuar em cada uma.</td></tr>
+    <tr><th>Pós-condição</th><td>Nenhum dado é gravado.</td></tr>
+    <tr><th>Requisitos</th><td>RF03, RF05</td></tr>
+  </tbody>
+</table>
+
+<h4>UC02 — Autenticar</h4>
+<table>
+  <tbody>
+    <tr><th style="width:34mm">Ator</th><td>Visitante</td></tr>
+    <tr><th>Pré-condição</th><td>O usuário já foi cadastrado pelo administrador.</td></tr>
+    <tr><th>Fluxo principal</th><td>1. O visitante informa e-mail e senha. 2. O sistema busca o usuário pelo e-mail. 3. Confere a senha com <span class="mono">password_verify</span>. 4. Regenera o identificador de sessão no cookie do perfil. 5. Grava id, nome, e-mail e tipo. 6. Redireciona ao painel correspondente.</td></tr>
+    <tr><th>Alternativos</th><td>FA01. E-mail ou senha em branco: mensagem pedindo os dois campos. FA02. Par inexistente ou senha incorreta: mensagem única de credencial inválida, sem indicar qual campo falhou. FA03. Já há sessão: o formulário continua disponível para o outro contexto.</td></tr>
+    <tr><th>Pós-condição</th><td>Sessão autenticada do perfil.</td></tr>
+    <tr><th>Requisitos</th><td>RF01, RF02, RF03</td></tr>
+  </tbody>
+</table>
+
+<h4>UC03 — Encerrar sessão</h4>
+<table>
+  <tbody>
+    <tr><th style="width:34mm">Ator</th><td>Administrador, professor ou aluno</td></tr>
+    <tr><th>Fluxo principal</th><td>1. O usuário aciona Sair. 2. O sistema abre só o cookie daquele contexto. 3. Limpa a sessão, expira o cookie e destrói a sessão. 4. Volta ao login.</td></tr>
+    <tr><th>Pós-condição</th><td>A outra sessão, se existir, permanece.</td></tr>
+    <tr><th>Requisitos</th><td>RF04</td></tr>
+  </tbody>
+</table>
+
+<h4>UC04 — Consultar painel administrativo</h4>
+<table>
+  <tbody>
+    <tr><th style="width:34mm">Ator</th><td>Administrador</td></tr>
+    <tr><th>Fluxo principal</th><td>1. O administrador abre o painel. 2. O sistema conta alunos, professores, administradores e turmas. 3. Lista os seis cadastros mais recentes, com atalho para edição.</td></tr>
+    <tr><th>Requisitos</th><td>RF11</td></tr>
+  </tbody>
+</table>
+
+<h4>UC05 — Manter usuários</h4>
+<table>
+  <tbody>
+    <tr><th style="width:34mm">Ator</th><td>Administrador</td></tr>
+    <tr><th>Fluxo principal</th><td>1. O administrador abre a lista, podendo filtrar por perfil. 2. Para incluir, informa nome, e-mail, senha e perfil. 3. Se for aluno, escolhe a turma. Se for professor, escolhe turmas e matérias. 4. O sistema valida e-mail único e senha com ao menos 5 caracteres. 5. Grava o usuário, o hash da senha e a tabela filha correspondente.</td></tr>
+    <tr><th>Alternativos</th><td>FA01. Editar: a senha em branco mantém o hash atual; perfil alterado reconstrói os vínculos (RN16). FA02. Excluir: remove o usuário e, por cascata, o perfil filho. FA03. Último administrador: exclusão ou troca de perfil é recusada. FA04. E-mail repetido: o formulário volta com o erro.</td></tr>
+    <tr><th>Pós-condição</th><td>Usuário consistente com o perfil e com os vínculos acadêmicos.</td></tr>
+    <tr><th>Requisitos</th><td>RF06, RF07, RF08, RF09</td></tr>
+  </tbody>
+</table>
+
+<h4>UC06 — Manter turmas</h4>
+<table>
+  <tbody>
+    <tr><th style="width:34mm">Ator</th><td>Administrador</td></tr>
+    <tr><th>Fluxo principal</th><td>1. O administrador lista as turmas. 2. Cadastra ou edita nome e ano. 3. Na ficha da turma, vê alunos e professores vinculados.</td></tr>
+    <tr><th>Alternativos</th><td>FA01. Excluir turma com alunos: o sistema recusa e permanece na ficha. FA02. Excluir turma sem alunos: apaga os arquivos dos eventos da turma e remove a turma; eventos, horários e vínculos de professor caem por integridade referencial.</td></tr>
+    <tr><th>Requisitos</th><td>RF10</td></tr>
+  </tbody>
+</table>
+
+<h4>UC07 — Consultar painel do professor</h4>
+<table>
+  <tbody>
+    <tr><th style="width:34mm">Ator</th><td>Professor</td></tr>
+    <tr><th>Fluxo principal</th><td>1. O professor entra no painel. 2. O sistema conta vínculos, atividades da semana e atividades futuras. 3. Lista até seis próximas atividades, da mais próxima para a mais distante. 4. Destaca a primeira como próxima atividade.</td></tr>
+    <tr><th>Alternativos</th><td>FA01. Usuário professor sem linha em <span class="mono">professores</span>: a sessão é encerrada e o login é exibido de novo.</td></tr>
+    <tr><th>Requisitos</th><td>RF12</td></tr>
+  </tbody>
+</table>
+
+<h4>UC08 — Manter atividades</h4>
+<table>
+  <tbody>
+    <tr><th style="width:34mm">Ator</th><td>Professor. Inclui UC09 e dispara UC18 para os alunos da turma.</td></tr>
+    <tr><th>Fluxo principal</th><td>1. O professor abre o formulário de nova atividade. 2. Informa título, tipo, turma, data, hora opcional, matéria e descrição. 3. O sistema valida tipo, turma pertencente ao professor, data e hora. 4. Grava o evento com o professor autenticado como autor. 5. Notifica cada aluno da turma. 6. Volta à lista.</td></tr>
+    <tr><th>Alternativos</th><td>FA01. Editar: só se o evento for do professor; a validação se repete. FA02. Excluir: a tela pede confirmação; os arquivos são apagados e o registro sai, levando anexos, conclusões e notificações. FA03. Turma fora do vínculo ou data inválida: o formulário exibe os erros e nada é gravado.</td></tr>
+    <tr><th>Pós-condição</th><td>A atividade passa a aparecer no calendário e na lista dos alunos daquela turma.</td></tr>
+    <tr><th>Requisitos</th><td>RF13, RF14, RF17</td></tr>
+  </tbody>
+</table>
+
+<h4>UC09 — Gerenciar anexos</h4>
+<table>
+  <tbody>
+    <tr><th style="width:34mm">Ator</th><td>Professor, no fluxo de criar ou editar atividade. Imagem do editor segue a mesma porta de upload, restrita a imagem.</td></tr>
+    <tr><th>Fluxo principal</th><td>1. O professor seleciona um ou mais arquivos. 2. O sistema recusa o que passar de 5 MB, a extensão fora da lista ou o MIME divergente. 3. Grava o arquivo com nome aleatório em <span class="mono">uploads/eventos/{id}</span>. 4. Registra nome original, caminho, MIME e tamanho.</td></tr>
+    <tr><th>Alternativos</th><td>FA01. Remover anexo marcado na edição: apaga o arquivo e a linha. FA02. Falha de um arquivo não cancela os demais; o erro é informado.</td></tr>
+    <tr><th>Requisitos</th><td>RF15, RNF07</td></tr>
+  </tbody>
+</table>
+
+<h4>UC10 — Concluir atividade no âmbito da turma</h4>
+<table>
+  <tbody>
+    <tr><th style="width:34mm">Ator</th><td>Professor</td></tr>
+    <tr><th>Fluxo principal</th><td>1. O professor aciona concluir numa atividade sua. 2. O sistema inverte <span class="mono">eventos.concluido</span>. 3. Retorna à lista ou à página de origem, se ela for da área do professor.</td></tr>
+    <tr><th>Pós-condição</th><td>A marca da turma muda. Os registros em <span class="mono">aluno_eventos</span> permanecem.</td></tr>
+    <tr><th>Requisitos</th><td>RF16, RN09</td></tr>
+  </tbody>
+</table>
+
+<h4>UC11 — Manter horários</h4>
+<table>
+  <tbody>
+    <tr><th style="width:34mm">Ator</th><td>Professor</td></tr>
+    <tr><th>Fluxo principal</th><td>1. O professor abre a grade. 2. Informa turma, matéria, dia (segunda a sábado), início e fim opcional. 3. O sistema valida a ordem dos horários e grava <span class="mono">horarios_aula</span>. 4. A grade do aluno daquela turma passa a exibir o slot.</td></tr>
+    <tr><th>Alternativos</th><td>FA01. Remover: só o horário da turma e, quando a ação é do professor, só o horário daquele professor.</td></tr>
+    <tr><th>Requisitos</th><td>RF19, RN12</td></tr>
+  </tbody>
+</table>
+
+<h4>UC12 — Consultar turmas</h4>
+<table>
+  <tbody>
+    <tr><th style="width:34mm">Ator</th><td>Professor</td></tr>
+    <tr><th>Fluxo principal</th><td>1. O professor abre Turmas. 2. O sistema lista só as turmas do vínculo, com as matérias agrupadas. 3. Na ficha, mostra alunos e o que aquele professor publicou.</td></tr>
+    <tr><th>Requisitos</th><td>RF18</td></tr>
+  </tbody>
+</table>
+
+<h4>UC13 — Consultar painel do aluno</h4>
+<table>
+  <tbody>
+    <tr><th style="width:34mm">Ator</th><td>Aluno</td></tr>
+    <tr><th>Fluxo principal</th><td>1. O aluno abre o painel. 2. O sistema conta atividades da turma e as já marcadas como concluídas no âmbito da turma, e calcula o percentual. 3. Monta uma agenda com as próximas atividades da turma e as pessoais ainda não concluídas. 4. Mostra a próxima aula de hoje, se houver horário.</td></tr>
+    <tr><th>Requisitos</th><td>RF20</td></tr>
+  </tbody>
+</table>
+
+<h4>UC14 — Consultar calendário</h4>
+<table>
+  <tbody>
+    <tr><th style="width:34mm">Ator</th><td>Aluno</td></tr>
+    <tr><th>Fluxo principal</th><td>1. O aluno abre o calendário do mês corrente. 2. O sistema busca as atividades da turma dele naquele mês. 3. Marca os dias com indicador por tipo. 4. O aluno muda o mês ou filtra por tipo e situação.</td></tr>
+    <tr><th>Pós-condição</th><td>Consulta apenas. Nenhum registro é alterado.</td></tr>
+    <tr><th>Requisitos</th><td>RF21, RF22</td></tr>
+  </tbody>
+</table>
+
+<h4>UC15 — Consultar e concluir atividade da turma</h4>
+<table>
+  <tbody>
+    <tr><th style="width:34mm">Ator</th><td>Aluno</td></tr>
+    <tr><th>Fluxo principal</th><td>1. O aluno abre a lista ou o detalhe. 2. O sistema só devolve o evento se a turma do evento for a turma do aluno. 3. Exibe descrição sanitizada e anexos para download. 4. No concluir, se não houver linha em <span class="mono">aluno_eventos</span>, cria com concluído e data. Se houver, inverte o flag e limpa ou preenche a data.</td></tr>
+    <tr><th>Alternativos</th><td>FA01. Evento de outra turma ou id inexistente: a ação não grava. FA02. O endereço de retorno só é aceito se começar na área do aluno.</td></tr>
+    <tr><th>Pós-condição</th><td>Somente o par deste aluno com esta atividade muda.</td></tr>
+    <tr><th>Requisitos</th><td>RF22, RF23, RF27</td></tr>
+  </tbody>
+</table>
+
+<h4>UC16 — Manter atividade pessoal</h4>
+<table>
+  <tbody>
+    <tr><th style="width:34mm">Ator</th><td>Aluno</td></tr>
+    <tr><th>Fluxo principal</th><td>1. O aluno informa título, data, hora opcional, descrição e matéria opcional. 2. O sistema valida a data e, se houver matéria, confere se ela existe na turma. 3. Grava em <span class="mono">aluno_atividades</span> com o aluno autenticado. 4. O item entra na agenda do painel.</td></tr>
+    <tr><th>Alternativos</th><td>FA01. Editar, excluir ou concluir: a busca exige o id e o aluno dono. FA02. Matéria fora da turma: erro, sem gravação.</td></tr>
+    <tr><th>Requisitos</th><td>RF24, RN10</td></tr>
+  </tbody>
+</table>
+
+<h4>UC17 — Consultar disciplinas e horários</h4>
+<table>
+  <tbody>
+    <tr><th style="width:34mm">Ator</th><td>Aluno</td></tr>
+    <tr><th>Fluxo principal</th><td>1. Em Disciplinas, o sistema agrupa as matérias dos professores vinculados à turma do aluno. 2. Na disciplina, lista horários e atividades daquela matéria. 3. Em Horários, mostra a grade da semana e destaca a próxima aula.</td></tr>
+    <tr><th>Requisitos</th><td>RF25</td></tr>
+  </tbody>
+</table>
+
+<h4>UC18 — Consultar notificações</h4>
+<table>
+  <tbody>
+    <tr><th style="width:34mm">Ator</th><td>Aluno. O professor dispara a criação ao publicar (UC08).</td></tr>
+    <tr><th>Pré-condição</th><td>Existe ao menos a estrutura de notificações. Avisos nascem só na publicação, não na edição.</td></tr>
+    <tr><th>Fluxo principal</th><td>1. O cabeçalho mostra a contagem de não lidas do aluno. 2. A lista traz até 40 avisos, não lidos primeiro. 3. Ao abrir um aviso, o sistema confere se ele pertence ao aluno, marca como lido e segue para a atividade.</td></tr>
+    <tr><th>Alternativos</th><td>FA01. Aviso de outro aluno ou id inválido: nada é marcado.</td></tr>
+    <tr><th>Requisitos</th><td>RF17, RF26</td></tr>
+  </tbody>
+</table>
+
+<h3>9.5 Fluxo de publicação</h3>
+<p>O caminho que cruza professor e aluno é o da atividade nova. Os passos abaixo são a sequência implementada, sem serviço intermediário.</p>
+<ol>
+  <li>Professor autenticado envia o formulário para <span class="mono">professor/adicionar_evento.php</span>.</li>
+  <li><span class="mono">validarEvento()</span> devolve erros ou o pacote já normalizado (hora com segundos, descrição filtrada, matéria com no máximo 100 caracteres).</li>
+  <li>A inserção em <span class="mono">eventos</span> usa o <span class="mono">professor_id</span> da sessão, nunca um id vindo do formulário como autor.</li>
+  <li><span class="mono">salvarAnexosEvento()</span> grava os arquivos aceitos.</li>
+  <li><span class="mono">notificarAlunosNovaAtividade()</span> insere uma linha em <span class="mono">notificacoes</span> para cada aluno de <span class="mono">listarAlunosDaTurma()</span>.</li>
+  <li>No próximo carregamento de página do aluno, o cabeçalho conta as não lidas. O calendário e a lista passam a incluir o evento porque filtram por <span class="mono">turma_id</span>.</li>
+</ol>
+
+<h2>10. Modelo entidade-relacionamento (MER)</h2>
+<p>O MER é conceitual. Ainda não decide nomes de tabela, chaves substitutas nem o tipo SQL. Entidade vira retângulo, relacionamento vira losango, e a cardinalidade fica nas pontas. Atributos estão nas tabelas desta seção, para o diagrama caber na página sem dezenas de elipses.</p>
+<p>A especialização de usuário é total e disjunta: cada pessoa é administrador, professor ou aluno, e somente um desses. Administrador não tem atributos além dos de usuário. Professor e aluno têm relacionamentos próprios.</p>
+
+<figure>
+<svg viewBox="0 0 760 320" role="img" aria-label="MER de organização escolar">
+  <rect class="ent" x="300" y="16" width="160" height="36"/><text class="et" x="380" y="33" text-anchor="middle">USUÁRIO</text>
+  <polygon class="dia" points="380,78 430,100 380,122 330,100"/><text class="dt" x="380" y="104" text-anchor="middle">é</text>
+  <line class="ln" x1="380" y1="52" x2="380" y2="78"/>
+  <rect class="ent" x="40" y="150" width="150" height="36"/><text class="at" x="115" y="172" text-anchor="middle" font-weight="700">ADMINISTRADOR</text>
+  <rect class="ent" x="230" y="150" width="140" height="36"/><text class="at" x="300" y="172" text-anchor="middle" font-weight="700">PROFESSOR</text>
+  <rect class="ent" x="390" y="150" width="110" height="36"/><text class="at" x="445" y="172" text-anchor="middle" font-weight="700">ALUNO</text>
+  <rect class="ent" x="630" y="150" width="110" height="36"/><text class="at" x="685" y="172" text-anchor="middle" font-weight="700">TURMA</text>
+  <line class="ln" x1="330" y1="108" x2="115" y2="150"/><line class="ln" x1="370" y1="122" x2="300" y2="150"/><line class="ln" x1="410" y1="122" x2="445" y2="150"/>
+  <text class="lb" x="70" y="142">0..1</text><text class="lb" x="250" y="142">0..1</text><text class="lb" x="400" y="142">0..1</text>
+  <polygon class="dia" points="565,168 598,188 565,208 532,188"/><text class="dt" x="565" y="192" text-anchor="middle">pertence</text>
+  <line class="ln" x1="500" y1="168" x2="532" y2="184"/><line class="ln" x1="598" y1="184" x2="630" y2="168"/>
+  <text class="lb" x="504" y="160">N</text><text class="lb" x="608" y="160">1</text>
+  <polygon class="dia" points="300,230 360,258 300,286 240,258"/>  <text class="dt" x="300" y="262" text-anchor="middle">leciona</text>
+  <line class="ln" x1="300" y1="186" x2="300" y2="230"/><line class="ln" x1="360" y1="258" x2="685" y2="186"/>
+  <text class="lb" x="308" y="214">N</text><text class="lb" x="500" y="214">N</text>
+  <text class="card" x="300" y="302" text-anchor="middle" font-size="10">atributo: matéria</text>
+</svg>
+<figcaption>Figura 5. MER da organização. Especialização total e disjunta. Leciona é N:N e carrega a matéria. Pertence é N:1: muitos alunos, uma turma.</figcaption>
+</figure>
+
+<figure>
+<svg viewBox="0 0 760 410" role="img" aria-label="MER da agenda">
+  <rect class="ent" x="300" y="8" width="150" height="30"/><text class="at" x="375" y="28" text-anchor="middle" font-weight="700">PROFESSOR</text>
+  <polygon class="dia" points="375,48 418,70 375,92 332,70"/><text class="dt" x="375" y="74" text-anchor="middle">publica</text>
+  <line class="ln" x1="375" y1="38" x2="375" y2="48"/><line class="ln" x1="375" y1="92" x2="375" y2="104"/>
+  <text class="lb" x="384" y="46">1</text><text class="lb" x="384" y="104">N</text>
+  <rect class="ent" x="300" y="104" width="150" height="30"/><text class="at" x="375" y="124" text-anchor="middle" font-weight="700">ATIVIDADE</text>
+  <polygon class="dia" points="530,119 572,141 530,163 488,141"/><text class="dt" x="530" y="145" text-anchor="middle">possui</text>
+  <line class="ln" x1="450" y1="119" x2="488" y2="134"/><line class="ln" x1="572" y1="141" x2="600" y2="141"/>
+  <rect class="ent" x="600" y="126" width="120" height="30"/><text class="at" x="660" y="146" text-anchor="middle" font-weight="700">ANEXO</text>
+  <text class="lb" x="456" y="112">1</text><text class="lb" x="578" y="132">N</text>
+  <polygon class="dia" points="375,156 418,178 375,200 332,178"/><text class="dt" x="375" y="182" text-anchor="middle">destinada</text>
+  <line class="ln" x1="375" y1="134" x2="375" y2="156"/><line class="ln" x1="375" y1="200" x2="375" y2="214"/>
+  <text class="lb" x="384" y="152">N</text><text class="lb" x="384" y="212">1</text>
+  <rect class="ent" x="300" y="214" width="150" height="30"/><text class="at" x="375" y="234" text-anchor="middle" font-weight="700">TURMA</text>
+  <rect class="ent" x="24" y="104" width="120" height="30"/><text class="at" x="84" y="124" text-anchor="middle" font-weight="700">ALUNO</text>
+  <polygon class="dia" points="196,119 236,141 196,163 156,141"/><text class="dt" x="196" y="145" text-anchor="middle">conclui</text>
+  <line class="ln" x1="144" y1="119" x2="156" y2="134"/><line class="ln" x1="236" y1="141" x2="300" y2="122"/>
+  <text class="lb" x="146" y="110">N</text><text class="lb" x="248" y="112">N</text>
+  <text class="card" x="196" y="180" text-anchor="middle" font-size="10">concluído, data</text>
+  <polygon class="dia" points="84,168 124,190 84,212 44,190"/><text class="dt" x="84" y="194" text-anchor="middle">registra</text>
+  <line class="ln" x1="84" y1="134" x2="84" y2="168"/>
+  <text class="lb" x="92" y="156">1</text>
+  <rect class="ent" x="16" y="226" width="150" height="30"/><text class="at" x="91" y="246" text-anchor="middle" font-weight="700">ATIV. PESSOAL</text>
+  <line class="ln" x1="84" y1="212" x2="84" y2="226"/>
+  <text class="lb" x="92" y="224">N</text>
+  <rect class="ent" x="24" y="300" width="110" height="28"/><text class="at" x="79" y="319" text-anchor="middle" font-weight="700">ALUNO</text>
+  <polygon class="dia" points="210,314 268,338 210,362 152,338"/><text class="dt" x="210" y="342" text-anchor="middle">avisado sobre</text>
+  <rect class="ent" x="300" y="300" width="130" height="28"/><text class="at" x="365" y="319" text-anchor="middle" font-weight="700">ATIVIDADE</text>
+  <line class="ln" x1="134" y1="314" x2="152" y2="328"/><line class="ln" x1="268" y1="328" x2="300" y2="314"/>
+  <text class="lb" x="136" y="304">N</text><text class="lb" x="274" y="304">N</text>
+  <text class="card" x="500" y="342" font-size="10">atributos: lida, data</text>
+  <text class="card" x="24" y="384" font-size="10">As caixas de baixo repetem Aluno e Atividade só para mostrar o segundo relacionamento, sem cruzar o desenho.</text>
+</svg>
+<figcaption>Figura 6. MER da agenda. Conclui e avisado sobre são N:N, cada um com atributos. Atividade pessoal depende do aluno.</figcaption>
+</figure>
+
+<h3>10.1 Entidades e atributos</h3>
+<table>
+  <thead><tr><th>Entidade</th><th>Atributos</th><th>Identificador</th></tr></thead>
+  <tbody>
+    <tr><td>Usuário</td><td>nome, e-mail (único), senha, tipo, data de criação</td><td>identificador próprio</td></tr>
+    <tr><td>Turma</td><td>nome, ano, data de criação</td><td>identificador próprio</td></tr>
+    <tr><td>Atividade</td><td>título, descrição, tipo, data, hora, matéria, concluída pela turma, data de criação</td><td>identificador próprio</td></tr>
+    <tr><td>Anexo</td><td>nome original, caminho, tipo MIME, tamanho, data de criação</td><td>identificador próprio</td></tr>
+    <tr><td>Atividade pessoal</td><td>título, descrição, data, hora, matéria, concluída, data de conclusão, data de criação</td><td>identificador próprio</td></tr>
+    <tr><td>Horário</td><td>matéria, dia da semana, hora de início, hora de fim</td><td>identificador próprio na implementação; no MER é relacionamento ternário</td></tr>
+    <tr><td>Notificação</td><td>lida, data de criação</td><td>no MER é o relacionamento “avisado sobre”, entre aluno e atividade</td></tr>
+  </tbody>
+</table>
+
+<h3>10.2 Relacionamentos e cardinalidade</h3>
+<table>
+  <thead><tr><th>Relacionamento</th><th>Entidades</th><th>Cardinalidade</th><th>Atributos</th></tr></thead>
+  <tbody>
+    <tr><td>é (especialização)</td><td>Usuário → Administrador, Professor, Aluno</td><td>total, disjunta, 1:0..1 em cada ramo</td><td>—</td></tr>
+    <tr><td>pertence</td><td>Aluno, Turma</td><td>N : 1</td><td>—</td></tr>
+    <tr><td>leciona</td><td>Professor, Turma</td><td>N : N</td><td>matéria</td></tr>
+    <tr><td>publica</td><td>Professor, Atividade</td><td>1 : N</td><td>—</td></tr>
+    <tr><td>destinada</td><td>Atividade, Turma</td><td>N : 1</td><td>—</td></tr>
+    <tr><td>possui</td><td>Atividade, Anexo</td><td>1 : N</td><td>—</td></tr>
+    <tr><td>conclui</td><td>Aluno, Atividade</td><td>N : N</td><td>concluído, data de conclusão</td></tr>
+    <tr><td>registra</td><td>Aluno, Atividade pessoal</td><td>1 : N</td><td>—</td></tr>
+    <tr><td>ocorre (ternário)</td><td>Turma, Professor, Horário</td><td>um horário liga uma turma a um professor</td><td>matéria, dia, início, fim</td></tr>
+    <tr><td>avisado sobre</td><td>Aluno, Atividade</td><td>N : N</td><td>lida, data de criação</td></tr>
+  </tbody>
+</table>
+
+<div class="nota">Matéria não é entidade. O mesmo nome pode aparecer no vínculo, na atividade, no horário e na agenda pessoal. Essa escolha evita um cadastro de disciplinas e impede, ao mesmo tempo, garantir que “Matemática” e “matemática” sejam a mesma coisa. A seção 15 registra isso como limitação.</div>
+
+<h3>10.3 Do conceitual ao lógico</h3>
+<p>A passagem para o modelo que o MySQL guarda segue as regras clássicas, com três decisões locais:</p>
+<ul>
+  <li>Especialização com tabela pai e tabelas filhas só onde há relacionamento. <span class="mono">usuarios</span> guarda o tipo. <span class="mono">professores</span> e <span class="mono">alunos</span> existem para serem alvo de chave estrangeira. Administrador não ganha tabela.</li>
+  <li>Relacionamento N:N vira tabela associativa. <span class="mono">professor_turmas</span> realiza “leciona”. <span class="mono">aluno_eventos</span> realiza “conclui”. <span class="mono">notificacoes</span> realiza “avisado sobre”.</li>
+  <li>O horário ternário vira a entidade associativa <span class="mono">horarios_aula</span>, com chaves para turma e professor. A notificação poderia ser só o relacionamento, mas a lista precisa de identificador e de ordenação, então também virou tabela.</li>
+</ul>
+
+<h2>11. Diagrama entidade-relacionamento (DER)</h2>
+<p>O DER abaixo é o modelo lógico: cada retângulo é uma tabela do MySQL, o atributo sublinhado é a chave primária e o atributo em itálico é chave estrangeira. A cardinalidade usa a notação mínima e máxima. Os atributos completos estão no dicionário da seção 12; o diagrama mostra as chaves e o atributo que dá sentido ao relacionamento.</p>
+
+<h3>11.1 Cadastros e vínculos</h3>
+<figure>
+<svg viewBox="0 0 760 470" role="img" aria-label="DER de cadastros">
+  <line class="ln" x1="380" y1="128" x2="130" y2="168"/>
+  <line class="ln" x1="380" y1="128" x2="380" y2="168"/>
+  <line class="ln" x1="490" y1="230" x2="590" y2="230"/>
+  <line class="ln" x1="130" y1="262" x2="130" y2="330"/>
+  <polyline class="ln" points="680,262 680,360 360,360"/>
+  <text class="lb" x="200" y="150">1</text>
+  <text class="lb" x="150" y="180">0..1</text>
+  <text class="lb" x="392" y="150">1</text>
+  <text class="lb" x="392" y="166">0..1</text>
+  <text class="lb" x="500" y="222">N</text>
+  <text class="lb" x="560" y="222">1</text>
+  <text class="lb" x="500" y="214">pertence</text>
+  <text class="lb" x="138" y="300">1</text>
+  <text class="lb" x="138" y="322">N</text>
+  <text class="lb" x="400" y="350">N</text>
+  <text class="lb" x="620" y="350">1</text>
+  <text class="lb" x="430" y="344">leciona</text>
+  <rect class="ent" x="270" y="16" width="220" height="112"/>
+  <rect class="hd" x="270" y="16" width="220" height="24"/>
+  <text class="ht" x="380" y="33" text-anchor="middle">USUARIOS</text>
+  <text class="at pk" x="282" y="56">id</text>
+  <text class="at" x="282" y="72">nome</text>
+  <text class="at" x="282" y="88">email</text>
+  <text class="at" x="282" y="104">senha, tipo, data_criacao</text>
+  <rect class="ent" x="30" y="168" width="200" height="94"/>
+  <rect class="hd" x="30" y="168" width="200" height="24"/>
+  <text class="ht" x="130" y="185" text-anchor="middle">PROFESSORES</text>
+  <text class="at pk" x="42" y="210">id</text>
+  <text class="at fk" x="42" y="228">usuario_id</text>
+  <text class="at" x="42" y="246">perfil do docente</text>
+  <rect class="ent" x="280" y="168" width="210" height="110"/>
+  <rect class="hd" x="280" y="168" width="210" height="24"/>
+  <text class="ht" x="385" y="185" text-anchor="middle">ALUNOS</text>
+  <text class="at pk" x="292" y="210">id</text>
+  <text class="at fk" x="292" y="228">usuario_id</text>
+  <text class="at fk" x="292" y="246">turma_id</text>
+  <text class="at" x="292" y="264">uma turma obrigatória</text>
+  <rect class="ent" x="590" y="168" width="150" height="94"/>
+  <rect class="hd" x="590" y="168" width="150" height="24"/>
+  <text class="ht" x="665" y="185" text-anchor="middle">TURMAS</text>
+  <text class="at pk" x="602" y="210">id</text>
+  <text class="at" x="602" y="228">nome</text>
+  <text class="at" x="602" y="246">ano, data_criacao</text>
+  <rect class="ent" x="30" y="330" width="330" height="112"/>
+  <rect class="hd" x="30" y="330" width="330" height="24"/>
+  <text class="ht" x="195" y="347" text-anchor="middle">PROFESSOR_TURMAS</text>
+  <text class="at pk" x="42" y="372">id</text>
+  <text class="at fk" x="42" y="390">professor_id, turma_id</text>
+  <text class="at" x="42" y="408">materia</text>
+  <text class="at" x="42" y="426">único (professor, turma, matéria)</text>
+</svg>
+<figcaption>Figura 7. DER de cadastros. Administrador permanece apenas em USUARIOS, com tipo correspondente.</figcaption>
+</figure>
+
+<h3>11.2 Agenda, conclusão, horário e aviso</h3>
+<figure>
+<svg viewBox="0 0 760 500" role="img" aria-label="DER da agenda">
+  <line class="ln" x1="176" y1="62" x2="230" y2="62"/>
+  <line class="ln" x1="450" y1="62" x2="545" y2="62"/>
+  <line class="ln" x1="340" y1="118" x2="340" y2="156"/>
+  <line class="ln" x1="176" y1="292" x2="230" y2="292"/>
+  <polyline class="ln" points="480,292 492,292 492,118 450,118"/>
+  <line class="ln" x1="96" y1="322" x2="96" y2="368"/>
+  <polyline class="ln" points="176,310 214,310 214,350 340,350 340,368"/>
+  <polyline class="ln" points="450,400 508,400 508,118 450,118"/>
+  <line class="ln" x1="635" y1="98" x2="635" y2="368"/>
+  <text class="lb" x="186" y="54">1</text><text class="lb" x="214" y="54">N</text>
+  <text class="lb" x="186" y="74">publica</text>
+  <text class="lb" x="458" y="54">N</text><text class="lb" x="520" y="54">1</text>
+  <text class="lb" x="468" y="74">destinada</text>
+  <text class="lb" x="348" y="140">1</text><text class="lb" x="348" y="154">N</text>
+  <text class="lb" x="300" y="146">possui</text>
+  <text class="lb" x="186" y="284">1</text><text class="lb" x="214" y="284">N</text>
+  <text class="lb" x="186" y="308">conclui</text>
+  <text class="lb" x="496" y="200">N:1</text>
+  <text class="lb" x="104" y="350">1</text><text class="lb" x="104" y="366">N</text>
+  <text class="lb" x="112" y="348">registra</text>
+  <text class="lb" x="220" y="346">1</text><text class="lb" x="300" y="346">N</text>
+  <text class="lb" x="248" y="342">avisado</text>
+  <text class="lb" x="512" y="250">N:1</text>
+  <text class="lb" x="642" y="220">1</text><text class="lb" x="642" y="250">N</text>
+  <text class="lb" x="648" y="236">turma</text>
+  <rect class="ent" x="16" y="24" width="160" height="76"/>
+  <rect class="hd" x="16" y="24" width="160" height="22"/>
+  <text class="ht" x="96" y="40" text-anchor="middle">PROFESSORES</text>
+  <text class="at pk" x="28" y="64">id</text>
+  <text class="at fk" x="28" y="82">usuario_id</text>
+  <rect class="ent" x="230" y="16" width="220" height="102"/>
+  <rect class="hd" x="230" y="16" width="220" height="22"/>
+  <text class="ht" x="340" y="32" text-anchor="middle">EVENTOS</text>
+  <text class="at pk" x="242" y="54">id</text>
+  <text class="at fk" x="242" y="72">professor_id, turma_id</text>
+  <text class="at" x="242" y="90">titulo, tipo, data_evento</text>
+  <text class="at" x="242" y="106">concluido, materia</text>
+  <rect class="ent" x="545" y="24" width="180" height="74"/>
+  <rect class="hd" x="545" y="24" width="180" height="22"/>
+  <text class="ht" x="635" y="40" text-anchor="middle">TURMAS</text>
+  <text class="at pk" x="557" y="62">id</text>
+  <text class="at" x="557" y="80">nome, ano</text>
+  <rect class="ent" x="250" y="156" width="200" height="74"/>
+  <rect class="hd" x="250" y="156" width="200" height="22"/>
+  <text class="ht" x="350" y="172" text-anchor="middle">EVENTO_ANEXOS</text>
+  <text class="at pk" x="262" y="194">id</text>
+  <text class="at fk" x="262" y="212">evento_id</text>
+  <rect class="ent" x="16" y="252" width="160" height="70"/>
+  <rect class="hd" x="16" y="252" width="160" height="22"/>
+  <text class="ht" x="96" y="268" text-anchor="middle">ALUNOS</text>
+  <text class="at pk" x="28" y="290">id</text>
+  <text class="at fk" x="28" y="308">usuario_id, turma_id</text>
+  <rect class="ent" x="230" y="248" width="250" height="88"/>
+  <rect class="hd" x="230" y="248" width="250" height="22"/>
+  <text class="ht" x="355" y="264" text-anchor="middle">ALUNO_EVENTOS</text>
+  <text class="at pk" x="242" y="286">id</text>
+  <text class="at fk" x="242" y="304">aluno_id, evento_id</text>
+  <text class="at" x="242" y="322">único (aluno, evento)</text>
+  <rect class="ent" x="16" y="368" width="190" height="88"/>
+  <rect class="hd" x="16" y="368" width="190" height="22"/>
+  <text class="ht" x="111" y="384" text-anchor="middle">ALUNO_ATIVIDADES</text>
+  <text class="at pk" x="28" y="406">id</text>
+  <text class="at fk" x="28" y="424">aluno_id</text>
+  <text class="at" x="28" y="442">titulo, data_evento</text>
+  <rect class="ent" x="230" y="368" width="220" height="74"/>
+  <rect class="hd" x="230" y="368" width="220" height="22"/>
+  <text class="ht" x="340" y="384" text-anchor="middle">NOTIFICACOES</text>
+  <text class="at pk" x="242" y="406">id</text>
+  <text class="at fk" x="242" y="424">aluno_id, evento_id</text>
+  <rect class="ent" x="520" y="368" width="220" height="104"/>
+  <rect class="hd" x="520" y="368" width="220" height="22"/>
+  <text class="ht" x="630" y="384" text-anchor="middle">HORARIOS_AULA</text>
+  <text class="at pk" x="532" y="406">id</text>
+  <text class="at fk" x="532" y="424">turma_id, professor_id</text>
+  <text class="at" x="532" y="442">dia_semana, hora_inicio</text>
+  <text class="at" x="532" y="458">professor_id → PROFESSORES</text>
+</svg>
+<figcaption>Figura 8. DER da agenda. Linhas à direita de ALUNO_EVENTOS e de NOTIFICACOES sobem até EVENTOS (N:1). HORARIOS_AULA liga-se a TURMAS pela vertical e guarda professor_id para PROFESSORES.</figcaption>
+</figure>
+
+<p class="leg">Leitura das pontas: ao lado de EVENTOS, “1” em PROFESSORES significa que cada atividade tem um autor; “N” em EVENTOS significa que o professor publica várias. O mesmo vale para turma, anexo, conclusão, agenda pessoal e notificação.</p>
+
+<h2>12. Modelo relacional e dicionário de dados</h2>
+<p>Notação: sublinhado conceitual na chave primária, e a chave estrangeira indicada por referência. Todas as tabelas usam <span class="mono">InnoDB</span> implícito do MySQL atual, chave substituta inteira autoincrementada e exclusão em cascata nas estrangeiras, salvo a trava de aplicação que impede excluir turma com alunos.</p>
+
+<pre class="mono" style="white-space:pre-wrap;background:#f6f8fb;padding:10px;border:1px solid #d5deea;font-size:9pt;line-height:1.4;">usuarios(<u>id</u>, nome, email, senha, tipo, data_criacao)
+  UK email
+  tipo ∈ {professor, aluno, administrador}
+
+turmas(<u>id</u>, nome, ano, data_criacao)
+
+professores(<u>id</u>, usuario_id → usuarios)
+
+alunos(<u>id</u>, usuario_id → usuarios, turma_id → turmas)
+
+professor_turmas(<u>id</u>, professor_id → professores, turma_id → turmas, materia)
+  UK (professor_id, turma_id, materia)
+
+eventos(<u>id</u>, professor_id → professores, turma_id → turmas, titulo, descricao,
+        tipo, concluido, data_evento, hora, materia, data_criacao)
+  tipo ∈ {prova, trabalho, atividade, reuniao}
+
+evento_anexos(<u>id</u>, evento_id → eventos, nome_original, caminho, tipo_mime,
+               tamanho, data_criacao)
+
+aluno_eventos(<u>id</u>, aluno_id → alunos, evento_id → eventos, concluido, data_conclusao)
+  UK (aluno_id, evento_id)
+
+aluno_atividades(<u>id</u>, aluno_id → alunos, titulo, descricao, data_evento, hora,
+                  materia, concluido, data_conclusao, data_criacao)
+
+horarios_aula(<u>id</u>, turma_id → turmas, professor_id → professores, materia,
+              dia_semana, hora_inicio, hora_fim)
+
+notificacoes(<u>id</u>, aluno_id → alunos, evento_id → eventos, lida, data_criacao)</pre>
+
+<p>As tabelas <span class="mono">aluno_atividades</span>, <span class="mono">horarios_aula</span> e <span class="mono">notificacoes</span>, e a coluna <span class="mono">eventos.materia</span>, nascem no script de runtime quando a base antiga não as tem. O script <span class="mono">database/calendario_estudantil.sql</span> já traz o núcleo importável, e a primeira conexão completa o restante.</p>
+
+<h3>12.1 usuarios</h3>
+<table>
+  <thead><tr><th>Coluna</th><th>Tipo</th><th>Nulo</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td>id</td><td>INT AI, PK</td><td>não</td><td>Identificador do usuário.</td></tr>
+    <tr><td>nome</td><td>VARCHAR(100)</td><td>não</td><td>Nome exibido no menu e nas listas.</td></tr>
+    <tr><td>email</td><td>VARCHAR(150), UK</td><td>não</td><td>Credencial de login.</td></tr>
+    <tr><td>senha</td><td>VARCHAR(255)</td><td>não</td><td>Hash. Nunca a senha em claro.</td></tr>
+    <tr><td>tipo</td><td>ENUM</td><td>não</td><td>professor, aluno ou administrador.</td></tr>
+    <tr><td>data_criacao</td><td>TIMESTAMP</td><td>não</td><td>Default: momento da inserção.</td></tr>
+  </tbody>
+</table>
+
+<h3>12.2 turmas</h3>
+<table>
+  <thead><tr><th>Coluna</th><th>Tipo</th><th>Nulo</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td>id</td><td>INT AI, PK</td><td>não</td><td>Identificador da turma.</td></tr>
+    <tr><td>nome</td><td>VARCHAR(100)</td><td>não</td><td>Exemplo: 2º Ano Informática.</td></tr>
+    <tr><td>ano</td><td>VARCHAR(20)</td><td>sim</td><td>Ano letivo, texto. Exemplo: 2026.</td></tr>
+    <tr><td>data_criacao</td><td>TIMESTAMP</td><td>não</td><td>Momento do cadastro.</td></tr>
+  </tbody>
+</table>
+
+<h3>12.3 professores e alunos</h3>
+<table>
+  <thead><tr><th>Tabela</th><th>Coluna</th><th>Regra</th></tr></thead>
+  <tbody>
+    <tr><td>professores</td><td>id, usuario_id → usuarios</td><td>Uma linha por usuário professor. Apagar o usuário apaga o professor e, em cascata, vínculos, eventos e horários dele.</td></tr>
+    <tr><td>alunos</td><td>id, usuario_id → usuarios, turma_id → turmas</td><td>Uma linha por usuário aluno. <span class="mono">turma_id</span> é obrigatório. Apagar a turma apagaria os alunos por cascata; a aplicação impede essa exclusão antes.</td></tr>
+  </tbody>
+</table>
+
+<h3>12.4 professor_turmas</h3>
+<table>
+  <thead><tr><th>Coluna</th><th>Tipo</th><th>Nulo</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td>id</td><td>INT AI, PK</td><td>não</td><td>Identificador do vínculo.</td></tr>
+    <tr><td>professor_id</td><td>INT, FK</td><td>não</td><td>Professor que leciona.</td></tr>
+    <tr><td>turma_id</td><td>INT, FK</td><td>não</td><td>Turma atendida.</td></tr>
+    <tr><td>materia</td><td>VARCHAR(100)</td><td>não</td><td>Nome da disciplina. Vazio quando o vínculo não nomeia matéria. Default ''. </td></tr>
+  </tbody>
+</table>
+<p>A chave única <span class="mono">professor_turma_materia</span> impede o mesmo trio duas vezes e permite duas linhas do mesmo professor na mesma turma quando as matérias diferem.</p>
+
+<h3>12.5 eventos</h3>
+<table>
+  <thead><tr><th>Coluna</th><th>Tipo</th><th>Nulo</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td>id</td><td>INT AI, PK</td><td>não</td><td>Identificador da atividade.</td></tr>
+    <tr><td>professor_id</td><td>INT, FK</td><td>não</td><td>Autor. Não vem do formulário como campo livre de autoria.</td></tr>
+    <tr><td>turma_id</td><td>INT, FK</td><td>não</td><td>Turma de destino.</td></tr>
+    <tr><td>titulo</td><td>VARCHAR(150)</td><td>não</td><td>Nome exibido na agenda.</td></tr>
+    <tr><td>descricao</td><td>TEXT</td><td>sim</td><td>Texto simples ou HTML já filtrado.</td></tr>
+    <tr><td>tipo</td><td>ENUM</td><td>não</td><td>prova, trabalho, atividade, reuniao.</td></tr>
+    <tr><td>concluido</td><td>TINYINT(1)</td><td>não</td><td>Conclusão no âmbito da turma. Default 0.</td></tr>
+    <tr><td>data_evento</td><td>DATE</td><td>não</td><td>Dia do prazo.</td></tr>
+    <tr><td>hora</td><td>TIME</td><td>sim</td><td>Horário opcional.</td></tr>
+    <tr><td>materia</td><td>VARCHAR(100)</td><td>não</td><td>Disciplina associada. Default ''. Coluna garantida na migração.</td></tr>
+    <tr><td>data_criacao</td><td>TIMESTAMP</td><td>não</td><td>Momento da publicação.</td></tr>
+  </tbody>
+</table>
+
+<h3>12.6 evento_anexos</h3>
+<table>
+  <thead><tr><th>Coluna</th><th>Tipo</th><th>Nulo</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td>id</td><td>INT AI, PK</td><td>não</td><td>Identificador do anexo.</td></tr>
+    <tr><td>evento_id</td><td>INT, FK</td><td>não</td><td>Atividade dona. Cascata na exclusão do evento.</td></tr>
+    <tr><td>nome_original</td><td>VARCHAR(255)</td><td>não</td><td>Nome mostrado ao usuário.</td></tr>
+    <tr><td>caminho</td><td>VARCHAR(255)</td><td>não</td><td>Caminho relativo dentro de <span class="mono">uploads/</span>.</td></tr>
+    <tr><td>tipo_mime</td><td>VARCHAR(100)</td><td>não</td><td>MIME detectado no arquivo, não o declarado pelo navegador.</td></tr>
+    <tr><td>tamanho</td><td>INT</td><td>não</td><td>Tamanho em bytes. Default 0.</td></tr>
+    <tr><td>data_criacao</td><td>TIMESTAMP</td><td>não</td><td>Momento do upload.</td></tr>
+  </tbody>
+</table>
+
+<h3>12.7 aluno_eventos</h3>
+<table>
+  <thead><tr><th>Coluna</th><th>Tipo</th><th>Nulo</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td>id</td><td>INT AI, PK</td><td>não</td><td>Identificador da conclusão.</td></tr>
+    <tr><td>aluno_id</td><td>INT, FK</td><td>não</td><td>Aluno.</td></tr>
+    <tr><td>evento_id</td><td>INT, FK</td><td>não</td><td>Atividade da turma.</td></tr>
+    <tr><td>concluido</td><td>BOOLEAN</td><td>sim</td><td>Default falso. Na prática a primeira inserção já grava verdadeiro.</td></tr>
+    <tr><td>data_conclusao</td><td>DATETIME</td><td>sim</td><td>Preenchida quando concluído; nula quando desmarcado.</td></tr>
+  </tbody>
+</table>
+<p>A unicidade <span class="mono">(aluno_id, evento_id)</span> garante uma única situação por aluno e atividade.</p>
+
+<h3>12.8 aluno_atividades</h3>
+<table>
+  <thead><tr><th>Coluna</th><th>Tipo</th><th>Nulo</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td>id</td><td>INT AI, PK</td><td>não</td><td>Identificador.</td></tr>
+    <tr><td>aluno_id</td><td>INT, FK</td><td>não</td><td>Dono. Cascata se o aluno for removido.</td></tr>
+    <tr><td>titulo</td><td>VARCHAR(150)</td><td>não</td><td>Título informado pelo aluno.</td></tr>
+    <tr><td>descricao</td><td>TEXT</td><td>sim</td><td>Texto livre.</td></tr>
+    <tr><td>data_evento</td><td>DATE</td><td>não</td><td>Dia do compromisso.</td></tr>
+    <tr><td>hora</td><td>TIME</td><td>sim</td><td>Horário opcional.</td></tr>
+    <tr><td>materia</td><td>VARCHAR(100)</td><td>não</td><td>Disciplina da turma ou vazio. Default ''. </td></tr>
+    <tr><td>concluido</td><td>TINYINT(1)</td><td>não</td><td>Default 0.</td></tr>
+    <tr><td>data_conclusao</td><td>DATETIME</td><td>sim</td><td>Quando o aluno concluiu.</td></tr>
+    <tr><td>data_criacao</td><td>TIMESTAMP</td><td>não</td><td>Momento do cadastro.</td></tr>
+  </tbody>
+</table>
+
+<h3>12.9 horarios_aula</h3>
+<table>
+  <thead><tr><th>Coluna</th><th>Tipo</th><th>Nulo</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td>id</td><td>INT AI, PK</td><td>não</td><td>Identificador do slot.</td></tr>
+    <tr><td>turma_id</td><td>INT, FK</td><td>não</td><td>Turma da aula.</td></tr>
+    <tr><td>professor_id</td><td>INT, FK</td><td>não</td><td>Professor da aula.</td></tr>
+    <tr><td>materia</td><td>VARCHAR(100)</td><td>não</td><td>Disciplina do slot. Default ''. </td></tr>
+    <tr><td>dia_semana</td><td>TINYINT</td><td>não</td><td>1 segunda … 6 sábado.</td></tr>
+    <tr><td>hora_inicio</td><td>TIME</td><td>não</td><td>Início.</td></tr>
+    <tr><td>hora_fim</td><td>TIME</td><td>sim</td><td>Término. Se preenchido, é maior que o início.</td></tr>
+  </tbody>
+</table>
+
+<h3>12.10 notificacoes</h3>
+<table>
+  <thead><tr><th>Coluna</th><th>Tipo</th><th>Nulo</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td>id</td><td>INT AI, PK</td><td>não</td><td>Identificador do aviso.</td></tr>
+    <tr><td>aluno_id</td><td>INT, FK</td><td>não</td><td>Destinatário.</td></tr>
+    <tr><td>evento_id</td><td>INT, FK</td><td>não</td><td>Atividade anunciada.</td></tr>
+    <tr><td>lida</td><td>TINYINT(1)</td><td>não</td><td>0 não lida, 1 lida. Default 0.</td></tr>
+    <tr><td>data_criacao</td><td>TIMESTAMP</td><td>não</td><td>Momento da publicação que gerou o aviso.</td></tr>
+  </tbody>
+</table>
+
+<h3>12.11 Formas normais</h3>
+<p>O esquema está na terceira forma normal no que depende de fato da chave: nenhum atributo não chave depende de parte da chave, e não há dependência transitiva entre atributos não chave dentro da mesma tabela. A repetição do texto da matéria em quatro tabelas não é redundância de atualização no sentido da normalização, porque cada ocorrência tem significado local (vínculo, atividade, aula, compromisso pessoal). É, porém, ausência de uma entidade Disciplina, e por isso o nome pode divergir por grafia.</p>
+
+<h2>13. Rastreabilidade</h2>
+<p>A matriz liga o requisito funcional ao caso de uso que o realiza e à regra de negócio que o restringe. Requisitos não funcionais atravessam todos os casos e não entram célula a célula.</p>
+
+<table>
+  <thead><tr><th>Requisito</th><th>Casos de uso</th><th>Regras</th></tr></thead>
+  <tbody>
+    <tr><td>RF01, RF02</td><td>UC02</td><td>RN01</td></tr>
+    <tr><td>RF03, RF05</td><td>UC01, UC02</td><td>—</td></tr>
+    <tr><td>RF04</td><td>UC03</td><td>—</td></tr>
+    <tr><td>RF06–RF09</td><td>UC05</td><td>RN01, RN02, RN03, RN04, RN05, RN14, RN16</td></tr>
+    <tr><td>RF10</td><td>UC06</td><td>RN13</td></tr>
+    <tr><td>RF11</td><td>UC04</td><td>—</td></tr>
+    <tr><td>RF12</td><td>UC07</td><td>—</td></tr>
+    <tr><td>RF13, RF14, RF17</td><td>UC08, UC18</td><td>RN06, RN07, RN11</td></tr>
+    <tr><td>RF15</td><td>UC09</td><td>RN15</td></tr>
+    <tr><td>RF16</td><td>UC10</td><td>RN09</td></tr>
+    <tr><td>RF18</td><td>UC12</td><td>RN04</td></tr>
+    <tr><td>RF19</td><td>UC11</td><td>RN12</td></tr>
+    <tr><td>RF20</td><td>UC13</td><td>—</td></tr>
+    <tr><td>RF21, RF22</td><td>UC14, UC15</td><td>RN06</td></tr>
+    <tr><td>RF23</td><td>UC15</td><td>RN08, RN09</td></tr>
+    <tr><td>RF24</td><td>UC16</td><td>RN10</td></tr>
+    <tr><td>RF25</td><td>UC17</td><td>RN04, RN12</td></tr>
+    <tr><td>RF26</td><td>UC18</td><td>RN11</td></tr>
+    <tr><td>RF27</td><td>UC09, UC15, UC16</td><td>RN06, RN10</td></tr>
+    <tr><td>RF28</td><td>provisionamento na conexão</td><td>—</td></tr>
+  </tbody>
+</table>
+
+<h2>14. Segurança</h2>
+<p>O controle de acesso é a peça que sustenta o produto: um aluno não pode ler a agenda de outra turma, e um professor não pode editar a atividade de outro. Isso está nas funções de guarda e nas consultas, não só no menu escondido.</p>
+<ul>
+  <li><strong>Autenticação.</strong> Senha com hash de <span class="mono">password_hash</span>. Mensagem de erro única. Sessão regenerada no login.</li>
+  <li><strong>Autorização.</strong> <span class="mono">exigirAdministrador</span>, <span class="mono">exigirProfessor</span> e <span class="mono">exigirAluno</span> antes do conteúdo. Consultas de evento filtram por autor ou por turma. Atividade pessoal filtra pelo aluno dono. O retorno pós-POST só aceita endereço da própria área, para evitar redirecionamento aberto.</li>
+  <li><strong>Injeção de SQL.</strong> PDO com parâmetros nomeados nas consultas que recebem entrada.</li>
+  <li><strong>XSS.</strong> <span class="mono">e()</span> aplica <span class="mono">htmlspecialchars</span>. A descrição do professor passa por <span class="mono">htmlSeguro()</span>, que mantém um conjunto pequeno de tags e remove atributos de evento e esquemas perigosos.</li>
+  <li><strong>Upload.</strong> Tamanho, extensão e MIME conferidos; nome no disco é aleatório. A imagem do editor é recusada se não for imagem, e o arquivo inválido é apagado.</li>
+  <li><strong>Sessão.</strong> Cookie <span class="mono">HttpOnly</span>, <span class="mono">SameSite=Lax</span>, vida até fechar o navegador. Dois nomes de sessão separam o administrador do restante.</li>
+  <li><strong>Integridade.</strong> Chaves estrangeiras e unicidades descritas no dicionário. O último administrador é protegido na aplicação.</li>
+</ul>
+<div class="aviso">O cookie de sessão não usa a flag Secure, porque o ambiente previsto é HTTP local. Não há token anti-CSRF nos formulários. Não há política de senha além do mínimo de 5 caracteres, nem bloqueio após tentativas. Esses pontos estão na seção de limitações e não devem ser lidos como controles já entregues.</div>
+
+<h2>15. Limitações e evolução</h2>
+
+<h3>15.1 Limitações atuais</h3>
+<ul>
+  <li><strong>Ambiente.</strong> O desenho assume XAMPP na máquina local: um Apache, um MySQL e a pasta <span class="mono">uploads</span> no mesmo disco. Não há balanceamento, backup automatizado nem HTTPS de fábrica.</li>
+  <li><strong>Credencial de banco.</strong> O padrão é <span class="mono">root</span> sem senha. Serve ao laboratório e é inadequado em qualquer máquina exposta à rede.</li>
+  <li><strong>Conta.</strong> Não há auto-cadastro, recuperação de senha, expiração nem segundo fator. Quem esquece a senha depende do administrador para gravar outra.</li>
+  <li><strong>CSRF.</strong> Formulários POST não enviam um token vinculado à sessão.</li>
+  <li><strong>Senha curta.</strong> O mínimo de 5 caracteres é uma trava fraca.</li>
+  <li><strong>Matéria textual.</strong> Não existe tabela de disciplinas. Grafias diferentes não se unem no filtro.</li>
+  <li><strong>Dois significados de concluído.</strong> <span class="mono">eventos.concluido</span> e <span class="mono">aluno_eventos.concluido</span> convivem. O painel do aluno usa a marca da turma no percentual. Quem lê o número precisa saber que ele não é a soma das conclusões individuais.</li>
+  <li><strong>Notificação parcial.</strong> O aviso nasce na criação da atividade, não na edição nem na exclusão lógica. Não sai do sistema: não há e-mail nem push. A lista corta em 40 itens.</li>
+  <li><strong>Um aluno, uma turma.</strong> Não há histórico de enturmação nem aluno em duas turmas.</li>
+  <li><strong>Exclusão em cascata.</strong> Apagar usuário ou evento remove filhos. Não há lixeira.</li>
+  <li><strong>Arquivos.</strong> O vínculo é o caminho gravado. Se o disco e o banco divergirem, o link quebra. Não há antivírus nem varredura de conteúdo além do MIME.</li>
+  <li><strong>Editor.</strong> A sanitização por lista de tags não substitui uma biblioteca dedicada de HTML. É uma redução de risco, não uma prova formal contra XSS em todo markup.</li>
+  <li><strong>Migração.</strong> O esquema evolui na primeira conexão, com <span class="mono">ALTER</span> e <span class="mono">CREATE</span> condicionais, em vez de migrações numeradas. Uma falha é engolida para não derrubar a tela.</li>
+  <li><strong>Testes.</strong> Não há suíte automatizada. A verificação é manual, nas telas.</li>
+  <li><strong>Concorrência e escala.</strong> Não há requisito de centenas de usuários simultâneos, cache ou fila. Índices são os da chave primária, das estrangeiras e das unicidades.</li>
+  <li><strong>Fuso e calendário.</strong> Datas usam o relógio do servidor PHP e do MySQL. Não há fuso configurável por escola.</li>
+  <li><strong>Idioma e acessibilidade.</strong> A interface é só em português. Há rótulos e alguns atributos ARIA; não houve auditoria de acessibilidade.</li>
+  <li><strong>Produto.</strong> Fora do escopo continuam notas, frequência, entrega de arquivo pelo aluno, multi-escola e aplicativo nativo.</li>
+</ul>
+
+<h3>15.2 Evolução possível</h3>
+<p>Se o sistema sair do laboratório, a ordem que protege o que já existe é: senha de banco e HTTPS, token de CSRF, política de senha, entidade Disciplina no lugar do texto solto, e separar no painel do aluno o percentual individual do percentual da turma. Notificação por e-mail, recuperação de senha e testes dos fluxos UC02, UC08 e UC15 viriam em seguida. Nada disso está implementado; a lista só ordena o que as limitações acima tornam visível.</p>
+
+<h2>16. Considerações finais</h2>
+<p>O Calendário Escolar é um monólito PHP e MySQL com três perfis, uma agenda da turma e uma agenda pessoal. A modelagem guarda a decisão que o produto precisa: a atividade pertence à turma e ao professor, e a conclusão de cada aluno é outra relação, N:N, com data própria. Horário, anexo e notificação completam a rotina sem transformar o sistema num diário de classe.</p>
+<p>O MER mostra essa ideia sem tipos de coluna. O DER e o dicionário mostram como ela ficou no MySQL, inclusive a especialização parcial em tabelas filhas e a matéria como atributo. Os requisitos e os casos de uso nomeiam o que as telas já fazem, e a seção de limitações separa isso do que o sistema ainda não promete.</p>
+
+<h2>17. Referências</h2>
+<ul>
+  <li>ELMASRI, R.; NAVATHE, S. B. <em>Sistemas de banco de dados</em>. Modelo entidade-relacionamento, mapeamento para o relacional e normalização.</li>
+  <li>SOMMERVILLE, I. <em>Engenharia de software</em>. Requisitos de usuário e de sistema, casos de uso e requisitos não funcionais.</li>
+  <li>PRESSMAN, R. S.; MAXIM, B. R. <em>Engenharia de software: uma abordagem profissional</em>. Processo de requisitos e modelagem de análise.</li>
+  <li>PHP. Manual de <span class="mono">password_hash</span>, <span class="mono">password_verify</span>, sessões e PDO. Disponível em php.net.</li>
+  <li>MySQL. Manual de referência: tipos de data, chaves estrangeiras e <span class="mono">utf8mb4</span>. Disponível em dev.mysql.com.</li>
+  <li>OWASP. <em>Session Management Cheat Sheet</em> e <em>File Upload Cheat Sheet</em>. Referência para os controles da seção 14 e para as lacunas da seção 15.</li>
+  <li>Repositório do próprio sistema: <span class="mono">database/calendario_estudantil.sql</span>, <span class="mono">config/database.php</span>, <span class="mono">includes/auth.php</span> e <span class="mono">includes/functions.php</span>.</li>
+</ul>
+
+<p class="pequena" style="margin-top:16px;color:#6b7a90;">Documento DES-CE-001, versão 1.0, 26 de outubro de 2026. Descreve o Calendário Escolar (c-estudantil) conforme o código e o esquema dessa data.</p>
+
+
+</body>
+</html>

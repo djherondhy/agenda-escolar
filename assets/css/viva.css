@@ -1,0 +1,341 @@
+:root {
+    --coral: #ff5a36;
+    --amber: #f5a524;
+    --lime: #73c043;
+    --teal: #14b8a6;
+    --violet: #7c3aed;
+    --pink: #ec4899;
+    --sun: #ffe08a;
+    --ink: #1c1430;
+}
+
+body.app-body,
+body.lp-body,
+body.auth-body {
+    background: #fff;
+}
+
+h1,
+h2,
+h3,
+.display-name,
+.brand-text strong,
+.page-title,
+.cal-month,
+.stat-value,
+.lp-hero h1 {
+    font-family: Nunito, Inter, "Segoe UI", sans-serif;
+}
+
+.app-shell,
+.lp-nav,
+.lp-body main,
+.lp-footer,
+.auth-shell {
+    position: relative;
+    z-index: 1;
+}
+
+.app-sidebar {
+    background: linear-gradient(180deg, #2a1748 0%, #3b1d6e 48%, #12324a 100%);
+    border-right: 0;
+    color: #fff;
+    box-shadow: 8px 0 30px rgba(42, 23, 72, 0.16);
+}
+
+.app-sidebar .brand-text small,
+.app-sidebar .side-user-role,
+.app-sidebar .side-user-out {
+    color: #f3e8ff;
+}
+
+.app-sidebar .side-nav a {
+    color: #f8f1ff;
+    border-radius: 12px;
+    transition: transform 180ms var(--ease), background 180ms var(--ease);
+}
+
+.app-sidebar .side-nav a:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    transform: translateX(4px);
+}
+
+.app-sidebar .side-nav a:nth-child(4n + 1).is-active { background: var(--coral); color: #fff; }
+.app-sidebar .side-nav a:nth-child(4n + 2).is-active { background: var(--amber); color: #3b2204; }
+.app-sidebar .side-nav a:nth-child(4n + 3).is-active { background: var(--teal); color: #042f2c; }
+.app-sidebar .side-nav a:nth-child(4n + 4).is-active { background: var(--violet); color: #fff; }
+
+.app-sidebar .side-user {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.app-sidebar .side-user-out:hover {
+    color: var(--sun);
+}
+
+.brand-mark {
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--coral), var(--amber), var(--violet));
+    padding: 4px;
+    animation: viva-wobble 3.2s ease-in-out infinite;
+}
+
+.brand-mark img {
+    border-radius: 8px;
+    background: #fff;
+}
+
+.page-title {
+    color: var(--coral);
+}
+
+.page-title.is-date {
+    color: #7c6a92;
+}
+
+.lp-hero h1 {
+    color: var(--ink);
+}
+
+.btn-stamp {
+    background: linear-gradient(120deg, var(--coral), var(--amber) 45%, var(--violet));
+    background-size: 180% 180%;
+    border: 0;
+    color: #fff;
+    box-shadow: 0 10px 22px rgba(255, 90, 54, 0.28);
+    animation: viva-sheen 7s ease infinite;
+}
+
+.btn-stamp:hover {
+    background: linear-gradient(120deg, #e63e22, #7c3aed);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.btn-ghost {
+    border-color: #f0c9b8;
+    background: rgba(255, 255, 255, 0.72);
+}
+
+.btn-ghost:hover {
+    border-color: var(--coral);
+    color: var(--coral);
+    background: #fff7f3;
+}
+
+.panel,
+.stat,
+.dash-hero,
+.auth-card,
+.activity-card,
+.lp-profile,
+.lp-steps li,
+.week-col {
+    border-radius: 18px;
+    box-shadow: 0 12px 28px rgba(48, 24, 80, 0.08);
+}
+
+.panel,
+.stat,
+.dash-hero,
+.auth-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.panel::before,
+.auth-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 5px;
+    background: linear-gradient(90deg, var(--coral), var(--amber), var(--teal), var(--violet));
+}
+
+.stat:nth-child(4n + 1) { background: linear-gradient(180deg, #fff, #fff1ea); }
+.stat:nth-child(4n + 2) { background: linear-gradient(180deg, #fff, #fff7df); }
+.stat:nth-child(4n + 3) { background: linear-gradient(180deg, #fff, #e7fbf6); }
+.stat:nth-child(4n + 4) { background: linear-gradient(180deg, #fff, #f3e8ff); }
+
+.stat:nth-child(4n + 1) .stat-value { color: var(--coral); }
+.stat:nth-child(4n + 2) .stat-value { color: #b45309; }
+.stat:nth-child(4n + 3) .stat-value { color: #0f766e; }
+.stat:nth-child(4n + 4) .stat-value { color: var(--violet); }
+
+a.stat:hover,
+.panel:hover,
+.dash-hero:hover,
+.activity-card:hover,
+.week-slot:hover,
+.lp-profile:hover {
+    transform: translateY(-4px);
+}
+
+.dash-shortcuts a:nth-child(4n + 1) { background: #ffe8df; color: #9a3412; }
+.dash-shortcuts a:nth-child(4n + 2) { background: #fff4cc; color: #92400e; }
+.dash-shortcuts a:nth-child(4n + 3) { background: #d9f8f2; color: #115e59; }
+.dash-shortcuts a:nth-child(4n + 4) { background: #efe4ff; color: #5b21b6; }
+
+.week-col:nth-child(6n + 1) { background: #fff1ea; }
+.week-col:nth-child(6n + 2) { background: #fff7e4; }
+.week-col:nth-child(6n + 3) { background: #e8fbf6; }
+.week-col:nth-child(6n + 4) { background: #eef2ff; }
+.week-col:nth-child(6n + 5) { background: #f6ecff; }
+.week-col:nth-child(6n + 6) { background: #fde8f3; }
+
+.week-col.is-today {
+    outline: 3px solid var(--coral);
+    border-color: var(--coral);
+    background: #ffe8df;
+}
+
+.week-slot {
+    background: rgba(255, 255, 255, 0.82);
+}
+
+.week-slot.is-next {
+    background: #d8f5e4;
+    outline-color: #12a15a;
+}
+
+.cal-day {
+    border-radius: 14px;
+    transition: transform 160ms var(--ease), box-shadow 160ms var(--ease);
+}
+
+.cal-day.is-today {
+    background: linear-gradient(180deg, #fff7ed, #fff);
+    border-color: var(--coral);
+    box-shadow: inset 0 0 0 2px var(--sun);
+}
+
+.cal-day.is-clickable:hover,
+button.cal-day:hover {
+    transform: translateY(-3px) rotate(-0.4deg);
+    border-color: var(--violet);
+}
+
+.chip-trabalho,
+.chip-professor { background: #d9f6f2; color: #0f766e; }
+.chip-reuniao,
+.chip-outro,
+.chip-administrador { background: #f3e8ff; color: #6d28d9; }
+.chip-atividade,
+.chip-tarefa,
+.chip-aluno,
+.chip-wait { background: #ffedd5; color: #c2410c; }
+.chip-prova { background: #ffe4e6; color: #be123c; }
+
+.filter-bar .is-active {
+    background: linear-gradient(120deg, var(--coral), var(--violet));
+    color: #fff;
+    border-color: transparent;
+}
+
+.lp-kicker {
+    color: var(--coral);
+}
+
+.lp-profile:nth-child(1) { background: linear-gradient(180deg, #fff, #fff4ec); }
+.lp-profile:nth-child(2) { background: linear-gradient(180deg, #fff, #f4eeff); }
+
+.lp-steps li:nth-child(1) { background: #fff5f0; }
+.lp-steps li:nth-child(2) { background: #f3fbf8; }
+.lp-steps li:nth-child(3) { background: #f7f1ff; }
+
+.lp-qr-code svg {
+    border: 4px solid #fff;
+    outline: 3px solid var(--sun);
+}
+
+.auth-aside {
+    background: linear-gradient(165deg, #3b1764 0%, #ff5a36 78%, #f5a524 100%);
+    color: #fff;
+    border-right: 0;
+}
+
+.auth-aside > p,
+.auth-preview li,
+.auth-aside .brand-text small {
+    color: #fff7ed;
+}
+
+.auth-preview li {
+    border-top-color: rgba(255, 255, 255, 0.25);
+}
+
+.auth-main {
+    background: transparent;
+}
+
+.app-content > *,
+.lp-hero,
+.lp-section,
+.auth-card,
+.auth-aside {
+    animation: viva-rise 560ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.lp-section:nth-child(2) { animation-delay: 80ms; }
+.lp-section:nth-child(3) { animation-delay: 140ms; }
+.lp-section:nth-child(4) { animation-delay: 200ms; }
+.app-content > *:nth-child(2) { animation-delay: 70ms; }
+.app-content > *:nth-child(3) { animation-delay: 120ms; }
+.app-content > *:nth-child(4) { animation-delay: 170ms; }
+.stat:nth-child(2) { animation: viva-rise 560ms cubic-bezier(0.16, 1, 0.3, 1) 80ms both; }
+.stat:nth-child(3) { animation: viva-rise 560ms cubic-bezier(0.16, 1, 0.3, 1) 140ms both; }
+.stat:nth-child(4) { animation: viva-rise 560ms cubic-bezier(0.16, 1, 0.3, 1) 200ms both; }
+.week-col { animation: viva-rise 500ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+.week-col:nth-child(2) { animation-delay: 50ms; }
+.week-col:nth-child(3) { animation-delay: 100ms; }
+.week-col:nth-child(4) { animation-delay: 150ms; }
+.week-col:nth-child(5) { animation-delay: 200ms; }
+.week-col:nth-child(6) { animation-delay: 250ms; }
+
+dialog[open] .modal-card {
+    animation: viva-pop 280ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.notif-bell {
+    background: #fff7ed;
+    border-color: #ffd7c8;
+    color: var(--coral);
+}
+
+@keyframes viva-rise {
+    from { opacity: 0; transform: translateY(18px) scale(0.98); }
+    to { opacity: 1; transform: none; }
+}
+
+@keyframes viva-pop {
+    from { opacity: 0; transform: translateY(10px) scale(0.94); }
+    to { opacity: 1; transform: none; }
+}
+
+@keyframes viva-sheen {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+@keyframes viva-wobble {
+    0%, 100% { transform: rotate(-8deg); }
+    50% { transform: rotate(8deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .brand-mark,
+    .btn-stamp,
+    .app-content > *,
+    .lp-hero,
+    .lp-section,
+    .auth-card,
+    .auth-aside,
+    .stat,
+    .week-col,
+    dialog[open] .modal-card {
+        animation: none !important;
+    }
+}

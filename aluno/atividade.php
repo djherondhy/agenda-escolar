@@ -20,7 +20,7 @@ if (!$evento) {
     redirecionar('/aluno/atividades.php');
 }
 
-$concluido = eventoConcluido($pdo, (int) $aluno['id'], $eventoId);
+$concluido = !empty($evento['concluido']);
 $anexos = listarAnexos($pdo, $eventoId);
 
 $tituloPagina = $evento['titulo'];
@@ -51,7 +51,7 @@ require __DIR__ . '/../includes/header.php';
             </dd>
         </div>
         <div>
-            <dt>Professor</dt>
+            <dt>Representante</dt>
             <dd><?= e($evento['professor_nome']) ?></dd>
         </div>
     </dl>
@@ -77,13 +77,9 @@ require __DIR__ . '/../includes/header.php';
         </ul>
     <?php endif; ?>
 
-    <form method="post" action="<?= BASE_URL ?>/aluno/concluir_evento.php">
-        <input type="hidden" name="id" value="<?= $eventoId ?>">
-        <input type="hidden" name="voltar" value="<?= BASE_URL ?>/aluno/atividade.php?id=<?= $eventoId ?>">
-        <button class="btn <?= $concluido ? 'btn-ghost' : 'btn-stamp' ?>" type="submit">
-            <?= $concluido ? 'Desmarcar conclusão' : 'Marcar como concluída' ?>
-        </button>
-    </form>
+    <?php if ($concluido): ?>
+        <p class="chip chip-ok">Concluída pelo representante</p>
+    <?php endif; ?>
 </section>
 
 <?php require __DIR__ . '/../includes/footer.php'; ?>

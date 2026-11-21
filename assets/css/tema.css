@@ -1,0 +1,365 @@
+.tema-botao {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 0 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.tema-botao:hover {
+    border-color: var(--violet, var(--accent));
+}
+
+.tema-botao svg {
+    width: 18px;
+    height: 18px;
+}
+
+.tema-rotulo::after {
+    content: "Escuro";
+}
+
+html[data-tema="escuro"] .tema-rotulo::after {
+    content: "Claro";
+}
+
+html:not([data-tema="escuro"]) .tema-icone-sol,
+html[data-tema="escuro"] .tema-icone-lua {
+    display: none;
+}
+
+.topbar-tools {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.topbar-tools .notif-bell,
+.topbar-tools .topbar-action {
+    margin-left: 0;
+}
+
+.lp-nav-acoes,
+.auth-tools {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.auth-tools {
+    width: min(400px, 100%);
+    margin: 0 auto 22px;
+    justify-content: space-between;
+}
+
+.lp-nav-acoes {
+    margin-left: auto;
+}
+
+.auth-tools .auth-back {
+    width: auto;
+    margin: 0;
+}
+
+.lp-nav .tema-botao,
+.auth-tools .tema-botao {
+    background: #fff;
+}
+
+html[data-tema="escuro"] {
+    color-scheme: dark;
+    --canvas: #14111c;
+    --surface: #221c2c;
+    --ink: #f6f1fb;
+    --ink-soft: #d7cce6;
+    --muted: #b3a4c6;
+    --line: #3a3148;
+    --accent: #a5b4fc;
+    --accent-hover: #c7d2fe;
+    --accent-soft: #2c2640;
+    --input: #2a2436;
+    --ok: #4ade80;
+    --danger: #fca5a5;
+    --ok-soft: #14532d;
+    --danger-soft: #4c1d24;
+    --warn-soft: #4a2c12;
+    --prova: #fca5a5;
+    --trabalho: #93c5fd;
+    --tarefa: #fdba74;
+    --outro: #cbd5e1;
+    --coral: #ff8a6a;
+    --ink: #f6f1fb;
+}
+
+html[data-tema="escuro"] body,
+html[data-tema="escuro"] body.app-body,
+html[data-tema="escuro"] body.lp-body,
+html[data-tema="escuro"] body.auth-body {
+    background: #14111c;
+    color: #f6f1fb;
+}
+
+html[data-tema="escuro"] .page-title {
+    color: #ff8a6a;
+}
+
+html[data-tema="escuro"] .page-title.is-date,
+html[data-tema="escuro"] .lp-hero h1 {
+    color: #f6f1fb;
+}
+
+html[data-tema="escuro"] .social-card,
+html[data-tema="escuro"] .panel,
+html[data-tema="escuro"] .stat,
+html[data-tema="escuro"] .dash-hero,
+html[data-tema="escuro"] .auth-card,
+html[data-tema="escuro"] .modal-card,
+html[data-tema="escuro"] .activity-card,
+html[data-tema="escuro"] .lp-profile,
+html[data-tema="escuro"] .lp-steps li,
+html[data-tema="escuro"] .week-col,
+html[data-tema="escuro"] .week-slot,
+html[data-tema="escuro"] .post-menu form,
+html[data-tema="escuro"] .salas-abas button,
+html[data-tema="escuro"] .salas-busca,
+html[data-tema="escuro"] .composer-top textarea,
+html[data-tema="escuro"] .comentario-form input[type="text"] {
+    background: #221c2c;
+    color: #f6f1fb;
+    border-color: #3a3148;
+}
+
+html[data-tema="escuro"] .stat:nth-child(4n + 1),
+html[data-tema="escuro"] .stat:nth-child(4n + 2),
+html[data-tema="escuro"] .stat:nth-child(4n + 3),
+html[data-tema="escuro"] .stat:nth-child(4n + 4),
+html[data-tema="escuro"] .lp-profile:nth-child(1),
+html[data-tema="escuro"] .lp-profile:nth-child(2) {
+    background: #221c2c;
+}
+
+html[data-tema="escuro"] .social-card small,
+html[data-tema="escuro"] .post-autor span,
+html[data-tema="escuro"] .post-autor time,
+html[data-tema="escuro"] .sala-descricao,
+html[data-tema="escuro"] .sala-membros small,
+html[data-tema="escuro"] .grupo-meta,
+html[data-tema="escuro"] .lateral-texto small,
+html[data-tema="escuro"] .perfil-numeros dt,
+html[data-tema="escuro"] .comentario-topo time,
+html[data-tema="escuro"] .comentario-balao small,
+html[data-tema="escuro"] .comentario-apagar,
+html[data-tema="escuro"] .post-menu summary,
+html[data-tema="escuro"] .field-help,
+html[data-tema="escuro"] .panel-lead,
+html[data-tema="escuro"] .empty {
+    color: #cbbfe0;
+}
+
+html[data-tema="escuro"] .comentario-balao,
+html[data-tema="escuro"] .post-comentarios,
+html[data-tema="escuro"] .post-menu summary:hover,
+html[data-tema="escuro"] .post-menu[open] summary,
+html[data-tema="escuro"] .post-acoes button:hover,
+html[data-tema="escuro"] .lateral-sala:hover,
+html[data-tema="escuro"] .atalhos-card a:hover {
+    background: #2c2438;
+    color: #f6f1fb;
+}
+
+html[data-tema="escuro"] .comentario-balao p,
+html[data-tema="escuro"] .post-texto,
+html[data-tema="escuro"] .post-acoes button,
+html[data-tema="escuro"] .salas-abas button,
+html[data-tema="escuro"] .salas-busca,
+html[data-tema="escuro"] .salas-busca input {
+    color: #f6f1fb;
+}
+
+html[data-tema="escuro"] .composer-top textarea:focus,
+html[data-tema="escuro"] .comentario-form input[type="text"]:focus,
+html[data-tema="escuro"] input,
+html[data-tema="escuro"] select,
+html[data-tema="escuro"] textarea {
+    background: #2a2436;
+    color: #f6f1fb;
+    border-color: #4c4160;
+}
+
+html[data-tema="escuro"] .btn-ghost {
+    background: #2a2436;
+    color: #f6f1fb;
+    border-color: #4c4160;
+}
+
+html[data-tema="escuro"] .nav-toggle,
+html[data-tema="escuro"] .tema-botao,
+html[data-tema="escuro"] .lp-nav .tema-botao,
+html[data-tema="escuro"] .auth-tools .tema-botao {
+    background: #221c2c;
+    color: #f6f1fb;
+    border-color: #3a3148;
+}
+
+html[data-tema="escuro"] .data-table,
+html[data-tema="escuro"] .data-table th,
+html[data-tema="escuro"] .data-table td,
+html[data-tema="escuro"] .cal-day,
+html[data-tema="escuro"] .week-col {
+    background: #221c2c;
+    color: #f6f1fb;
+    border-color: #3a3148;
+}
+
+html[data-tema="escuro"] .cal-day.is-today {
+    background: #3a241c;
+}
+
+html[data-tema="escuro"] .chip-trabalho,
+html[data-tema="escuro"] .chip-professor { background: #134e4a; color: #99f6e4; }
+html[data-tema="escuro"] .chip-reuniao,
+html[data-tema="escuro"] .chip-outro,
+html[data-tema="escuro"] .chip-administrador { background: #3b2660; color: #ddd6fe; }
+html[data-tema="escuro"] .chip-atividade,
+html[data-tema="escuro"] .chip-tarefa,
+html[data-tema="escuro"] .chip-aluno,
+html[data-tema="escuro"] .chip-wait { background: #7c2d12; color: #ffedd5; }
+html[data-tema="escuro"] .chip-prova { background: #7f1d1d; color: #fecaca; }
+html[data-tema="escuro"] .chip-ok { background: #14532d; color: #bbf7d0; }
+
+html[data-tema="escuro"] .cal-event.is-done,
+html[data-tema="escuro"] .activity-card.is-done,
+html[data-tema="escuro"] .agenda-item.is-done,
+html[data-tema="escuro"] .lateral-item.is-done .lateral-data {
+    background: #14532d;
+    color: #bbf7d0;
+}
+
+html[data-tema="escuro"] .cal-event.is-pending,
+html[data-tema="escuro"] .activity-card.is-pending,
+html[data-tema="escuro"] .agenda-item.is-pending,
+html[data-tema="escuro"] .lateral-data {
+    background: #7c2d12;
+    color: #ffedd5;
+}
+
+html[data-tema="escuro"] .notif-item {
+    background: #3a2418;
+    color: #ffedd5;
+}
+
+html[data-tema="escuro"] .notif-item.is-read {
+    background: #221c2c;
+    color: #f6f1fb;
+}
+
+html[data-tema="escuro"] .sala-selo,
+html[data-tema="escuro"] .grupo-status {
+    background: #14532d;
+    color: #bbf7d0;
+}
+
+html[data-tema="escuro"] .ql-toolbar,
+html[data-tema="escuro"] .ql-container {
+    background: #221c2c;
+    color: #f6f1fb;
+    border-color: #3a3148;
+}
+
+html[data-tema="escuro"] .ql-editor.ql-blank::before {
+    color: #b3a4c6;
+}
+
+html[data-tema="escuro"] ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #7c3aed, #ff8a6a) padding-box;
+}
+
+html[data-tema="escuro"] {
+    scrollbar-color: #6d5a90 transparent;
+}
+
+html[data-tema="escuro"] .atividades-filtros,
+html[data-tema="escuro"] .atividade-item {
+    background: #221c2c;
+    border-color: #3a3148;
+    color: #f6f1fb;
+}
+
+html[data-tema="escuro"] .filtro-select,
+html[data-tema="escuro"] .filtro-chave {
+    border-color: #4c4160;
+    color: #f6f1fb;
+}
+
+html[data-tema="escuro"] .filtro-select {
+    background-color: #2a2436;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23cbbfe0' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px 16px;
+}
+
+html[data-tema="escuro"] .filtro-chave {
+    background-color: #2a2436;
+}
+
+html[data-tema="escuro"] .filtro-chave small {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f6f1fb;
+}
+
+html[data-tema="escuro"] .filtro-chave input:not(:checked) {
+    background: #4c4160;
+}
+
+html[data-tema="escuro"] .atividade-item.is-pending .atividade-quando,
+html[data-tema="escuro"] .atividade-item.is-pending .atividade-estado {
+    background: #7c2d12;
+    color: #ffedd5;
+}
+
+html[data-tema="escuro"] .atividade-item.is-done .atividade-quando,
+html[data-tema="escuro"] .atividade-item.is-done .atividade-estado {
+    background: #14532d;
+    color: #bbf7d0;
+}
+
+html[data-tema="escuro"] .atividade-detalhe,
+html[data-tema="escuro"] .atividades-resumo,
+html[data-tema="escuro"] .filtro-legenda {
+    color: #cbbfe0;
+}
+
+html[data-tema="escuro"] .app-dialog::backdrop {
+    background: rgba(8, 6, 12, 0.72);
+}
+
+html[data-tema="escuro"] .app-barra {
+    background: rgba(28, 22, 38, 0.94);
+    border-color: #3a3148;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.4);
+}
+
+html[data-tema="escuro"] .app-barra-item,
+html[data-tema="escuro"] .app-barra-mais,
+html[data-tema="escuro"] .app-barra-centro {
+    color: #cbbfe0;
+}
+
+html[data-tema="escuro"] .app-mais-lista {
+    background: #221c2c;
+    border-color: #3a3148;
+}
+
+html[data-tema="escuro"] .app-mais-lista .app-barra-item.is-active {
+    background: #3a241c;
+}

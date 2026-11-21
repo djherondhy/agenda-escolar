@@ -23,7 +23,7 @@ $errosHorario = $errosHorario ?? [];
                         <th>Dia</th>
                         <th>Horário</th>
                         <th>Disciplina</th>
-                        <th>Professor</th>
+                        <th>Quem ministra</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
@@ -36,7 +36,7 @@ $errosHorario = $errosHorario ?? [];
                                 <?= $aula['hora_fim'] ? ' – ' . formatarHora($aula['hora_fim']) : '' ?>
                             </td>
                             <td data-label="Disciplina"><?= e(rotuloMateria($aula['materia'])) ?></td>
-                            <td data-label="Professor"><?= e($aula['professor_nome']) ?></td>
+                            <td data-label="Quem ministra"><?= e($aula['professor_nome']) ?></td>
                             <td data-label="Ações">
                                 <form method="post" action="<?= e($actionHorario) ?>" data-confirm="Remover este horário?">
                                     <input type="hidden" name="acao" value="remover_horario">

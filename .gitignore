@@ -2,6 +2,9 @@
 uploads/*
 !uploads/.htaccess
 
+# Chaves VAPID: cada ambiente gera as próprias na primeira execução
+config/vapid.php
+
 # Sistema / IDE
 .DS_Store
 Thumbs.db

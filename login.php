@@ -3,6 +3,8 @@
 require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/functions.php';
 
+instalarBancoSeNecessario();
+
 $sessoesAbertas = sessoesAtivas();
 
 $erro = '';
@@ -34,22 +36,26 @@ $temErro = $erro !== '';
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <?php require __DIR__ . '/includes/tema_inicio.php'; ?>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Entrar · Calendário Escolar</title>
+    <title>Entrar · Agenda Acadêmica</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="<?= BASE_URL ?>/assets/img/lapis.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="<?= asset('assets/css/style.css') ?>">
+    <link rel="stylesheet" href="<?= asset('assets/css/viva.css') ?>">
+    <link rel="stylesheet" href="<?= asset('assets/css/tema.css') ?>">
 </head>
 <body class="auth-body">
     <div class="auth-shell">
         <aside class="auth-aside" aria-hidden="true">
             <a class="brand" href="<?= BASE_URL ?>/">
-                <span class="brand-mark">CE</span>
+                <span class="brand-mark"><img src="<?= BASE_URL ?>/assets/img/lapis.svg" alt=""></span>
                 <span class="brand-text">
-                    <strong>Calendário</strong>
-                    <small>Escolar</small>
+                    <strong>Agenda</strong>
+                    <small>Acadêmica</small>
                 </span>
             </a>
             <h2>Prazos da turma em um só lugar.</h2>
@@ -62,7 +68,10 @@ $temErro = $erro !== '';
         </aside>
 
         <main class="auth-main">
-            <a class="auth-back" href="<?= BASE_URL ?>/">Voltar ao início</a>
+            <div class="auth-tools">
+                <a class="auth-back" href="<?= BASE_URL ?>/">Voltar ao início</a>
+                <?php require __DIR__ . '/includes/tema_botao.php'; ?>
+            </div>
 
             <form class="auth-card" method="post" action="<?= BASE_URL ?>/login.php" novalidate>
                 <div class="auth-brand">
@@ -120,25 +129,10 @@ $temErro = $erro !== '';
                 <button class="btn btn-stamp" type="submit">Entrar</button>
             </form>
 
-            <section class="auth-demo" aria-label="Contas para teste">
-                <p>Contas de teste: professores e alunos usam <strong>senha123</strong>. O administrador usa <strong>admin</strong>.</p>
-                <div class="auth-demo-list auth-demo-list-3">
-                    <button type="button" class="auth-demo-btn" data-fill-login="admin@admin.com" data-fill-senha="admin">
-                        <span>Administrador</span>
-                        admin@admin.com
-                    </button>
-                    <button type="button" class="auth-demo-btn" data-fill-login="joao@escola.com" data-fill-senha="senha123">
-                        <span>Professor</span>
-                        João da Silva
-                    </button>
-                    <button type="button" class="auth-demo-btn" data-fill-login="carlos@escola.com" data-fill-senha="senha123">
-                        <span>Aluno</span>
-                        Carlos Souza
-                    </button>
-                </div>
-            </section>
         </main>
     </div>
-    <script src="<?= BASE_URL ?>/assets/js/script.js"></script>
+    <script src="<?= asset('assets/js/script.js') ?>"></script>
+    <script src="<?= asset('assets/js/viva.js') ?>"></script>
+    <script src="<?= asset('assets/js/tema.js') ?>"></script>
 </body>
 </html>

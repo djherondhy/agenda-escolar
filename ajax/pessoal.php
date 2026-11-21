@@ -33,4 +33,10 @@ echo json_encode([
     'materia'     => $atividade['materia'],
     'concluido'   => (bool) $atividade['concluido'],
     'prazo'       => rotuloPrazo($atividade['data_evento']),
+    'anexos'      => array_map(static function (array $anexo): array {
+        return [
+            'nome' => $anexo['nome_original'],
+            'url'  => UPLOAD_URL . '/' . $anexo['caminho'],
+        ];
+    }, listarAnexosDaLinha($pdo, 'aluno_atividade_anexos', 'atividade_id', (int) $atividade['id'])),
 ]);
