@@ -84,6 +84,9 @@
     box-shadow: 0 0 0 2px #fff;
 }
 
+.avatar-foto { overflow: hidden; }
+.avatar-foto img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
 .avatar-sm { width: 32px; height: 32px; font-size: 12px; }
 .avatar-lg { width: 48px; height: 48px; font-size: 17px; }
 .avatar-xl { width: 76px; height: 76px; font-size: 26px; box-shadow: 0 0 0 4px #fff, 0 8px 20px rgba(48, 24, 80, 0.18); }
@@ -1513,3 +1516,93 @@ html {
         transition: none;
     }
 }
+
+/* Perfil da conta: foto, senha e aviso de senha provisória */
+.alert-aviso {
+    background: var(--warn-soft);
+    color: #7a4a00;
+}
+
+.alert-aviso a {
+    color: inherit;
+    font-weight: 700;
+}
+
+.topbar-perfil {
+    display: inline-flex;
+    border-radius: 50%;
+    text-decoration: none;
+}
+
+.topbar-perfil .avatar {
+    box-shadow: 0 0 0 2px var(--line);
+}
+
+.perfil-conta + .perfil-conta {
+    margin-top: 16px;
+}
+
+.perfil-conta-topo {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.perfil-conta-topo h2 {
+    margin: 0;
+}
+
+.perfil-conta h3 {
+    margin: 0 0 10px;
+    font-size: 16px;
+}
+
+.perfil-form {
+    max-width: 520px;
+    margin-bottom: 12px;
+}
+
+.perfil-form .form-actions {
+    margin-top: 12px;
+}
+
+/* Avisos no aparelho (notificações push) */
+.push-caixa {
+    margin: 12px 0 20px;
+    padding: 14px;
+    border-radius: 10px;
+    background: var(--accent-soft);
+}
+
+.push-status {
+    margin: 0 0 10px;
+    font-weight: 600;
+}
+
+.push-status.is-erro {
+    color: var(--danger);
+}
+
+.push-dica {
+    margin-top: 12px;
+    font-size: 14px;
+}
+
+.push-dica ol,
+.push-ajuda ul {
+    margin: 6px 0 0;
+    padding-left: 20px;
+}
+
+.push-ajuda {
+    margin-top: 12px;
+    font-size: 14px;
+}
+
+.push-ajuda summary {
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.push-caixa [hidden] { display: none !important; }

@@ -15,6 +15,8 @@ if ($tipoUsuario === 'aluno' && $usuario) {
     }
 }
 
+$urlPerfil = BASE_URL . ($tipoUsuario === 'administrador' ? '/admin/perfil.php' : '/aluno/perfil.php');
+
 $itensMenu = [];
 $adicionarMenu = static function (string $id, string $rotulo, string $href, bool $centro = false) use (&$itensMenu, $menuAtivo): void {
     $itensMenu[] = [
@@ -149,6 +151,7 @@ $linkBarra = static function (array $item, bool $centro = false): string {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
     <link rel="icon" href="<?= BASE_URL ?>/assets/img/lapis.svg" type="image/svg+xml">
+    <?php require __DIR__ . '/pwa_head.php'; ?>
     <link rel="stylesheet" href="<?= asset('assets/css/style.css') ?>">
     <link rel="stylesheet" href="<?= asset('assets/css/viva.css') ?>">
     <link rel="stylesheet" href="<?= asset('assets/css/social.css') ?>">
@@ -178,6 +181,7 @@ $linkBarra = static function (array $item, bool $centro = false): string {
                 <div class="side-user">
                     <span class="side-user-name"><?= e($usuario['nome']) ?></span>
                     <span class="side-user-role"><?= e($ehRepresentante && $tipoUsuario === 'aluno' ? 'Representante de turma' : rotuloPerfil($tipoUsuario)) ?></span>
+                    <a class="side-user-out side-user-perfil" href="<?= e($urlPerfil) ?>">Meu perfil e senha</a>
                     <a class="side-user-out" href="<?= BASE_URL ?>/logout.php?contexto=<?= $tipoUsuario === 'administrador' ? 'administrador' : 'usuario' ?>">Sair</a>
                 </div>
             <?php endif; ?>
@@ -226,6 +230,9 @@ $linkBarra = static function (array $item, bool $centro = false): string {
                 <h1 class="page-title <?= $menuAtivo === 'dashboard' ? 'is-date' : '' ?>"><?= e($tituloPagina) ?></h1>
                 <div class="topbar-tools">
                     <?php require __DIR__ . '/tema_botao.php'; ?>
+                    <?php if ($usuario): ?>
+                        <a class="topbar-perfil" href="<?= e($urlPerfil) ?>" aria-label="Meu perfil" title="Meu perfil"><?= avatarSocial((int) $usuario['id'], (string) $usuario['nome'], 'sm') ?></a>
+                    <?php endif; ?>
                     <?php if ($tipoUsuario === 'aluno'): ?>
                         <a class="notif-bell<?= $notificacoesNaoLidas ? ' has-alert' : '' ?>" href="<?= BASE_URL ?>/aluno/notificacoes.php" aria-label="Notificações<?= $notificacoesNaoLidas ? ', ' . $notificacoesNaoLidas . ' não lidas' : '' ?>">
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9a6 6 0 1 1 12 0c0 7 3 7 3 9H3c0-2 3-2 3-9Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 20a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -240,4 +247,9 @@ $linkBarra = static function (array $item, bool $centro = false): string {
                 </div>
             </header>
             <main class="app-content">
+                <?php if ($usuario && $menuAtivo !== 'perfil' && senhaProvisoriaAtiva((int) $usuario['id'])): ?>
+                    <div class="alert alert-aviso senha-aviso" role="status">
+                        Você está usando uma senha provisória. <a href="<?= e($urlPerfil) ?>#senha">Crie a sua senha agora</a>.
+                    </div>
+                <?php endif; ?>
                 <div class="nav-backdrop" data-nav-close hidden></div>

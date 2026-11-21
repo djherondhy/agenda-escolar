@@ -109,7 +109,7 @@ if (count($sessoesAbertas) === 1) {
         <section class="lp-section lp-qr" id="no-celular">
             <div>
                 <h2>Abrir no celular</h2>
-                <p class="lp-section-lead">Aponte a câmera para abrir no celular. O celular precisa estar na mesma rede Wi-Fi deste computador.</p>
+                <p class="lp-section-lead">Aponte a câmera do celular para abrir a Agenda Acadêmica. Depois, é só entrar com o seu e-mail.</p>
                 <p class="lp-qr-url"><?= e(urlParaCelular()) ?></p>
             </div>
             <div class="lp-qr-code"><?= qrSvg(urlParaCelular()) ?></div>

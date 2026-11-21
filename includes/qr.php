@@ -2,6 +2,11 @@
 
 function urlParaCelular(): string
 {
+    // Produção: o QR Code sempre aponta para o endereço público (APP_URL).
+    if (env('APP_URL') !== null) {
+        return origemPublica() . BASE_URL . '/';
+    }
+
     $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
         || ((int) ($_SERVER['SERVER_PORT'] ?? 80) === 443)
         || apacheSslAtivo();

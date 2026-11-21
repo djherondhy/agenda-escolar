@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $erros[] = 'Selecione um perfil válido.';
     }
 
-    if (strlen($senha) < 5) {
+    if ($senha !== '' && strlen($senha) < 5) {
         $erros[] = 'A senha deve ter pelo menos 5 caracteres.';
     }
 
@@ -62,15 +62,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $pdo->beginTransaction();
 
+            // Sem senha informada: usa a padrão e pede para o próprio usuário trocar depois.
+            $provisoria = $senha === '';
             $stmt = $pdo->prepare(
-                'INSERT INTO usuarios (nome, email, senha, tipo)
-                 VALUES (:nome, :email, :senha, :tipo)'
+                'INSERT INTO usuarios (nome, email, senha, tipo, senha_provisoria)
+                 VALUES (:nome, :email, :senha, :tipo, :provisoria)'
             );
             $stmt->execute([
-                'nome'  => $dados['nome'],
-                'email' => $dados['email'],
-                'senha' => password_hash($senha, PASSWORD_DEFAULT),
-                'tipo'  => $dados['tipo'],
+                'nome'       => $dados['nome'],
+                'email'      => $dados['email'],
+                'senha'      => password_hash($provisoria ? SENHA_PADRAO_USUARIO : $senha, PASSWORD_DEFAULT),
+                'tipo'       => $dados['tipo'],
+                'provisoria' => $provisoria ? 1 : 0,
             ]);
 
             sincronizarPerfilUsuario($pdo, (int) $pdo->lastInsertId(), $dados['tipo'], $dados);
@@ -122,7 +125,8 @@ require __DIR__ . '/../includes/header.php';
 
             <div class="field">
                 <label for="senha">Senha</label>
-                <input id="senha" name="senha" type="password" required autocomplete="new-password">
+                <input id="senha" name="senha" type="password" autocomplete="new-password" placeholder="Deixe em branco para usar <?= e(SENHA_PADRAO_USUARIO) ?>">
+                <small class="field-help">Em branco, a senha será <strong><?= e(SENHA_PADRAO_USUARIO) ?></strong> e o próprio usuário troca depois em "Meu perfil".</small>
             </div>
 
             <?php require __DIR__ . '/../includes/usuario_turmas_fields.php'; ?>

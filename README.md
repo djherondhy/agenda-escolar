@@ -39,6 +39,16 @@ O `BASE_URL` é detectado sozinho; use `APP_BASE_URL` no `.env` apenas se precis
 | admin@admin.com | adminadmin | Administrador |
 
 Altere a senha após o primeiro acesso. Alunos e representantes são cadastrados pelo administrador.
+
+Ao cadastrar um usuário **sem senha**, ela fica como `ifam2026` e aparece um aviso para a pessoa criar a própria senha em **Meu perfil** (ícone no topo da tela). Lá também dá para enviar a foto de perfil.
+
+## Notificações (navegador e celular)
+
+Funcionam por Web Push e exigem **HTTPS** (já ativo em produção). O aluno abre **Notificações** (sino) e toca em **Ativar avisos neste aparelho**; o botão **Enviar aviso de teste** confirma que está tudo certo.
+
+- Android e computador: Chrome, Edge ou Firefox, basta permitir.
+- iPhone/iPad (iOS 16.4+): abrir no Safari, **Compartilhar → Adicionar à Tela de Início**, abrir pelo ícone e ativar os avisos.
+- O QR Code da página inicial usa o `APP_URL` do `.env`.
 ## Funcionalidades
 
 ### Representante de turma

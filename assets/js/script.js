@@ -715,34 +715,6 @@ document.addEventListener('DOMContentLoaded', () => {
         aplicarFiltros();
     }
 
-    const ativarPush = document.getElementById('ativar-push');
-    ativarPush?.addEventListener('click', async () => {
-        const status = document.getElementById('push-status');
-        if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-            if (status) status.textContent = 'Este navegador não recebe avisos na tela do celular.';
-            return;
-        }
-        try {
-            const registro = await navigator.serviceWorker.register(`${window.APP_BASE}/sw.js`);
-            const inscricao = await registro.pushManager.subscribe({
-                userVisibleOnly: true,
-                applicationServerKey: base64UrlParaBytes(ativarPush.dataset.vapid || ''),
-            });
-            const resposta = await fetch(`${window.APP_BASE}/aluno/push_salvar.php`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(inscricao),
-            });
-            if (status) {
-                status.textContent = resposta.ok
-                    ? 'Avisos ativados neste celular.'
-                    : 'Não foi possível guardar o aviso deste celular.';
-            }
-        } catch (erro) {
-            if (status) status.textContent = 'Permissão negada ou o site não está em HTTPS.';
-        }
-    });
-
     const avisoSocial = (texto, erro = false) => {
         if (!texto) {
             return;

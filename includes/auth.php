@@ -10,6 +10,13 @@ function nomeSessaoPorTipo(string $tipo): string
     return $tipo === 'administrador' ? SESSAO_ADMIN : SESSAO_USER;
 }
 
+function requisicaoHttps(): bool
+{
+    return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || strtolower((string) ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https'
+        || (int) ($_SERVER['SERVER_PORT'] ?? 80) === 443;
+}
+
 function iniciarSessaoNome(string $nome): void
 {
     if (session_status() === PHP_SESSION_ACTIVE) {
@@ -23,7 +30,7 @@ function iniciarSessaoNome(string $nome): void
     session_set_cookie_params([
         'lifetime' => 0,
         'path'     => '/',
-        'secure'   => false,
+        'secure'   => requisicaoHttps(),
         'httponly' => true,
         'samesite' => 'Lax',
     ]);

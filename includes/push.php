@@ -69,10 +69,6 @@ function base64UrlDecode(string $texto): string
 
 function enviarPushNovaAtividade(PDO $pdo, int $eventoId, int $turmaId): void
 {
-    if (!function_exists('curl_init') || !function_exists('openssl_pkey_new')) {
-        return;
-    }
-
     $evento = $pdo->prepare(
         'SELECT titulo, tipo FROM eventos WHERE id = :id LIMIT 1'
     );
@@ -89,36 +85,66 @@ function enviarPushNovaAtividade(PDO $pdo, int $eventoId, int $turmaId): void
          WHERE a.turma_id = :turma_id'
     );
     $inscritos->execute(['turma_id' => $turmaId]);
-    $lista = $inscritos->fetchAll();
-    if (!$lista) {
-        return;
+
+    dispararPush($pdo, $inscritos->fetchAll(), montarPayloadPush(
+        'Nova atividade da turma',
+        rotuloTipo($linha['tipo']) . ': ' . $linha['titulo'],
+        '/aluno/atividade.php?id=' . $eventoId,
+        'atividade-' . $eventoId
+    ));
+}
+
+function urlBaseDoPedido(): string
+{
+    return origemPublica() . BASE_URL;
+}
+
+function montarPayloadPush(string $titulo, string $corpo, string $caminho, string $tag): array
+{
+    $base = urlBaseDoPedido();
+
+    return [
+        'title' => $titulo,
+        'body'  => $corpo,
+        'url'   => $base . $caminho,
+        'icon'  => $base . '/assets/img/icon-192.png',
+        'badge' => $base . '/assets/img/icon-192.png',
+        'tag'   => $tag,
+    ];
+}
+
+/**
+ * Envia o aviso para cada inscrição e apaga as que o serviço de push já não aceita (404/410).
+ * Devolve o status HTTP de cada envio (201 = entregue ao serviço de push).
+ */
+function dispararPush(PDO $pdo, array $lista, array $payload): array
+{
+    if (!$lista || !function_exists('curl_init') || !function_exists('openssl_pkey_new')) {
+        return [];
     }
 
     $chaves = garantirChavesVapid();
-    $payload = json_encode([
-        'title' => 'Agenda Acadêmica',
-        'body'  => rotuloTipo($linha['tipo']) . ': ' . $linha['titulo'],
-        'url'   => urlBaseDoPedido() . '/aluno/atividade.php?id=' . $eventoId,
-    ], JSON_UNESCAPED_UNICODE);
+    $json = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    $statuses = [];
 
     foreach ($lista as $inscricao) {
-        $status = enviarUmPush($inscricao, $payload, $chaves);
+        $status = enviarUmPush($inscricao, $json, $chaves);
+        $statuses[] = $status;
         if ($status === 404 || $status === 410) {
             $apagar = $pdo->prepare('DELETE FROM push_inscricoes WHERE id = :id');
             $apagar->execute(['id' => $inscricao['id']]);
         }
     }
+
+    return $statuses;
 }
 
-function urlBaseDoPedido(): string
+function inscricoesDoAluno(PDO $pdo, int $alunoId): array
 {
-    $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-        || ((int) ($_SERVER['SERVER_PORT'] ?? 80) === 443);
-    $porta = (int) ($_SERVER['SERVER_PORT'] ?? ($https ? 443 : 80));
-    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    $esquema = $https ? 'https' : 'http';
+    $stmt = $pdo->prepare('SELECT id, endpoint, p256dh, auth FROM push_inscricoes WHERE aluno_id = :aluno_id');
+    $stmt->execute(['aluno_id' => $alunoId]);
 
-    return $esquema . '://' . $host . BASE_URL;
+    return $stmt->fetchAll();
 }
 
 function enviarUmPush(array $inscricao, string $payload, array $chaves): int
@@ -138,8 +164,11 @@ function enviarUmPush(array $inscricao, string $payload, array $chaves): int
         CURLOPT_POST => true,
         CURLOPT_POSTFIELDS => $corpo,
         CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_CONNECTTIMEOUT => 4,
+        CURLOPT_TIMEOUT => 8,
         CURLOPT_HTTPHEADER => [
             'TTL: 86400',
+            'Urgency: high',
             'Content-Type: application/octet-stream',
             'Content-Encoding: aes128gcm',
             'Authorization: vapid t=' . $jwt . ', k=' . $chaves['public'],
@@ -152,14 +181,13 @@ function enviarUmPush(array $inscricao, string $payload, array $chaves): int
 
     return $status;
 }
-
 function jwtVapid(string $aud, string $privada): string
 {
     $cabeca = base64Url(json_encode(['typ' => 'JWT', 'alg' => 'ES256']));
     $corpo = base64Url(json_encode([
         'aud' => $aud,
         'exp' => time() + 12 * 3600,
-        'sub' => 'mailto:admin@admin.com',
+        'sub' => origemPublica(),
     ]));
     openssl_sign($cabeca . '.' . $corpo, $assinatura, $privada, OPENSSL_ALGO_SHA256);
 

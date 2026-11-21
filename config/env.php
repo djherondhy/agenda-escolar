@@ -93,6 +93,25 @@ function configurarBanco(): array
 }
 
 /**
+ * Origem pública do site (esquema + domínio), sem barra final.
+ * Usa APP_URL do .env (ex.: https://academico.wararadev.com); sem ele, deduz da requisição.
+ */
+function origemPublica(): string
+{
+    $definido = env('APP_URL');
+    if ($definido !== null) {
+        return rtrim($definido, '/');
+    }
+
+    $proxy = strtolower((string) ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? ''));
+    $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || (int) ($_SERVER['SERVER_PORT'] ?? 80) === 443
+        || $proxy === 'https';
+
+    return ($https ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
+}
+
+/**
  * BASE_URL: usa APP_BASE_URL se definido; senão, em localhost usa /c-estudantil
  * e em produção detecta a pasta onde o projeto está publicado.
  */

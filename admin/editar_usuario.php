@@ -95,8 +95,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ];
 
             if ($senha !== '') {
-                $sql .= ', senha = :senha';
+                // Senha definida pelo admin para outra pessoa é provisória: ela deve trocar depois.
+                $sql .= ', senha = :senha, senha_provisoria = :provisoria';
                 $params['senha'] = password_hash($senha, PASSWORD_DEFAULT);
+                $params['provisoria'] = $ehProprio ? 0 : 1;
             }
 
             $sql .= ' WHERE id = :id';

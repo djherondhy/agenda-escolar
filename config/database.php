@@ -20,6 +20,8 @@ unset($bancoCfg);
 
 const ADMIN_EMAIL_PADRAO = 'admin@admin.com';
 const ADMIN_SENHA_PADRAO = 'adminadmin';
+// Senha inicial de quem for cadastrado sem senha; cada usuário troca depois em "Meu perfil".
+const SENHA_PADRAO_USUARIO = 'ifam2026';
 
 function dsnBanco(bool $comBanco = true): string
 {
@@ -87,6 +89,7 @@ function getPDO(): PDO
             garantirNotificacoes($pdo);
             garantirPush($pdo);
             garantirRepresentanteAluno($pdo);
+            garantirPerfilUsuario($pdo);
             require_once dirname(__DIR__) . '/includes/comunidade.php';
             garantirComunidade($pdo);
             prepararProducao($pdo);
@@ -310,6 +313,17 @@ function garantirRepresentanteAluno(PDO $pdo): void
     $coluna = $pdo->query("SHOW COLUMNS FROM alunos LIKE 'representante'")->fetch();
     if (!$coluna) {
         $pdo->exec('ALTER TABLE alunos ADD COLUMN representante TINYINT(1) NOT NULL DEFAULT 0 AFTER turma_id');
+    }
+}
+
+function garantirPerfilUsuario(PDO $pdo): void
+{
+    if (!$pdo->query("SHOW COLUMNS FROM usuarios LIKE 'foto'")->fetch()) {
+        $pdo->exec('ALTER TABLE usuarios ADD COLUMN foto VARCHAR(255) NULL');
+    }
+
+    if (!$pdo->query("SHOW COLUMNS FROM usuarios LIKE 'senha_provisoria'")->fetch()) {
+        $pdo->exec('ALTER TABLE usuarios ADD COLUMN senha_provisoria TINYINT(1) NOT NULL DEFAULT 0');
     }
 }
 

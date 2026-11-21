@@ -44,6 +44,7 @@ $temErro = $erro !== '';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
     <link rel="icon" href="<?= BASE_URL ?>/assets/img/lapis.svg" type="image/svg+xml">
+    <?php require __DIR__ . '/includes/pwa_head.php'; ?>
     <link rel="stylesheet" href="<?= asset('assets/css/style.css') ?>">
     <link rel="stylesheet" href="<?= asset('assets/css/viva.css') ?>">
     <link rel="stylesheet" href="<?= asset('assets/css/tema.css') ?>">

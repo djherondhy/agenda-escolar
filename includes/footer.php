@@ -79,5 +79,19 @@
     <script src="<?= asset('assets/js/script.js') ?>"></script>
     <script src="<?= asset('assets/js/viva.js') ?>"></script>
     <script src="<?= asset('assets/js/tema.js') ?>"></script>
+    <?php
+    if (($tipoUsuario ?? '') === 'aluno' && !empty($alunoModal)) {
+        try {
+            require_once __DIR__ . '/push.php';
+            $chavePushRodape = garantirChavesVapid()['public'];
+        } catch (Throwable $e) {
+            $chavePushRodape = '';
+        }
+        if ($chavePushRodape !== '') {
+            echo '<script>window.APP_PUSH = ' . json_encode(['vapid' => $chavePushRodape, 'alunoId' => (int) $alunoModal['id']]) . ';</script>' . "\n";
+            echo '    <script src="' . asset('assets/js/push.js') . '"></script>' . "\n";
+        }
+    }
+    ?>
 </body>
 </html>

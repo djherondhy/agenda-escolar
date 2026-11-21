@@ -313,6 +313,11 @@ function avatarSocial(int $id, string $nome, string $tamanho = ''): string
 {
     $classe = 'avatar av-' . (($id % 6) + 1) . ($tamanho !== '' ? ' avatar-' . $tamanho : '');
 
+    $foto = fotoUsuario($id);
+    if ($foto !== null) {
+        return '<span class="' . $classe . ' avatar-foto" aria-hidden="true"><img src="' . e(urlFotoPerfil($foto)) . '" alt="" loading="lazy"></span>';
+    }
+
     return '<span class="' . $classe . '" aria-hidden="true">' . e(iniciaisNome($nome)) . '</span>';
 }
 
