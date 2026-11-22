@@ -2,12 +2,14 @@
 $horariosPainel = $horariosPainel ?? [];
 $opcoesHorario = $opcoesHorario ?? [];
 $actionHorario = $actionHorario ?? '';
-$errosHorario = $errosHorario ?? [];
+$horarioEmbutido = $horarioEmbutido ?? false;
 ?>
 
+<?php if (!$horarioEmbutido): ?>
 <section class="panel">
     <h2>Horários de aula</h2>
     <p class="panel-lead">A grade semanal que os alunos veem em Horários e em cada disciplina.</p>
+<?php endif; ?>
 
     <?php foreach ($errosHorario as $erro): ?>
         <div class="alert alert-error"><?= e($erro) ?></div>
@@ -90,4 +92,6 @@ $errosHorario = $errosHorario ?? [];
             <button class="btn btn-stamp" type="submit">Adicionar horário</button>
         </form>
     <?php endif; ?>
+<?php if (!$horarioEmbutido): ?>
 </section>
+<?php endif; ?>

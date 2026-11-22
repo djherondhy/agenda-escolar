@@ -63,17 +63,6 @@ require __DIR__ . '/../includes/header.php';
 <?php endif; ?>
 
 <section class="panel">
-    <div class="panel-head">
-        <h2>Turmas padrão</h2>
-    </div>
-    <p class="panel-lead">Adiciona, se ainda não existirem, 1º, 2º e 3º anos de Informática, Administração e Agropecuária, já com a grade do IFAM.</p>
-    <form method="post" action="<?= BASE_URL ?>/admin/turmas.php">
-        <input type="hidden" name="popular" value="1">
-        <button class="btn btn-stamp empty-action" type="submit">Popular turmas padrão</button>
-    </form>
-</section>
-
-<section class="panel">
     <h2>Nova turma</h2>
 
     <?php foreach ($erros as $erro): ?>
@@ -139,6 +128,17 @@ require __DIR__ . '/../includes/header.php';
             </table>
         </div>
     <?php endif; ?>
+</section>
+
+<section class="panel">
+    <div class="panel-head">
+        <h2>Turmas padrão</h2>
+    </div>
+    <p class="panel-lead">Adiciona, se ainda não existirem, 1º, 2º e 3º anos de Informática, Administração e Agropecuária, já com a grade do IFAM.</p>
+    <form method="post" action="<?= BASE_URL ?>/admin/turmas.php">
+        <input type="hidden" name="popular" value="1">
+        <button class="btn btn-ghost" type="submit">Popular turmas padrão</button>
+    </form>
 </section>
 
 <?php require __DIR__ . '/../includes/footer.php'; ?>

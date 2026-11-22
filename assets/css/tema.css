@@ -239,6 +239,96 @@ html[data-tema="escuro"] .chip-post { background: #134e4a; color: #99f6e4; }
 html[data-tema="escuro"] .chip-comentario { background: #3b2660; color: #ddd6fe; }
 html[data-tema="escuro"] .chip-ok { background: #14532d; color: #bbf7d0; }
 
+html[data-tema="escuro"] .grade-nucleo {
+    background: #221c2c;
+    border-color: #3a3148;
+}
+
+html[data-tema="escuro"] .grade-nucleo-basico .grade-nucleo-topo { background: #3a241c; }
+html[data-tema="escuro"] .grade-nucleo-basico .grade-nucleo-marca { background: #7c2d12; color: #ffedd5; }
+html[data-tema="escuro"] .grade-nucleo-politecnico .grade-nucleo-topo { background: #2a2140; }
+html[data-tema="escuro"] .grade-nucleo-politecnico .grade-nucleo-marca { background: #3b2660; color: #ddd6fe; }
+html[data-tema="escuro"] .grade-nucleo-tecnico .grade-nucleo-topo { background: #132e2b; }
+html[data-tema="escuro"] .grade-nucleo-tecnico .grade-nucleo-marca { background: #134e4a; color: #99f6e4; }
+
+html[data-tema="escuro"] .grade-linha:hover { background: #2a2436; }
+
+html[data-tema="escuro"] .grade-linha input[type="text"] {
+    background: transparent;
+    color: #f6f1fb;
+    border-color: transparent;
+}
+
+html[data-tema="escuro"] .grade-linha input[type="text"]:hover,
+html[data-tema="escuro"] .grade-linha input[type="text"]:focus {
+    background: #1b1624;
+    border-color: #4c4160;
+}
+
+html[data-tema="escuro"] .grade-ico:hover {
+    background: #1b1624;
+    color: #ddd6fe;
+}
+
+html[data-tema="escuro"] .grade-ico-remover:hover {
+    background: #3f1d24;
+    color: #fecdd3;
+}
+
+html[data-tema="escuro"] .turma-abas a {
+    background: #221c2c;
+    border-color: #3a3148;
+    color: #f6f1fb;
+}
+
+html[data-tema="escuro"] .turma-abas a:hover {
+    border-color: #6d28d9;
+    color: #fff;
+}
+
+html[data-tema="escuro"] .turma-aba-n {
+    background: #2a2436;
+    color: #ddd6fe;
+}
+
+html[data-tema="escuro"] .turma-perigo {
+    background: #2a1820;
+    border-color: #7f1d1d;
+}
+
+html[data-tema="escuro"] .quadro-intervalo th,
+html[data-tema="escuro"] .quadro-intervalo td,
+html[data-tema="escuro"] .quadro-celula.is-vazia {
+    background: #221c2c;
+    color: #ddd6fe;
+}
+
+html[data-tema="escuro"] .quadro-aula,
+html[data-tema="escuro"] .quadro-chip {
+    background: #3a241c;
+    border-color: #9a3412;
+    color: #fff7ed;
+}
+
+html[data-tema="escuro"] .quadro-aula[data-nucleo="politecnico"],
+html[data-tema="escuro"] .quadro-chip[data-nucleo="politecnico"] {
+    background: #2a2140;
+    border-color: #6d28d9;
+    color: #f5f3ff;
+}
+
+html[data-tema="escuro"] .quadro-aula[data-nucleo="tecnico"],
+html[data-tema="escuro"] .quadro-chip[data-nucleo="tecnico"] {
+    background: #132e2b;
+    border-color: #0f766e;
+    color: #ecfdf5;
+}
+
+html[data-tema="escuro"] .quadro-x:hover {
+    background: #3f1d24;
+    color: #fecdd3;
+}
+
 html[data-tema="escuro"] .cal-event.is-done,
 html[data-tema="escuro"] .activity-card.is-done,
 html[data-tema="escuro"] .agenda-item.is-done,
