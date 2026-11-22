@@ -3,8 +3,8 @@
 /**
  * Lembrete do dia anterior.
  *
- * Na Hostinger, crie um Cron Job do tipo PHP, uma vez por dia (por exemplo 08:00):
- *   php /home/SEU_USUARIO/domains/academico.wararadev.com/public_html/cron/lembretes.php
+ * Na Hostinger, Cron Jobs, uma vez por dia (0 8 * * *), comando:
+ *   /usr/bin/php /home/u838736489/public_html/academico/cron/lembretes.php
  *
  * Também aceita uma URL, se o painel só tiver wget/curl:
  *   https://academico.wararadev.com/cron/lembretes.php?token=O_TOKEN

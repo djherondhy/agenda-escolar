@@ -58,13 +58,13 @@ O mesmo texto pode chegar no celular por Web Push. É preciso **HTTPS** (já ati
 
 ### Lembrete da véspera na Hostinger
 
-O lembrete sai sozinho na primeira visita do dia. Para garantir o envio mesmo sem ninguém no site, crie um Cron Job no hPanel, tipo **PHP**, uma vez por dia (por exemplo 08:00, horário de Manaus):
+O lembrete sai sozinho na primeira visita do dia. Para garantir o envio mesmo sem ninguém no site, crie um Cron Job no hPanel, uma vez por dia (`0 8 * * *`), e cole:
 
 ```text
-php /home/SEU_USUARIO/domains/academico.wararadev.com/public_html/cron/lembretes.php
+/usr/bin/php /home/u838736489/public_html/academico/cron/lembretes.php
 ```
 
-Troque `SEU_USUARIO` e a pasta pelo caminho real (Gerenciador de arquivos do hPanel mostra o caminho). Se o painel só aceitar uma URL:
+Se o painel só aceitar uma URL:
 
 ```text
 https://academico.wararadev.com/cron/lembretes.php?token=O_TOKEN
