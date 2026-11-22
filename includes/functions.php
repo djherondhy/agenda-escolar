@@ -1001,6 +1001,7 @@ function popularTurmasPadrao(PDO $pdo): int
         }
 
         $inserir->execute(['nome' => $nome, 'ano' => $ano]);
+        aplicarGradePadrao($pdo, (int) $pdo->lastInsertId());
         $inseridas++;
     }
 
@@ -1079,22 +1080,45 @@ function rotuloDiaSemana(int $dia): string
 
 function listarDisciplinasDaTurma(PDO $pdo, int $turmaId): array
 {
+    $grupos = [];
+    try {
+        $stmt = $pdo->prepare(
+            'SELECT nome, nucleo, ordem
+             FROM disciplinas_turma
+             WHERE turma_id = :turma_id
+             ORDER BY ordem, nome'
+        );
+        $stmt->execute(['turma_id' => $turmaId]);
+        foreach ($stmt->fetchAll() as $linha) {
+            $chave = mb_strtolower(trim((string) $linha['nome']));
+            $grupos[$chave] = [
+                'materia'     => $linha['nome'],
+                'nucleo'      => $linha['nucleo'],
+                'ordem'       => (int) $linha['ordem'],
+                'professores' => [],
+            ];
+        }
+    } catch (Throwable $e) {
+        $grupos = [];
+    }
+
     $stmt = $pdo->prepare(
         'SELECT pt.materia, p.id AS professor_id, u.nome AS professor_nome
          FROM professor_turmas pt
          INNER JOIN professores p ON p.id = pt.professor_id
          INNER JOIN usuarios u ON u.id = p.usuario_id
-         WHERE pt.turma_id = :turma_id
-         ORDER BY pt.materia = \'\', pt.materia, u.nome'
+         WHERE pt.turma_id = :turma_id AND pt.materia <> \'\'
+         ORDER BY pt.materia, u.nome'
     );
     $stmt->execute(['turma_id' => $turmaId]);
 
-    $grupos = [];
     foreach ($stmt->fetchAll() as $linha) {
         $chave = mb_strtolower(trim((string) $linha['materia']));
         if (!isset($grupos[$chave])) {
             $grupos[$chave] = [
                 'materia'     => $linha['materia'],
+                'nucleo'      => '',
+                'ordem'       => 1000,
                 'professores' => [],
             ];
         }
@@ -1475,3 +1499,4 @@ function destinovoltarAluno(?string $voltar): string
 }
 
 require_once __DIR__ . '/comunidade.php';
+require_once __DIR__ . '/grades.php';

@@ -31,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'nome' => $nome,
                 'ano'  => $ano !== '' ? $ano : null,
             ]);
+            aplicarGradePadrao($pdo, (int) $pdo->lastInsertId());
             redirecionar('/admin/turmas.php?ok=1');
         }
     }
@@ -65,7 +66,7 @@ require __DIR__ . '/../includes/header.php';
     <div class="panel-head">
         <h2>Turmas padrão</h2>
     </div>
-    <p class="panel-lead">Adiciona, se ainda não existirem, 1º, 2º e 3º anos de Informática, Administração e Agropecuária.</p>
+    <p class="panel-lead">Adiciona, se ainda não existirem, 1º, 2º e 3º anos de Informática, Administração e Agropecuária, já com a grade do IFAM.</p>
     <form method="post" action="<?= BASE_URL ?>/admin/turmas.php">
         <input type="hidden" name="popular" value="1">
         <button class="btn btn-stamp empty-action" type="submit">Popular turmas padrão</button>

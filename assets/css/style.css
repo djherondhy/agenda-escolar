@@ -357,6 +357,31 @@ form .btn-stamp {
     gap: 4px;
 }
 
+.grade-bloco + .grade-bloco {
+    margin-top: 18px;
+}
+
+.grade-linha {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.grade-linha form:first-child {
+    display: flex;
+    flex: 1 1 280px;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.grade-linha input[type="text"] {
+    flex: 1 1 180px;
+    min-width: 0;
+}
+
 .btn-compact {
     min-height: 28px;
     padding: 2px 8px;

@@ -91,6 +91,8 @@ function getPDO(): PDO
             garantirAvisos($pdo);
             garantirRepresentanteAluno($pdo);
             garantirPerfilUsuario($pdo);
+            require_once dirname(__DIR__) . '/includes/grades.php';
+            garantirGradesTurmas($pdo);
             require_once dirname(__DIR__) . '/includes/comunidade.php';
             garantirComunidade($pdo);
             prepararProducao($pdo);
