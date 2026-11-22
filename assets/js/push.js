@@ -11,7 +11,21 @@
     const suportado = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
     const ios = /iphone|ipad|ipod/i.test(navigator.userAgent)
         || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const android = /android/i.test(navigator.userAgent);
     const instalado = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    let instalarPrompt = null;
+
+    window.addEventListener('beforeinstallprompt', (evento) => {
+        if (!android || instalado) {
+            return;
+        }
+        evento.preventDefault();
+        instalarPrompt = evento;
+        const botao = document.getElementById('android-instalar');
+        if (botao) {
+            botao.hidden = false;
+        }
+    });
 
     const els = {
         status: document.getElementById('push-status'),
@@ -161,4 +175,117 @@
     } else {
         atualizarTela();
     }
+
+    const modalAndroid = document.getElementById('modal-android');
+    const modalPermissao = document.getElementById('modal-android-push');
+    const guardarVisita = () => sessionStorage.setItem('ce-android-app', '1');
+    const guardarPermissao = () => sessionStorage.setItem('ce-android-push', '1');
+
+    const abrirPermissao = () => {
+        if (!android || !suportado || !modalPermissao || modalPermissao.open) {
+            return;
+        }
+        if (Notification.permission === 'granted' || sessionStorage.getItem('ce-android-push')) {
+            return;
+        }
+        if (modalAndroid?.open) {
+            return;
+        }
+        const texto = document.getElementById('android-push-texto');
+        const permitir = document.getElementById('android-permitir');
+        if (Notification.permission === 'denied') {
+            if (texto) {
+                texto.textContent = 'As notificações estão bloqueadas. Toque no cadeado ao lado do endereço, abra Permissões e marque Notificações como Permitir. Depois volte aqui.';
+            }
+            if (permitir) {
+                permitir.hidden = true;
+            }
+        }
+        try {
+            modalPermissao.showModal();
+            guardarPermissao();
+        } catch (erro) {
+            /* outro diálogo aberto */
+        }
+    };
+
+    if (
+        android
+        && !instalado
+        && modalAndroid
+        && !sessionStorage.getItem('ce-android-app')
+        && localStorage.getItem('ce-android-instalado') !== '1'
+    ) {
+        try {
+            modalAndroid.showModal();
+            guardarVisita();
+        } catch (erro) {
+            abrirPermissao();
+        }
+    } else {
+        abrirPermissao();
+    }
+
+    document.getElementById('android-entendi')?.addEventListener('click', () => {
+        guardarVisita();
+        modalAndroid?.close();
+    });
+
+    modalAndroid?.addEventListener('cancel', guardarVisita);
+    modalAndroid?.addEventListener('close', () => {
+        guardarVisita();
+        setTimeout(abrirPermissao, 0);
+    });
+
+    document.getElementById('android-permitir')?.addEventListener('click', async (evento) => {
+        const botao = evento.currentTarget;
+        botao.disabled = true;
+        try {
+            const permissao = await Notification.requestPermission();
+            if (permissao !== 'granted') {
+                const texto = document.getElementById('android-push-texto');
+                if (texto) {
+                    texto.textContent = 'Permissão não concedida. Toque em Permitir quando o celular perguntar, ou libere nas configurações do Chrome.';
+                }
+                return;
+            }
+            const registro = await registrar();
+            await assinar(registro);
+            await atualizarTela();
+            modalPermissao?.close();
+        } catch (erro) {
+            const texto = document.getElementById('android-push-texto');
+            if (texto) {
+                texto.textContent = 'Não foi possível ativar agora. Tente de novo pela página de avisos.';
+            }
+        } finally {
+            botao.disabled = false;
+        }
+    });
+
+    document.getElementById('android-depois')?.addEventListener('click', () => {
+        guardarPermissao();
+        modalPermissao?.close();
+    });
+
+    modalPermissao?.addEventListener('cancel', guardarPermissao);
+
+    document.getElementById('android-instalar')?.addEventListener('click', async () => {
+        if (!instalarPrompt) {
+            return;
+        }
+        instalarPrompt.prompt();
+        const escolha = await instalarPrompt.userChoice.catch(() => null);
+        instalarPrompt = null;
+        document.getElementById('android-instalar').hidden = true;
+        if (escolha && escolha.outcome === 'accepted') {
+            localStorage.setItem('ce-android-instalado', '1');
+            modalAndroid?.close();
+        }
+    });
+
+    window.addEventListener('appinstalled', () => {
+        localStorage.setItem('ce-android-instalado', '1');
+        modalAndroid?.close();
+    });
 })();

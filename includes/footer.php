@@ -89,6 +89,33 @@
         }
         if ($chavePushRodape !== '') {
             $alunoPushId = isset($alunoModal['id']) ? (int) $alunoModal['id'] : 0;
+            echo '<dialog class="app-dialog" id="modal-android" aria-labelledby="android-titulo">' . "\n";
+            echo '    <div class="modal-card">' . "\n";
+            echo '        <h2 id="android-titulo">Ative os avisos neste celular</h2>' . "\n";
+            echo '        <p class="panel-lead">No Android, a Agenda precisa estar na tela inicial. Assim o celular entrega as notificações de atividades, publicações e lembretes.</p>' . "\n";
+            echo '        <ol class="push-passos">' . "\n";
+            echo '            <li>No Chrome, toque nos <strong>três pontos</strong> no canto superior.</li>' . "\n";
+            echo '            <li>Escolha <strong>Instalar app</strong> ou <strong>Adicionar à tela inicial</strong>.</li>' . "\n";
+            echo '            <li>Confirme em <strong>Instalar</strong>.</li>' . "\n";
+            echo '            <li>Abra a Agenda pelo <strong>ícone novo</strong>, não pela aba do navegador.</li>' . "\n";
+            echo '            <li>Quando o celular perguntar, toque em <strong>Permitir</strong> nas notificações.</li>' . "\n";
+            echo '        </ol>' . "\n";
+            echo '        <div class="modal-actions">' . "\n";
+            echo '            <button class="btn btn-stamp" type="button" id="android-instalar" hidden>Adicionar à tela inicial</button>' . "\n";
+            echo '            <button class="btn btn-ghost" type="button" id="android-entendi">Entendi</button>' . "\n";
+            echo '        </div>' . "\n";
+            echo '    </div>' . "\n";
+            echo '</dialog>' . "\n";
+            echo '<dialog class="app-dialog" id="modal-android-push" aria-labelledby="android-push-titulo">' . "\n";
+            echo '    <div class="modal-card">' . "\n";
+            echo '        <h2 id="android-push-titulo">Permitir notificações</h2>' . "\n";
+            echo '        <p class="panel-lead" id="android-push-texto">A Agenda avisa neste celular quando surge uma atividade, uma publicação, um comentário ou o lembrete do dia anterior.</p>' . "\n";
+            echo '        <div class="modal-actions">' . "\n";
+            echo '            <button class="btn btn-stamp" type="button" id="android-permitir">Permitir notificações</button>' . "\n";
+            echo '            <button class="btn btn-ghost" type="button" id="android-depois">Agora não</button>' . "\n";
+            echo '        </div>' . "\n";
+            echo '    </div>' . "\n";
+            echo '</dialog>' . "\n";
             echo '<script>window.APP_PUSH = ' . json_encode([
                 'vapid' => $chavePushRodape,
                 'usuarioId' => (int) $usuario['id'],

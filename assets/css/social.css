@@ -1605,4 +1605,17 @@ html {
     font-weight: 600;
 }
 
+.push-passos {
+    display: grid;
+    gap: 8px;
+    margin: 0 0 4px;
+    padding-left: 20px;
+    color: var(--ink-soft);
+    font-size: 15px;
+}
+
+.push-passos strong {
+    color: var(--ink);
+}
+
 .push-caixa [hidden] { display: none !important; }
