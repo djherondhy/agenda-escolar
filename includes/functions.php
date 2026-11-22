@@ -365,6 +365,27 @@ function marcarNotificacaoLida(PDO $pdo, int $notificacaoId, int $usuarioId): ?s
     return '/aluno/notificacoes.php';
 }
 
+function marcarNotificacoesLidas(PDO $pdo, int $usuarioId): void
+{
+    $stmt = $pdo->prepare('UPDATE notificacoes SET lida = 1 WHERE usuario_id = :usuario_id AND lida = 0');
+    $stmt->execute(['usuario_id' => $usuarioId]);
+}
+
+function excluirNotificacao(PDO $pdo, int $notificacaoId, int $usuarioId): void
+{
+    $stmt = $pdo->prepare('DELETE FROM notificacoes WHERE id = :id AND usuario_id = :usuario_id');
+    $stmt->execute([
+        'id'         => $notificacaoId,
+        'usuario_id' => $usuarioId,
+    ]);
+}
+
+function limparNotificacoes(PDO $pdo, int $usuarioId): void
+{
+    $stmt = $pdo->prepare('DELETE FROM notificacoes WHERE usuario_id = :usuario_id');
+    $stmt->execute(['usuario_id' => $usuarioId]);
+}
+
 function listarAlunosDaTurma(PDO $pdo, int $turmaId): array
 {
     $stmt = $pdo->prepare(

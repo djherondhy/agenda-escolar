@@ -995,6 +995,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         busca?.addEventListener('input', aplicar);
     }
+
+    const buscaMembro = document.querySelector('[data-busca-membro]');
+    if (buscaMembro) {
+        const linhas = document.querySelectorAll('[data-candidato]');
+        const vazio = document.querySelector('[data-candidatos-vazio]');
+        const filtrar = () => {
+            const termo = buscaMembro.value.trim().toLowerCase();
+            let visiveis = 0;
+            linhas.forEach((linha) => {
+                const ok = termo === '' || (linha.dataset.busca || '').includes(termo);
+                linha.hidden = !ok;
+                if (ok) visiveis += 1;
+            });
+            if (vazio) vazio.hidden = visiveis > 0;
+        };
+        buscaMembro.addEventListener('input', filtrar);
+    }
 });
 
 function base64UrlParaBytes(texto) {

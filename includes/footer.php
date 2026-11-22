@@ -12,7 +12,7 @@
             <p id="confirm-texto">Esta ação não pode ser desfeita.</p>
             <div class="modal-actions">
                 <button class="btn btn-ghost" value="cancel">Cancelar</button>
-                <button class="btn btn-danger" value="ok">Excluir</button>
+                <button class="btn btn-danger" value="ok">Confirmar</button>
             </div>
         </form>
     </dialog>

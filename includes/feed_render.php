@@ -146,7 +146,7 @@ function renderCartaoSala(array $sala): void
             <span class="sala-selo">Você participa</span>
         <?php endif; ?>
         <div class="sala-corpo">
-            <span class="sala-icone sala-icone-lg <?= capaSala($id) ?>"><?= e(iniciaisNome($sala['titulo'])) ?></span>
+            <?= htmlIconeSala($sala, 'lg') ?>
             <p class="sala-tema"><?= e(($sala['tema'] ?? '') !== '' ? $sala['tema'] : 'Estudo livre') ?></p>
             <h2><a href="<?= BASE_URL ?>/aluno/sala.php?id=<?= $id ?>"><?= e($sala['titulo']) ?></a></h2>
             <p class="sala-descricao"><?= e($sala['descricao'] ?: 'Sala aberta para publicar resumos e comentar.') ?></p>
@@ -156,7 +156,7 @@ function renderCartaoSala(array $sala): void
                         <?= avatarSocial((int) $membro['id'], $membro['nome'], 'sm') ?>
                     <?php endforeach; ?>
                 </span>
-                <small><?= $inscritos ?> membro<?= $inscritos === 1 ? '' : 's' ?> · criada por <?= e(primeiroNome($sala['criador_nome'] ?? '')) ?></small>
+                <small><?= $inscritos ?> membro<?= $inscritos === 1 ? '' : 's' ?> · <?= e(origemDaSala($sala['criador_nome'] ?? '')) ?></small>
             </div>
         </div>
         <div class="sala-rodape">

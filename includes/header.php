@@ -169,8 +169,15 @@ $linkBarra = static function (array $item, bool $centro = false): string {
             </a>
 
             <nav class="side-nav" aria-label="Menu principal">
-                <?php foreach ($itensMenu as $itemMenu): ?>
-                    <a class="<?= $itemMenu['ativo'] ? 'is-active' : '' ?>" href="<?= e($itemMenu['href']) ?>"><?= $itemMenu['id'] === 'gerenciar' ? 'Gerenciar atividades' : e($itemMenu['rotulo']) ?></a>
+                <?php
+                $rotulosLaterais = [
+                    'gerenciar' => 'Gerenciar atividades',
+                    'salas' => 'Salas de estudos',
+                ];
+                foreach ($itensMenu as $itemMenu):
+                    $rotuloLateral = $rotulosLaterais[$itemMenu['id']] ?? $itemMenu['rotulo'];
+                ?>
+                    <a class="<?= $itemMenu['ativo'] ? 'is-active' : '' ?>" href="<?= e($itemMenu['href']) ?>"><?= e($rotuloLateral) ?></a>
                 <?php endforeach; ?>
             </nav>
 

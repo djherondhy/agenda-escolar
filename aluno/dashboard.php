@@ -189,7 +189,7 @@ require __DIR__ . '/../includes/header.php';
             <?php endif; ?>
             <?php foreach ($salasSugeridas as $sala): ?>
                 <a class="lateral-sala" href="<?= BASE_URL ?>/aluno/sala.php?id=<?= (int) $sala['id'] ?>">
-                    <span class="sala-icone <?= capaSala((int) $sala['id']) ?>"><?= e(iniciaisNome($sala['titulo'])) ?></span>
+                    <?= htmlIconeSala($sala) ?>
                     <span class="lateral-texto">
                         <strong><?= e($sala['titulo']) ?></strong>
                         <small><?= (int) $sala['inscritos'] ?> membro<?= (int) $sala['inscritos'] === 1 ? '' : 's' ?><?= $sala['inscrito'] ? ' · você participa' : '' ?></small>

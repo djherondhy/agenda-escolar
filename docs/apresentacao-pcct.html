@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>PCCT — Sistema de Calendário Estudantil</title>
+<style>
+  @page {
+    size: 338.66mm 190.5mm;
+    margin: 0;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", Calibri, sans-serif;
+    color: #102033;
+    background: #14181f;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .slide {
+    width: 338.66mm;
+    height: 190.5mm;
+    background: #f7f8fb;
+    position: relative;
+    overflow: hidden;
+    page-break-after: always;
+    break-after: page;
+    padding: 12mm 16mm 11mm;
+    display: flex;
+    flex-direction: column;
+  }
+  .slide:last-child { page-break-after: auto; break-after: auto; }
+  @media screen {
+    .slide { margin: 18px auto; box-shadow: 0 12px 40px rgba(0,0,0,.35); }
+  }
+  @media print {
+    body { background: #fff; }
+    .slide { margin: 0; box-shadow: none; }
+  }
+
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 11pt;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #5c6b80;
+    padding-bottom: 3.5mm;
+    border-bottom: 1.5px solid #d5deea;
+    margin-bottom: 7mm;
+  }
+  .top strong { color: #1d4ed8; font-weight: 650; letter-spacing: .12em; }
+  h1.titulo {
+    margin: 0 0 6mm;
+    font-size: 32pt;
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+    font-weight: 650;
+    color: #102033;
+  }
+  .lead {
+    margin: 0 0 6mm;
+    font-size: 16.5pt;
+    line-height: 1.35;
+    color: #3d4c63;
+    max-width: 280mm;
+  }
+  .corpo { flex: 1; min-height: 0; }
+  .rodape {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 4mm;
+    padding-top: 3mm;
+    border-top: 1px solid #d5deea;
+    font-size: 10.5pt;
+    color: #6b7a90;
+  }
+  .rodape .num {
+    color: #1d4ed8;
+    font-weight: 700;
+    letter-spacing: .04em;
+  }
+
+  /* capa */
+  .slide-cover {
+    padding: 0;
+    flex-direction: row;
+    background: #0e1c33;
+    color: #fff;
+  }
+  .cover-main {
+    flex: 1;
+    padding: 16mm 16mm 14mm 18mm;
+    display: flex;
+    flex-direction: column;
+  }
+  .inst {
+    margin: 0;
+    font-size: 11pt;
+    line-height: 1.45;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: #9eb6d9;
+  }
+  .curso {
+    margin: 8mm 0 0;
+    font-size: 13pt;
+    color: #d6e4f7;
+  }
+  .cover-main h1 {
+    margin: 10mm 0 0;
+    font-size: 34pt;
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    font-weight: 680;
+    max-width: 195mm;
+    color: #fff;
+  }
+  .cover-main h1 span {
+    display: block;
+    margin-top: 3mm;
+    font-size: 20pt;
+    font-weight: 450;
+    color: #c5d5ee;
+    letter-spacing: 0;
+  }
+  .produto-pill {
+    display: inline-block;
+    margin-top: 8mm;
+    padding: 2.2mm 5mm;
+    border: 1px solid #3d6adf;
+    color: #dbe7ff;
+    font-size: 13pt;
+    letter-spacing: .04em;
+    width: fit-content;
+  }
+  .cover-base { margin-top: auto; }
+  .cover-base .tipo {
+    margin: 0;
+    font-size: 14pt;
+    color: #9eb6d9;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+  .cover-side {
+    width: 108mm;
+    background: #f4f7fb;
+    color: #102033;
+    padding: 16mm 12mm 14mm;
+    display: flex;
+    flex-direction: column;
+  }
+  .cover-side .ano {
+    margin: 0;
+    font-size: 36pt;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: #1d4ed8;
+    line-height: 1;
+  }
+  .cover-side .local {
+    margin: 2mm 0 0;
+    font-size: 14pt;
+    color: #3d4c63;
+  }
+  .cover-side .bloco { margin-top: 10mm; }
+  .rotulo {
+    margin: 0 0 2mm;
+    font-size: 10pt;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: #1d4ed8;
+    font-weight: 700;
+  }
+  .nome { margin: 0; font-size: 13.5pt; font-weight: 650; line-height: 1.25; }
+  .det { margin: 0.4mm 0 3.2mm; font-size: 11pt; color: #5c6b80; }
+  .faixa {
+    margin-top: auto;
+    height: 4px;
+    background: linear-gradient(90deg, #1d4ed8, #0f6b45);
+  }
+
+  /* roteiro */
+  .roteiro { display: grid; gap: 3.2mm; }
+  .item-r {
+    display: grid;
+    grid-template-columns: 18mm 1fr auto;
+    gap: 5mm;
+    align-items: center;
+    background: #fff;
+    border: 1px solid #d5deea;
+    padding: 4mm 6mm;
+  }
+  .item-r .n {
+    font-size: 20pt;
+    font-weight: 700;
+    color: #1d4ed8;
+  }
+  .item-r h2 { margin: 0; font-size: 18pt; font-weight: 650; }
+  .item-r p { margin: 0.6mm 0 0; font-size: 12.5pt; color: #5c6b80; }
+  .item-r .ir { color: #8aa0bd; font-size: 16pt; }
+
+  /* problema */
+  .dores {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 4mm;
+    margin-bottom: 5mm;
+  }
+  .dor {
+    background: #fff;
+    border: 1px solid #d5deea;
+    padding: 5mm 5.5mm 5mm;
+    border-top: 4px solid #1d4ed8;
+  }
+  .dor:nth-child(2) { border-top-color: #b54708; }
+  .dor:nth-child(3) { border-top-color: #0f6b45; }
+  .dor .n { font-size: 11pt; letter-spacing: .12em; text-transform: uppercase; color: #5c6b80; margin: 0 0 1.5mm; }
+  .dor h2 { margin: 0 0 1.5mm; font-size: 18pt; font-weight: 650; }
+  .dor p { margin: 0; font-size: 13.5pt; line-height: 1.35; color: #3d4c63; }
+  .problema {
+    background: #0e1c33;
+    color: #fff;
+    padding: 6mm 7mm;
+  }
+  .problema .rotulo { color: #93c5fd; }
+  .problema p { margin: 0; font-size: 16.5pt; line-height: 1.35; }
+
+  /* objetivos */
+  .geral {
+    background: #e8effc;
+    border-left: 4px solid #1d4ed8;
+    padding: 4.5mm 6mm;
+    margin-bottom: 5mm;
+  }
+  .geral .rotulo { margin-bottom: 1mm; }
+  .geral p { margin: 0; font-size: 16pt; line-height: 1.35; }
+  .especificos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3.2mm 5mm;
+  }
+  .esp {
+    display: grid;
+    grid-template-columns: 12mm 1fr;
+    gap: 3mm;
+    align-items: start;
+    background: #fff;
+    border: 1px solid #d5deea;
+    padding: 3.4mm 4.5mm;
+  }
+  .esp .n { font-size: 16pt; font-weight: 700; color: #1d4ed8; }
+  .esp p { margin: 0; font-size: 13.5pt; line-height: 1.3; }
+
+  /* referencial */
+  .cols3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4.5mm; height: 100%; }
+  .col {
+    background: #fff;
+    border: 1px solid #d5deea;
+    padding: 5.5mm 5.5mm 5mm;
+    display: flex;
+    flex-direction: column;
+  }
+  .col h2 { margin: 0 0 3mm; font-size: 16.5pt; line-height: 1.2; }
+  .col ul { margin: 0; padding-left: 4.5mm; }
+  .col li { margin: 0 0 2.2mm; font-size: 13.5pt; line-height: 1.32; color: #243044; }
+  .col .fonte { margin-top: auto; padding-top: 3mm; font-size: 11pt; color: #5c6b80; line-height: 1.35; }
+
+  /* metodologia */
+  .chips { display: flex; gap: 3mm; margin-bottom: 5mm; }
+  .chip {
+    background: #0e1c33;
+    color: #fff;
+    padding: 2.2mm 5mm;
+    font-size: 13pt;
+    letter-spacing: .04em;
+  }
+  .passos { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3.2mm; }
+  .passo {
+    background: #fff;
+    border: 1px solid #d5deea;
+    padding: 4.5mm 4mm 4mm;
+    min-height: 78mm;
+  }
+  .passo .n {
+    display: block;
+    font-size: 20pt;
+    font-weight: 700;
+    color: #1d4ed8;
+    margin-bottom: 2mm;
+  }
+  .passo h2 { margin: 0 0 2mm; font-size: 14.5pt; line-height: 1.2; }
+  .passo p { margin: 0; font-size: 12.5pt; line-height: 1.35; color: #3d4c63; }
+  .nota {
+    margin-top: 4.5mm;
+    font-size: 12.5pt;
+    color: #3d4c63;
+  }
+
+  /* produto */
+  .split { display: grid; grid-template-columns: 1.15fr .85fr; gap: 5mm; height: 100%; }
+  .painel {
+    background: #0e1c33;
+    color: #fff;
+    padding: 7mm 7mm;
+    display: flex;
+    flex-direction: column;
+  }
+  .painel h2 { margin: 0; font-size: 26pt; letter-spacing: -0.02em; }
+  .painel .sub { margin: 2mm 0 5mm; color: #9eb6d9; font-size: 14pt; }
+  .painel p { margin: 0 0 4mm; font-size: 15pt; line-height: 1.4; color: #e7eef8; }
+  .mini {
+    margin-top: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 3mm;
+  }
+  .mini div { border-top: 2px solid #3d6adf; padding-top: 2mm; }
+  .mini strong { display: block; font-size: 13pt; }
+  .mini span { font-size: 11pt; color: #9eb6d9; }
+  .lista-box { background: #fff; border: 1px solid #d5deea; padding: 5mm 6mm; }
+  .lista-box + .lista-box { margin-top: 4mm; }
+  .lista-box h2 { margin: 0 0 2.5mm; font-size: 14pt; letter-spacing: .08em; text-transform: uppercase; color: #1d4ed8; }
+  .lista-box.fora h2 { color: #6b7a90; }
+  .lista-box ul { margin: 0; padding-left: 4.5mm; }
+  .lista-box li { margin: 0 0 1.6mm; font-size: 13.5pt; line-height: 1.3; }
+
+  /* perfis */
+  .perfis { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4.5mm; height: 100%; }
+  .perfil {
+    background: #fff;
+    border: 1px solid #d5deea;
+    padding: 5.5mm 5.5mm;
+    display: flex;
+    flex-direction: column;
+  }
+  .perfil .quem {
+    margin: 0;
+    font-size: 11pt;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: #1d4ed8;
+    font-weight: 700;
+  }
+  .perfil h2 { margin: 1.5mm 0 3mm; font-size: 20pt; }
+  .perfil ul { margin: 0; padding-left: 4.5mm; }
+  .perfil li { margin: 0 0 2.2mm; font-size: 13.5pt; line-height: 1.32; }
+  .perfil .area {
+    margin-top: auto;
+    padding-top: 3mm;
+    font-size: 11.5pt;
+    color: #5c6b80;
+  }
+
+  /* arquitetura */
+  .arq {
+    display: grid;
+    grid-template-columns: 1.35fr .65fr;
+    gap: 5mm;
+    height: 100%;
+  }
+  .camadas { display: flex; flex-direction: column; gap: 3mm; }
+  .camada {
+    background: #fff;
+    border: 1px solid #d5deea;
+    padding: 4mm 5.5mm;
+    display: grid;
+    grid-template-columns: 42mm 1fr;
+    gap: 4mm;
+    align-items: center;
+  }
+  .camada strong { font-size: 15pt; color: #1d4ed8; }
+  .camada p { margin: 0; font-size: 13.5pt; line-height: 1.3; color: #243044; }
+  .techs {
+    background: #fff;
+    border: 1px solid #d5deea;
+    padding: 5mm 5.5mm;
+  }
+  .techs h2 { margin: 0 0 3mm; font-size: 14pt; letter-spacing: .08em; text-transform: uppercase; color: #1d4ed8; }
+  .techs ul { margin: 0; padding: 0; list-style: none; }
+  .techs li {
+    padding: 1.8mm 0;
+    border-bottom: 1px solid #e6edf5;
+    font-size: 13.5pt;
+  }
+  .techs li span { color: #5c6b80; }
+
+  /* funcionalidades */
+  .grade {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 3.5mm;
+    height: 100%;
+  }
+  .feat {
+    background: #fff;
+    border: 1px solid #d5deea;
+    padding: 4.5mm 4.5mm;
+    display: flex;
+    flex-direction: column;
+  }
+  .feat .tag {
+    font-size: 10.5pt;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #1d4ed8;
+    font-weight: 700;
+    margin: 0 0 2mm;
+  }
+  .feat h2 { margin: 0 0 2mm; font-size: 15.5pt; line-height: 1.15; }
+  .feat p { margin: 0; font-size: 12.5pt; line-height: 1.32; color: #3d4c63; }
+
+  /* resultados */
+  .res {
+    display: grid;
+    grid-template-columns: 1.2fr .8fr;
+    gap: 5mm;
+    height: 100%;
+  }
+  .res ul { margin: 0; padding: 0; list-style: none; }
+  .res li {
+    background: #fff;
+    border: 1px solid #d5deea;
+    padding: 3.2mm 4.5mm;
+    margin: 0 0 2.6mm;
+    font-size: 14pt;
+    line-height: 1.3;
+  }
+  .res li strong { color: #1d4ed8; }
+  .dialogo {
+    background: #0e1c33;
+    color: #e7eef8;
+    padding: 6mm;
+    display: flex;
+    flex-direction: column;
+  }
+  .dialogo h2 { margin: 0 0 3mm; font-size: 16pt; color: #fff; }
+  .dialogo p { margin: 0 0 3.5mm; font-size: 13.5pt; line-height: 1.38; }
+  .dialogo p:last-child { margin-bottom: 0; color: #9eb6d9; }
+
+  /* duas colunas finais */
+  .duas { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; height: 100%; }
+  .bloco-f {
+    background: #fff;
+    border: 1px solid #d5deea;
+    padding: 5.5mm 6mm;
+  }
+  .bloco-f h2 {
+    margin: 0 0 3.5mm;
+    font-size: 16pt;
+    color: #1d4ed8;
+  }
+  .bloco-f ul { margin: 0; padding-left: 4.5mm; }
+  .bloco-f li { margin: 0 0 2.4mm; font-size: 14pt; line-height: 1.32; }
+
+  .fechamento {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 4.5mm;
+    margin-bottom: 5mm;
+  }
+  .fecho {
+    background: #fff;
+    border-top: 4px solid #1d4ed8;
+    border-right: 1px solid #d5deea;
+    border-bottom: 1px solid #d5deea;
+    border-left: 1px solid #d5deea;
+    padding: 5mm 5mm;
+    min-height: 52mm;
+  }
+  .fecho .n { margin: 0 0 2mm; font-size: 12pt; letter-spacing: .12em; text-transform: uppercase; color: #1d4ed8; font-weight: 700; }
+  .fecho p { margin: 0; font-size: 15pt; line-height: 1.35; }
+  .frase {
+    background: #0e1c33;
+    color: #fff;
+    padding: 6mm 7mm;
+    font-size: 18pt;
+    line-height: 1.35;
+  }
+
+  .refs { margin: 0; padding: 0; list-style: none; }
+  .refs li {
+    padding: 2.6mm 0;
+    border-bottom: 1px solid #d5deea;
+    font-size: 13pt;
+    line-height: 1.35;
+    color: #243044;
+  }
+  .refs li strong { color: #102033; }
+
+  .slide-fim {
+    background: #0e1c33;
+    color: #fff;
+    justify-content: center;
+    padding: 18mm 20mm;
+  }
+  .slide-fim .k {
+    margin: 0;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: #93c5fd;
+    font-size: 13pt;
+  }
+  .slide-fim h1 {
+    margin: 4mm 0 3mm;
+    font-size: 48pt;
+    letter-spacing: -0.03em;
+    font-weight: 680;
+  }
+  .slide-fim .sub { margin: 0 0 12mm; font-size: 18pt; color: #c5d5ee; }
+  .fim-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12mm; max-width: 250mm; }
+  .slide-fim .nome { font-size: 16pt; color: #fff; }
+  .slide-fim .det { color: #9eb6d9; font-size: 13pt; }
+  .slide-fim .rotulo { color: #93c5fd; }
+</style>
+</head>
+<body>
+
+<section class="slide slide-cover">
+  <div class="cover-main">
+    <p class="inst">Ministério da Educação<br>Instituto Federal de Educação, Ciência e Tecnologia do Amazonas<br>Campus Lábrea</p>
+    <p class="curso">Curso Técnico de Nível Médio em Informática · Forma Integrada</p>
+    <h1>Sistema de Calendário Estudantil<span>para organização da rotina escolar</span></h1>
+    <div class="produto-pill">Agenda Acadêmica</div>
+    <div class="cover-base">
+      <p class="tipo">Projeto de Conclusão de Curso Técnico</p>
+    </div>
+  </div>
+  <aside class="cover-side">
+    <p class="ano">2026</p>
+    <p class="local">Lábrea — AM</p>
+    <div class="bloco">
+      <p class="rotulo">Discentes</p>
+      <p class="nome">Carlos Vinicius Barros de Souza</p>
+      <p class="det">Matrícula 2024314950</p>
+      <p class="nome">José Quintino Júnior</p>
+      <p class="det">Matrícula 2024321478</p>
+    </div>
+    <div class="bloco">
+      <p class="rotulo">Orientação</p>
+      <p class="nome">Daniel Martins da Silva</p>
+      <p class="det">Orientador</p>
+      <p class="nome">Cleude de Souza Maia</p>
+      <p class="det">Co-orientadora</p>
+    </div>
+    <div class="faixa"></div>
+  </aside>
+</section>
+
+<section class="slide">
+  <div class="top"><span><strong>PCCT</strong> · Agenda Acadêmica</span><span>IFAM · Campus Lábrea</span></div>
+  <h1 class="titulo">Roteiro</h1>
+  <div class="corpo">
+    <div class="roteiro">
+      <div class="item-r"><span class="n">01</span><div><h2>Problema e objetivos</h2><p>A dificuldade de organizar a rotina e o que o trabalho se propõe a fazer.</p></div><span class="ir">→</span></div>
+      <div class="item-r"><span class="n">02</span><div><h2>Fundamentação e método</h2><p>Gestão do tempo, tecnologias na educação e o caminho da pesquisa aplicada.</p></div><span class="ir">→</span></div>
+      <div class="item-r"><span class="n">03</span><div><h2>O sistema desenvolvido</h2><p>Perfis, arquitetura, tecnologias e funcionalidades da Agenda Acadêmica.</p></div><span class="ir">→</span></div>
+      <div class="item-r"><span class="n">04</span><div><h2>Resultados</h2><p>O que foi entregue e como isso dialoga com o referencial.</p></div><span class="ir">→</span></div>
+      <div class="item-r"><span class="n">05</span><div><h2>Limites e considerações finais</h2><p>O que ficou de fora, o que vem depois e o que se conclui.</p></div><span class="ir">→</span></div>
+    </div>
+  </div>
+  <div class="rodape"><span>Carlos Vinicius Barros de Souza · José Quintino Júnior</span><span class="num">02</span></div>
+</section>
+
+<section class="slide">
+  <div class="top"><span><strong>PCCT</strong> · Agenda Acadêmica</span><span>Introdução</span></div>
+  <h1 class="titulo">A rotina escolar se perde no meio do caminho</h1>
+  <p class="lead">Provas, trabalhos, tarefas e horários convivem com avisos em mensagens, anotações e agendas soltas. Sem um lugar único, o prazo passa.</p>
+  <div class="corpo">
+    <div class="dores">
+      <article class="dor">
+        <p class="n">01</p>
+        <h2>Esquecimento</h2>
+        <p>Compromissos deixam de ser vistos quando a informação não está reunida.</p>
+      </article>
+      <article class="dor">
+        <p class="n">02</p>
+        <h2>Atraso e acúmulo</h2>
+        <p>A falta de planejamento empurra entregas e sobrecarrega a semana.</p>
+      </article>
+      <article class="dor">
+        <p class="n">03</p>
+        <h2>Pouca visão do prazo</h2>
+        <p>O estudante não enxerga, de uma vez, o que vence no mês.</p>
+      </article>
+    </div>
+    <div class="problema">
+      <p class="rotulo">Problema de pesquisa</p>
+      <p>De que maneira um sistema de calendário estudantil pode contribuir para a organização das atividades, o acompanhamento dos prazos e a gestão do tempo?</p>
+    </div>
+  </div>
+  <div class="rodape"><span>Carlos Vinicius Barros de Souza · José Quintino Júnior</span><span class="num">03</span></div>
+</section>
+
+<section class="slide">
+  <div class="top"><span><strong>PCCT</strong> · Agenda Acadêmica</span><span>Objetivos</span></div>
+  <h1 class="titulo">O que o trabalho se propõe</h1>
+  <div class="corpo">
+    <div class="geral">
+      <p class="rotulo">Objetivo geral</p>
+      <p>Desenvolver um sistema de calendário estudantil que auxilie no registro, na visualização e no gerenciamento das atividades acadêmicas.</p>
+    </div>
+    <div class="especificos">
+      <div class="esp"><span class="n">01</span><p>Identificar as necessidades dos estudantes na organização da rotina.</p></div>
+      <div class="esp"><span class="n">02</span><p>Definir os requisitos do sistema.</p></div>
+      <div class="esp"><span class="n">03</span><p>Implementar o registro de provas, trabalhos, tarefas e demais compromissos.</p></div>
+      <div class="esp"><span class="n">04</span><p>Organizar as atividades por data, com visualização em calendário.</p></div>
+      <div class="esp"><span class="n">05</span><p>Verificar o funcionamento das principais funcionalidades.</p></div>
+      <div class="esp"><span class="n">06</span><p>Avaliar se a ferramenta facilita o planejamento e o acompanhamento.</p></div>
+    </div>
+  </div>
+  <div class="rodape"><span>Carlos Vinicius Barros de Souza · José Quintino Júnior</span><span class="num">04</span></div>
+</section>
+
+<section class="slide">
+  <div class="top"><span><strong>PCCT</strong> · Agenda Acadêmica</span><span>Referencial teórico</span></div>
+  <h1 class="titulo">Três apoios para a proposta</h1>
+  <div class="corpo">
+    <div class="cols3">
+      <article class="col">
+        <h2>Gestão do tempo</h2>
+        <ul>
+          <li>Organizar o tempo faz parte da autorregulação da aprendizagem.</li>
+          <li>Registrar atividades ajuda o estudante a enxergar a própria carga.</li>
+          <li>Há relação positiva entre planejamento e resultados de aprendizagem.</li>
+        </ul>
+        <p class="fonte">Wolters e Brady (2021); Tabuenca, Greller e Verpoorten (2021); Liu, Ma e Jia (2026).</p>
+      </article>
+      <article class="col">
+        <h2>Tecnologias na educação</h2>
+        <ul>
+          <li>O digital amplia acesso, comunicação e gestão escolar.</li>
+          <li>A tecnologia precisa responder a uma necessidade real.</li>
+          <li>A adoção depende de condições técnicas e do uso no cotidiano.</li>
+        </ul>
+        <p class="fonte">UNESCO (2023); Cetic.br (2024); Zhou, Smith e Al-Samarraie (2023).</p>
+      </article>
+      <article class="col">
+        <h2>Sistemas de organização</h2>
+        <ul>
+          <li>Calendário e lista tiram o compromisso do caderno e da mensagem.</li>
+          <li>Um único ambiente facilita consulta de prazo e pendência.</li>
+          <li>A ferramenta apoia a autonomia; não substitui o hábito de planejar.</li>
+        </ul>
+        <p class="fonte">Base da Agenda Acadêmica: registrar, datar e acompanhar.</p>
+      </article>
+    </div>
+  </div>
+  <div class="rodape"><span>Carlos Vinicius Barros de Souza · José Quintino Júnior</span><span class="num">05</span></div>
+</section>
+
+<section class="slide">
+  <div class="top"><span><strong>PCCT</strong> · Agenda Acadêmica</span><span>Metodologia</span></div>
+  <h1 class="titulo">Pesquisa aplicada, do problema ao sistema</h1>
+  <div class="corpo">
+    <div class="chips">
+      <span class="chip">Natureza aplicada</span>
+      <span class="chip">Abordagem qualitativa</span>
+      <span class="chip">Objetivo descritivo</span>
+    </div>
+    <div class="passos">
+      <article class="passo"><span class="n">1</span><h2>Bibliografia</h2><p>Gestão do tempo, tecnologias e sistemas escolares, com obras de 2020 a 2026.</p></article>
+      <article class="passo"><span class="n">2</span><h2>Requisitos</h2><p>Necessidades da rotina, atores e o que cada perfil precisa fazer.</p></article>
+      <article class="passo"><span class="n">3</span><h2>Modelagem</h2><p>Dados, regras de negócio e telas da aplicação web.</p></article>
+      <article class="passo"><span class="n">4</span><h2>Implementação</h2><p>Construção das áreas de administrador, representante e aluno.</p></article>
+      <article class="passo"><span class="n">5</span><h2>Verificação</h2><p>Checagem manual das telas e das regras de acesso.</p></article>
+    </div>
+    <p class="nota">A descrição técnica segue o Documento de Engenharia de Software, versão 2.0, de 21 de novembro de 2026, e separa o que está pronto do que fica para versões futuras.</p>
+  </div>
+  <div class="rodape"><span>Carlos Vinicius Barros de Souza · José Quintino Júnior</span><span class="num">06</span></div>
+</section>
+
+<section class="slide">
+  <div class="top"><span><strong>PCCT</strong> · Agenda Acadêmica</span><span>O produto</span></div>
+  <h1 class="titulo">Uma agenda da turma, não um diário de classe</h1>
+  <div class="corpo">
+    <div class="split">
+      <div class="painel">
+        <h2>Agenda Acadêmica</h2>
+        <p class="sub">Aplicação web para a rotina escolar</p>
+        <p>O representante publica provas, trabalhos, atividades e a grade. O aluno acompanha o calendário da turma, marca o que concluiu e guarda compromissos só seus. O administrador cuida de usuários e turmas.</p>
+        <div class="mini">
+          <div><strong>3 perfis</strong><span>acesso separado</span></div>
+          <div><strong>1 turma</strong><span>por aluno</span></div>
+          <div><strong>Web</strong><span>navegador e atalho</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="lista-box">
+          <h2>Dentro do escopo</h2>
+          <ul>
+            <li>Login, turmas, atividades, anexos e calendário</li>
+            <li>Horários, agenda pessoal, mural e salas de estudo</li>
+            <li>Avisos internos, Web Push, tema claro/escuro e PWA</li>
+          </ul>
+        </div>
+        <div class="lista-box fora">
+          <h2>Fora do escopo</h2>
+          <ul>
+            <li>Notas, frequência, boletim e matrícula</li>
+            <li>Aplicativo de loja, SIGAA e Google Classroom</li>
+            <li>Recuperação de senha por e-mail ou SMS</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="rodape"><span>Carlos Vinicius Barros de Souza · José Quintino Júnior</span><span class="num">07</span></div>
+</section>
+
+<section class="slide">
+  <div class="top"><span><strong>PCCT</strong> · Agenda Acadêmica</span><span>Perfis de acesso</span></div>
+  <h1 class="titulo">Cada pessoa vê o que é da sua função</h1>
+  <div class="corpo">
+    <div class="perfis">
+      <article class="perfil">
+        <p class="quem">Administrador</p>
+        <h2>Desenvolvedor e conselheiro</h2>
+        <ul>
+          <li>Cadastra, edita e remove usuários e turmas.</li>
+          <li>Vincula o aluno a uma turma e o representante às suas turmas.</li>
+          <li>Não publica atividade da turma.</li>
+          <li>A turma com alunos não pode ser excluída.</li>
+        </ul>
+        <p class="area">Área /admin</p>
+      </article>
+      <article class="perfil">
+        <p class="quem">Representante</p>
+        <h2>Quem organiza a turma</h2>
+        <ul>
+          <li>Publica prova, trabalho, atividade e reunião, com anexo.</li>
+          <li>Atua só nas turmas às quais está vinculado.</li>
+          <li>Mantém a grade de horários.</li>
+          <li>Modera o mural dessas turmas.</li>
+        </ul>
+        <p class="area">Área /representante</p>
+      </article>
+      <article class="perfil">
+        <p class="quem">Aluno</p>
+        <h2>Quem acompanha o prazo</h2>
+        <ul>
+          <li>Vê o calendário, os filtros e o detalhe da atividade.</li>
+          <li>Marca a própria conclusão, sem alterar a dos colegas.</li>
+          <li>Mantém agenda pessoal, mural e salas de estudo.</li>
+          <li>Recebe aviso interno e, se quiser, no celular.</li>
+        </ul>
+        <p class="area">Área /aluno</p>
+      </article>
+    </div>
+  </div>
+  <div class="rodape"><span>Visitante entra pela página inicial e faz login. Cada usuário tem um único perfil.</span><span class="num">08</span></div>
+</section>
+
+<section class="slide">
+  <div class="top"><span><strong>PCCT</strong> · Agenda Acadêmica</span><span>Arquitetura</span></div>
+  <h1 class="titulo">Três camadas no mesmo servidor</h1>
+  <div class="corpo">
+    <div class="arq">
+      <div class="camadas">
+        <article class="camada">
+          <strong>Apresentação</strong>
+          <p>Páginas de cada perfil, estilos, JavaScript e respostas JSON. Textos exibidos passam por escape.</p>
+        </article>
+        <article class="camada">
+          <strong>Aplicação</strong>
+          <p>Login, permissão, validação, notificações, anexos, perfil, mural e salas de estudo.</p>
+        </article>
+        <article class="camada">
+          <strong>Persistência</strong>
+          <p>MySQL ou MariaDB via PDO, com consultas parametrizadas. Arquivos ficam em uploads/.</p>
+        </article>
+        <article class="camada">
+          <strong>No navegador</strong>
+          <p>Service worker e manifesto permitem atalho na tela inicial e o recebimento de Web Push.</p>
+        </article>
+      </div>
+      <aside class="techs">
+        <h2>Tecnologias</h2>
+        <ul>
+          <li>PHP 8 ou superior <span>— regras e páginas</span></li>
+          <li>MySQL ou MariaDB <span>— dados</span></li>
+          <li>HTML, CSS e JavaScript <span>— interface</span></li>
+          <li>Apache <span>— XAMPP no desenvolvimento</span></li>
+          <li>PDO <span>— acesso ao banco</span></li>
+          <li>Quill <span>— descrição das atividades</span></li>
+          <li>Git <span>— histórico do código</span></li>
+        </ul>
+      </aside>
+    </div>
+  </div>
+  <div class="rodape"><span>Sem framework PHP. A página protegida confere o perfil antes de consultar os dados.</span><span class="num">09</span></div>
+</section>
+
+<section class="slide">
+  <div class="top"><span><strong>PCCT</strong> · Agenda Acadêmica</span><span>Funcionalidades</span></div>
+  <h1 class="titulo">O que a turma passa a consultar num só lugar</h1>
+  <div class="corpo">
+    <div class="grade">
+      <article class="feat"><p class="tag">Agenda</p><h2>Calendário mensal</h2><p>Atividades da turma por data, com filtros por tipo e situação.</p></article>
+      <article class="feat"><p class="tag">Publicação</p><h2>Atividades e anexos</h2><p>Prova, trabalho, atividade e reunião, com arquivo de até 5 MB.</p></article>
+      <article class="feat"><p class="tag">Aula</p><h2>Grade semanal</h2><p>Disciplinas, horários e a próxima aula do dia.</p></article>
+      <article class="feat"><p class="tag">Aluno</p><h2>Conclusão individual</h2><p>O progresso de um estudante não muda o registro da turma.</p></article>
+      <article class="feat"><p class="tag">Pessoal</p><h2>Agenda do aluno</h2><p>Compromissos particulares, invisíveis para o restante da turma.</p></article>
+      <article class="feat"><p class="tag">Turma</p><h2>Mural</h2><p>Publicações, comentários e anexos entre os membros da turma.</p></article>
+      <article class="feat"><p class="tag">Estudo</p><h2>Salas de estudo</h2><p>Espaço com inscrição. Só quem entrou participa.</p></article>
+      <article class="feat"><p class="tag">Aviso</p><h2>Sino e celular</h2><p>Aviso interno ao publicar e Web Push quando o aluno ativa.</p></article>
+    </div>
+  </div>
+  <div class="rodape"><span>Também há foto de perfil, troca de senha, QR Code de acesso, tema claro ou escuro e instalação como atalho.</span><span class="num">10</span></div>
+</section>
+
+<section class="slide">
+  <div class="top"><span><strong>PCCT</strong> · Agenda Acadêmica</span><span>Resultados</span></div>
+  <h1 class="titulo">O objetivo técnico foi alcançado</h1>
+  <div class="corpo">
+    <div class="res">
+      <ul>
+        <li><strong>Ambiente único.</strong> Provas, trabalhos, horários e compromissos pessoais deixam de ficar espalhados.</li>
+        <li><strong>Papéis separados.</strong> Administrador, representante e aluno acessam só o que lhes cabe.</li>
+        <li><strong>Prazo visível.</strong> Calendário, filtros e o painel de próximas atividades organizam a semana.</li>
+        <li><strong>Aviso na hora.</strong> A publicação gera notificação para os alunos da turma.</li>
+        <li><strong>Checagem feita.</strong> Login, cadastros, calendário, anexos, horários e permissões foram percorridos nas telas.</li>
+      </ul>
+      <aside class="dialogo">
+        <h2>Diálogo com a teoria</h2>
+        <p>O calendário e a conclusão individual oferecem um apoio concreto à autorregulação descrita por Wolters e Brady (2021).</p>
+        <p>O registro digital dos compromissos aproxima a ferramenta do que Tabuenca, Greller e Verpoorten (2021) estudaram sobre acompanhar a carga de estudo.</p>
+        <p>A existência do sistema não garante rendimento. Isso depende do uso contínuo.</p>
+      </aside>
+    </div>
+  </div>
+  <div class="rodape"><span>A aplicação foi documentada em execução local e em ambiente publicado com HTTPS.</span><span class="num">11</span></div>
+</section>
+
+<section class="slide">
+  <div class="top"><span><strong>PCCT</strong> · Agenda Acadêmica</span><span>Limites</span></div>
+  <h1 class="titulo">O que este PCCT não fecha</h1>
+  <div class="corpo">
+    <div class="duas">
+      <article class="bloco-f">
+        <h2>Limitações</h2>
+        <ul>
+          <li>A verificação foi manual. Não houve experimento com estudantes.</li>
+          <li>Não há aplicativo nativo, API pública nem integração com SIGAA ou Google Classroom.</li>
+          <li>Não há recuperação de senha por e-mail, autenticação em dois fatores nem testes automatizados.</li>
+          <li>A disciplina é texto, não um cadastro próprio. O nome pode variar.</li>
+          <li>A aplicação depende de um único hospedeiro.</li>
+        </ul>
+      </article>
+      <article class="bloco-f">
+        <h2>Continuidade</h2>
+        <ul>
+          <li>Usar o sistema com alunos e representantes e recolher a percepção deles.</li>
+          <li>Criar um cadastro de disciplinas.</li>
+          <li>Reforçar segurança e acessibilidade, inclusive proteção contra CSRF e a política de senhas.</li>
+          <li>Incluir relatórios do acompanhamento da turma.</li>
+          <li>Avaliar o efeito real sobre o hábito de planejar, não só sobre o funcionamento das telas.</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+  <div class="rodape"><span>Esses itens são melhorias futuras. Não estão apresentados como prontos.</span><span class="num">12</span></div>
+</section>
+
+<section class="slide">
+  <div class="top"><span><strong>PCCT</strong> · Agenda Acadêmica</span><span>Considerações finais</span></div>
+  <h1 class="titulo">Uma necessidade da escola, resolvida em sistema</h1>
+  <div class="corpo">
+    <div class="fechamento">
+      <article class="fecho">
+        <p class="n">Entrega</p>
+        <p>Há um ambiente para registrar, consultar e acompanhar a rotina, com funções distintas para cada perfil.</p>
+      </article>
+      <article class="fecho">
+        <p class="n">Sentido</p>
+        <p>A ferramenta centraliza o prazo e devolve ao estudante o controle do que ainda está pendente.</p>
+      </article>
+      <article class="fecho">
+        <p class="n">Limite honesto</p>
+        <p>Organizar a informação ajuda. Mudar o rendimento exige uso, disciplina e uma avaliação com usuários reais.</p>
+      </article>
+    </div>
+    <div class="frase">O objetivo de desenvolver a ferramenta foi contemplado. O passo seguinte é colocá-la na rotina de uma turma e observar o uso.</div>
+  </div>
+  <div class="rodape"><span>Carlos Vinicius Barros de Souza · José Quintino Júnior</span><span class="num">13</span></div>
+</section>
+
+<section class="slide">
+  <div class="top"><span><strong>PCCT</strong> · Agenda Acadêmica</span><span>Referências</span></div>
+  <h1 class="titulo">Obras citadas na apresentação</h1>
+  <div class="corpo">
+    <ul class="refs">
+      <li><strong>CETIC.BR.</strong> Pesquisa sobre o uso das TIC nas escolas brasileiras: TIC Educação 2023. São Paulo: CGI.br, 2024.</li>
+      <li><strong>LIU, B.; MA, P.; JIA, F.</strong> Systematic review and meta-analysis of the impact of time management on college students' learning outcomes. Frontiers in Psychology, v. 17, 2026.</li>
+      <li><strong>TABUENCA, B.; GRELLER, W.; VERPOORTEN, D.</strong> Mind the gap: smoothing the transition to higher education fostering time management skills. Universal Access in the Information Society, 2021.</li>
+      <li><strong>UNESCO.</strong> Global education monitoring report 2023: technology in education: a tool on whose terms? Paris: UNESCO, 2023.</li>
+      <li><strong>WOLTERS, C. A.; BRADY, A. C.</strong> College students' time management: a self-regulated learning perspective. Educational Psychology Review, v. 33, n. 4, p. 1319-1351, 2021.</li>
+      <li><strong>ZHOU, X.; SMITH, C. J. M.; AL-SAMARRAIE, H.</strong> Digital technology adaptation and initiatives: a systematic review of teaching and learning during COVID-19. Journal of Computing in Higher Education, 2023.</li>
+    </ul>
+  </div>
+  <div class="rodape"><span>As referências completas estão no relatório técnico.</span><span class="num">14</span></div>
+</section>
+
+<section class="slide slide-fim">
+  <p class="k">PCCT · IFAM Campus Lábrea · 2026</p>
+  <h1>Obrigado.</h1>
+  <p class="sub">Perguntas e contribuições.</p>
+  <div class="fim-grid">
+    <div>
+      <p class="rotulo">Discentes</p>
+      <p class="nome">Carlos Vinicius Barros de Souza</p>
+      <p class="det">2024314950</p>
+      <p class="nome">José Quintino Júnior</p>
+      <p class="det">2024321478</p>
+    </div>
+    <div>
+      <p class="rotulo">Orientação</p>
+      <p class="nome">Daniel Martins da Silva</p>
+      <p class="det">Orientador</p>
+      <p class="nome">Cleude de Souza Maia</p>
+      <p class="det">Co-orientadora</p>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

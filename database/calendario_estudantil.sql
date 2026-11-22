@@ -136,7 +136,9 @@ CREATE TABLE salas_estudo (
     titulo VARCHAR(150) NOT NULL,
     tema VARCHAR(150) NOT NULL DEFAULT '',
     descricao TEXT,
-    criador_id INT NOT NULL,
+    icone VARCHAR(30) NOT NULL DEFAULT '',
+    exemplo TINYINT(1) NOT NULL DEFAULT 0,
+    criador_id INT NULL,
     data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (criador_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
@@ -144,6 +146,7 @@ CREATE TABLE salas_estudo (
 CREATE TABLE salas_inscricoes (
     sala_id INT NOT NULL,
     usuario_id INT NOT NULL,
+    admin TINYINT(1) NOT NULL DEFAULT 0,
     data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (sala_id, usuario_id),
     FOREIGN KEY (sala_id) REFERENCES salas_estudo(id) ON DELETE CASCADE,
@@ -178,6 +181,10 @@ CREATE TABLE salas_comentarios (
     data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (post_id) REFERENCES salas_posts(id) ON DELETE CASCADE,
     FOREIGN KEY (autor_id) REFERENCES usuarios(id) ON DELETE CASCADE
+);
+
+CREATE TABLE app_marcadores (
+    chave VARCHAR(60) PRIMARY KEY
 );
 
 -- Administrador padrão (senha: adminadmin). Altere a senha após o primeiro acesso.

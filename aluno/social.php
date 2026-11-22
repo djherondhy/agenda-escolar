@@ -53,28 +53,30 @@ if ($acao === 'criar_sala') {
     $titulo = textoComunidade($_POST['titulo'] ?? '', 150);
     $tema = textoComunidade($_POST['tema'] ?? '', 150);
     $descricao = textoComunidade($_POST['descricao'] ?? '', 1000);
+    $icone = iconeSalaValido((string) ($_POST['icone'] ?? ''));
     if ($titulo === '') {
         $responder(false, ['erro' => 'Dê um nome para a sala antes de criar.'], 'erro=sala', BASE_URL . '/aluno/salas.php');
     }
 
     $stmt = $pdo->prepare(
-        'INSERT INTO salas_estudo (titulo, tema, descricao, criador_id)
-         VALUES (:titulo, :tema, :descricao, :criador)'
+        'INSERT INTO salas_estudo (titulo, tema, descricao, icone, criador_id)
+         VALUES (:titulo, :tema, :descricao, :icone, :criador)'
     );
     $stmt->execute([
         'titulo'    => $titulo,
         'tema'      => $tema,
         'descricao' => $descricao,
+        'icone'     => $icone,
         'criador'   => $usuarioId,
     ]);
     $salaId = (int) $pdo->lastInsertId();
-    $inscrever = $pdo->prepare('INSERT INTO salas_inscricoes (sala_id, usuario_id) VALUES (:sala, :usuario)');
-    $inscrever->execute(['sala' => $salaId, 'usuario' => $usuarioId]);
+    entrarNaSala($pdo, $salaId, $usuarioId, true);
     $salaNova = [
         'id'           => $salaId,
         'titulo'       => $titulo,
         'tema'         => $tema,
         'descricao'    => $descricao,
+        'icone'        => $icone,
         'inscrito'     => true,
         'inscritos'    => 1,
         'criador_nome' => (string) ($_SESSION['usuario_nome'] ?? ''),
@@ -96,29 +98,28 @@ if ($acao === 'inscrever') {
     if (!$sala) {
         $responder(false, ['erro' => 'Esta sala não está mais disponível.'], 'erro=sala', BASE_URL . '/aluno/salas.php');
     }
-    $stmt = $pdo->prepare(
-        'INSERT IGNORE INTO salas_inscricoes (sala_id, usuario_id) VALUES (:sala, :usuario)'
-    );
-    $stmt->execute(['sala' => $alvo, 'usuario' => $usuarioId]);
+    $virouAdmin = entrarNaSala($pdo, $alvo, $usuarioId, false);
     $sala['inscrito'] = true;
     $sala['membros'] = listarMembrosSala($pdo, $alvo, 4);
     $conta = $pdo->prepare('SELECT COUNT(*) FROM salas_inscricoes WHERE sala_id = :sala');
     $conta->execute(['sala' => $alvo]);
     $sala['inscritos'] = (int) $conta->fetchColumn();
-    $criadorSala = (int) $sala['criador_id'] === $usuarioId;
-    $feedInscricao = capturarRender(static function () use ($pdo, $alvo, $usuarioId, $criadorSala): void {
+    if ($virouAdmin && ($sala['criador_nome'] ?? '') === '') {
+        $sala['criador_nome'] = (string) ($_SESSION['usuario_nome'] ?? '');
+    }
+    $feedInscricao = capturarRender(static function () use ($pdo, $alvo, $usuarioId, $virouAdmin): void {
         $feedPosts = listarPostsComunitarios($pdo, 'sala', $alvo);
         $feedPodePublicar = true;
         $feedUsuarioId = $usuarioId;
-        $feedModeraPosts = $criadorSala;
-        $feedModeraComentarios = $criadorSala;
+        $feedModeraPosts = $virouAdmin;
+        $feedModeraComentarios = $virouAdmin;
         $feedContexto = 'sala';
         $feedAlvo = $alvo;
         $feedVoltar = BASE_URL . '/aluno/sala.php?id=' . $alvo;
         require __DIR__ . '/../includes/feed_social.php';
     });
     $status = '<span class="grupo-status"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.6 9.2 16.8 19 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
-        . ($criadorSala ? 'Você criou esta sala' : 'Você participa') . '</span>';
+        . ($virouAdmin ? 'Você administra esta sala' : 'Você participa') . '</span>';
     $responder(true, [
         'acao'   => 'inscrever',
         'html'   => capturarRender(static function () use ($sala): void {
@@ -126,7 +127,81 @@ if ($acao === 'inscrever') {
         }),
         'feed'   => $feedInscricao,
         'status' => $status,
-    ], 'ok=inscrito', BASE_URL . '/aluno/sala.php?id=' . $alvo);
+    ], $virouAdmin ? 'ok=admin' : 'ok=inscrito', BASE_URL . '/aluno/sala.php?id=' . $alvo);
+}
+
+if (in_array($acao, ['editar_sala', 'adicionar_membro', 'remover_membro', 'tornar_admin', 'remover_admin', 'excluir_sala'], true)) {
+    $sala = obterSala($pdo, $alvo);
+    $destino = BASE_URL . '/aluno/sala.php?id=' . $alvo . '&aba=config';
+    if (!$sala || !usuarioAdministraSala($pdo, $alvo, $usuarioId)) {
+        $responder(false, ['erro' => 'Você não pode alterar esta sala.'], 'erro=acesso', BASE_URL . '/aluno/salas.php');
+    }
+
+    if ($acao === 'editar_sala') {
+        $titulo = textoComunidade($_POST['titulo'] ?? '', 150);
+        $tema = textoComunidade($_POST['tema'] ?? '', 150);
+        $descricao = textoComunidade($_POST['descricao'] ?? '', 1000);
+        $icone = iconeSalaValido((string) ($_POST['icone'] ?? ''));
+        if ($titulo === '') {
+            $responder(false, ['erro' => 'Dê um nome para a sala.'], 'erro=titulo', $destino);
+        }
+        $stmt = $pdo->prepare(
+            'UPDATE salas_estudo SET titulo = :titulo, tema = :tema, descricao = :descricao, icone = :icone WHERE id = :id'
+        );
+        $stmt->execute([
+            'titulo'    => $titulo,
+            'tema'      => $tema,
+            'descricao' => $descricao,
+            'icone'     => $icone,
+            'id'        => $alvo,
+        ]);
+        $responder(true, [], 'ok=editada', $destino);
+    }
+
+    if ($acao === 'adicionar_membro') {
+        $membroId = (int) ($_POST['membro_id'] ?? 0);
+        $stmt = $pdo->prepare(
+            'SELECT id FROM usuarios WHERE id = :id AND tipo IN (\'aluno\', \'professor\') LIMIT 1'
+        );
+        $stmt->execute(['id' => $membroId]);
+        if (!$stmt->fetchColumn()) {
+            $responder(false, ['erro' => 'Escolha um aluno para adicionar.'], 'erro=membro', $destino);
+        }
+        $comoAdmin = ($_POST['como_admin'] ?? '') === '1';
+        entrarNaSala($pdo, $alvo, $membroId, $comoAdmin);
+        $responder(true, [], $comoAdmin ? 'ok=admin_novo' : 'ok=membro', $destino);
+    }
+
+    if ($acao === 'tornar_admin' || $acao === 'remover_admin') {
+        $membroId = (int) ($_POST['membro_id'] ?? 0);
+        $promover = $acao === 'tornar_admin';
+        if (!definirAdminDaSala($pdo, $alvo, $membroId, $promover)) {
+            $responder(false, ['erro' => 'A sala precisa de pelo menos um administrador.'], 'erro=ultimo', $destino);
+        }
+        $responder(true, [], $promover ? 'ok=admin_promovido' : 'ok=admin_removido', $destino);
+    }
+
+    if ($acao === 'remover_membro') {
+        $membroId = (int) ($_POST['membro_id'] ?? 0);
+        if ($membroId === $usuarioId) {
+            $responder(false, ['erro' => 'Peça a outro administrador para ajustar o seu acesso.'], 'erro=criador', $destino);
+        }
+        if (usuarioAdministraSala($pdo, $alvo, $membroId) && !salaTemOutroAdmin($pdo, $alvo, $membroId)) {
+            $responder(false, ['erro' => 'A sala precisa de pelo menos um administrador.'], 'erro=ultimo', $destino);
+        }
+        $stmt = $pdo->prepare('DELETE FROM salas_inscricoes WHERE sala_id = :sala AND usuario_id = :usuario');
+        $stmt->execute(['sala' => $alvo, 'usuario' => $membroId]);
+        $responder(true, [], 'ok=membro_removido', $destino);
+    }
+
+    $posts = $pdo->prepare('SELECT id FROM salas_posts WHERE sala_id = :sala');
+    $posts->execute(['sala' => $alvo]);
+    foreach ($posts->fetchAll() as $post) {
+        apagarPostComunitario($pdo, 'sala', (int) $post['id']);
+    }
+    $apagar = $pdo->prepare('DELETE FROM salas_estudo WHERE id = :id');
+    $apagar->execute(['id' => $alvo]);
+    $responder(true, [], 'ok=excluida', BASE_URL . '/aluno/salas.php');
 }
 
 $permitido = $contexto === 'mural'
@@ -300,5 +375,5 @@ function salaCriadaPeloUsuario(PDO $pdo, int $salaId, int $usuarioId): bool
 {
     $sala = obterSala($pdo, $salaId);
 
-    return $sala && (int) $sala['criador_id'] === $usuarioId;
+    return $sala && usuarioAdministraSala($pdo, $salaId, $usuarioId);
 }

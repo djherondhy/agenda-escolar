@@ -954,6 +954,70 @@ html {
     box-shadow: 0 0 0 5px #fff, 0 10px 24px rgba(48, 24, 80, 0.18);
 }
 
+.sala-icone-svg svg {
+    width: 52%;
+    height: 52%;
+}
+
+.sala-icones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 4px 0 0;
+    padding: 0;
+    border: 0;
+}
+
+.sala-icones legend {
+    width: 100%;
+    margin-bottom: 4px;
+    padding: 0;
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.sala-icones label {
+    position: relative;
+    cursor: pointer;
+}
+
+.sala-icones input {
+    position: absolute;
+    opacity: 0;
+}
+
+.sala-icone-opcao {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+    color: var(--ink);
+    font-family: "Nunito", sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.sala-icone-opcao svg {
+    width: 22px;
+    height: 22px;
+}
+
+.sala-icones input:checked + .sala-icone-opcao {
+    border-color: transparent;
+    background: linear-gradient(120deg, var(--coral), var(--violet));
+    color: #fff;
+    box-shadow: 0 8px 16px rgba(124, 58, 237, 0.2);
+}
+
+.sala-icones input:focus-visible + .sala-icone-opcao {
+    outline: 2px solid var(--violet);
+    outline-offset: 2px;
+}
+
 /* Vazio */
 .social-empty {
     display: grid;
@@ -1261,7 +1325,41 @@ html {
     text-align: center;
 }
 
-/* Página da sala */
+.sala-membro-linha {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0;
+    border-top: 1px solid var(--line);
+}
+
+.sala-membro-linha .lateral-membro {
+    min-width: 0;
+    padding: 0;
+}
+
+.sala-membro-linha .btn {
+    flex: 0 0 auto;
+}
+
+.sala-membro-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.sala-candidatos {
+    display: grid;
+    max-height: 420px;
+    margin-top: 12px;
+    overflow: auto;
+}
+
+.panel .salas-busca {
+    margin-top: 4px;
+}
 .grupo-head {
     margin-bottom: 20px;
     overflow: hidden;
@@ -1269,6 +1367,7 @@ html {
 
 .grupo-capa {
     position: relative;
+    z-index: 0;
     height: 150px;
 }
 
@@ -1276,6 +1375,7 @@ html {
     position: absolute;
     top: 14px;
     left: 14px;
+    z-index: 2;
     padding: 6px 12px;
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.9);
@@ -1286,6 +1386,8 @@ html {
 }
 
 .grupo-info {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-wrap: wrap;
     align-items: flex-end;
@@ -1499,7 +1601,11 @@ html {
     }
 
     .grupo-capa {
-        height: 110px;
+        height: 96px;
+    }
+
+    .grupo-info .sala-icone-xl {
+        margin-top: -28px;
     }
 
     .salas-busca {

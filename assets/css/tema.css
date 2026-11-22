@@ -359,6 +359,12 @@ html[data-tema="escuro"] .notif-item.is-read {
     color: #f6f1fb;
 }
 
+html[data-tema="escuro"] .sala-icone-opcao {
+    background: #2a2436;
+    border-color: #3a3148;
+    color: #f6f1fb;
+}
+
 html[data-tema="escuro"] .sala-selo,
 html[data-tema="escuro"] .grupo-status {
     background: #14532d;

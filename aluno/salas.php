@@ -20,6 +20,9 @@ $menuAtivo = 'salas';
 require __DIR__ . '/../includes/header.php';
 ?>
 
+<?php if (($_GET['ok'] ?? '') === 'excluida'): ?>
+    <div class="alert alert-ok" role="status">Sala excluída.</div>
+<?php endif; ?>
 <?php if (!empty($_GET['erro'])): ?>
     <div class="alert alert-error">Dê um nome para a sala antes de criar.</div>
 <?php endif; ?>
@@ -41,7 +44,7 @@ require __DIR__ . '/../includes/header.php';
         <span class="nova-sala-mais" aria-hidden="true">+</span>
         <span>
             <strong>Criar uma sala de estudo</strong>
-            <small>Você entra automaticamente e pode convidar a turma toda.</small>
+            <small>Você entra automaticamente e configura quem participa.</small>
         </span>
     </summary>
     <form class="nova-sala-form" method="post" action="<?= BASE_URL ?>/aluno/social.php">
@@ -58,6 +61,9 @@ require __DIR__ . '/../includes/header.php';
             <div class="field span-2">
                 <label for="sala-descricao">Sobre o que é a sala</label>
                 <textarea id="sala-descricao" name="descricao" rows="3" maxlength="1000" placeholder="Quem entra encontra resumos, dúvidas e material de estudo."></textarea>
+            </div>
+            <div class="field span-2">
+                <?php campoIconesSala(''); ?>
             </div>
         </div>
         <button class="btn btn-stamp" type="submit">Criar e entrar</button>
@@ -86,7 +92,7 @@ require __DIR__ . '/../includes/header.php';
                 <span class="sala-selo">Você participa</span>
             <?php endif; ?>
             <div class="sala-corpo">
-                <span class="sala-icone sala-icone-lg <?= capaSala((int) $sala['id']) ?>"><?= e(iniciaisNome($sala['titulo'])) ?></span>
+                <?= htmlIconeSala($sala, 'lg') ?>
                 <p class="sala-tema"><?= e($sala['tema'] !== '' ? $sala['tema'] : 'Estudo livre') ?></p>
                 <h2><a href="<?= BASE_URL ?>/aluno/sala.php?id=<?= (int) $sala['id'] ?>"><?= e($sala['titulo']) ?></a></h2>
                 <p class="sala-descricao"><?= e($sala['descricao'] ?: 'Sala aberta para publicar resumos e comentar.') ?></p>
@@ -96,7 +102,7 @@ require __DIR__ . '/../includes/header.php';
                             <?= avatarSocial((int) $membro['id'], $membro['nome'], 'sm') ?>
                         <?php endforeach; ?>
                     </span>
-                    <small><?= (int) $sala['inscritos'] ?> membro<?= (int) $sala['inscritos'] === 1 ? '' : 's' ?> · criada por <?= e(primeiroNome($sala['criador_nome'])) ?></small>
+                    <small><?= (int) $sala['inscritos'] ?> membro<?= (int) $sala['inscritos'] === 1 ? '' : 's' ?> · <?= e(origemDaSala($sala['criador_nome'] ?? '')) ?></small>
                 </div>
             </div>
             <div class="sala-rodape">
