@@ -33,7 +33,7 @@ $turmaMaterias = $dados['turma_materias'] ?? [];
             </div>
         <?php endif; ?>
     </div>
-    <small class="field-help">Marque as turmas e informe as matérias. Um professor pode dar várias matérias na mesma turma.</small>
+    <small class="field-help">Conta antiga. O representante atual de cada turma é um aluno escolhido na página da turma.</small>
     <?php if (!$turmas): ?>
         <p class="empty">Nenhuma turma cadastrada. <a href="<?= BASE_URL ?>/admin/turmas.php">Cadastrar turmas</a></p>
     <?php else: ?>

@@ -23,9 +23,25 @@ if (!$turma || !professorTemTurma($pdo, (int) $professor['id'], $turmaId)) {
 $errosHorario = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $resultado = processarHorarioTurma($pdo, $_POST, $turmaId, (int) $professor['id'], $errosHorario);
-    if ($resultado) {
-        redirecionar('/professor/turma.php?id=' . $turmaId . '&ok=' . $resultado);
+    $acao = (string) ($_POST['acao'] ?? '');
+    if (in_array($acao, ['mover_horario', 'definir_horario', 'esvaziar_horario', 'gerar_horario'], true)) {
+        $resultadoQuadro = processarQuadroHorario($pdo, $_POST, $turmaId, $errosHorario);
+        if (($_POST['ajax'] ?? '') === '1') {
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode([
+                'ok'   => $resultadoQuadro !== null,
+                'erro' => $errosHorario[0] ?? '',
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+        if ($resultadoQuadro) {
+            redirecionar('/professor/turma.php?id=' . $turmaId . '&ok=' . $resultadoQuadro);
+        }
+    } else {
+        $resultado = processarHorarioTurma($pdo, $_POST, $turmaId, (int) $professor['id'], $errosHorario);
+        if ($resultado) {
+            redirecionar('/professor/turma.php?id=' . $turmaId . '&ok=' . $resultado);
+        }
     }
 }
 
@@ -38,10 +54,13 @@ $actionHorario = BASE_URL . '/professor/turma.php?id=' . $turmaId;
 $minhasMaterias = [];
 foreach ($professores as $item) {
     if ((int) $item['professor_id'] === (int) $professor['id']) {
-        $minhasMaterias = array_map(
-            static fn ($materia) => rotuloMateria($materia['materia']),
-            $item['materias']
-        );
+        $minhasMaterias = [];
+        foreach ($item['materias'] as $materia) {
+            if (trim((string) $materia['materia']) === '') {
+                continue;
+            }
+            $minhasMaterias[] = rotuloMateria($materia['materia']);
+        }
         break;
     }
 }
@@ -54,7 +73,11 @@ require __DIR__ . '/../includes/header.php';
 
 <p class="back-link"><a href="<?= BASE_URL ?>/professor/turmas.php">Turmas</a></p>
 
-<?php if (($_GET['ok'] ?? '') === 'horario_ok'): ?>
+<?php if (($_GET['ok'] ?? '') === 'horario_gerado'): ?>
+    <div class="alert alert-ok" role="status">Grade de horários gerada. Arraste as aulas para ajustar.</div>
+<?php elseif (($_GET['ok'] ?? '') === 'horario_quadro'): ?>
+    <div class="alert alert-ok" role="status">Grade de horários atualizada.</div>
+<?php elseif (($_GET['ok'] ?? '') === 'horario_ok'): ?>
     <div class="alert alert-ok" role="status">Horário adicionado. Os alunos já veem na grade da turma.</div>
 <?php elseif (($_GET['ok'] ?? '') === 'horario_removido'): ?>
     <div class="alert alert-ok" role="status">Horário removido.</div>
@@ -76,43 +99,32 @@ require __DIR__ . '/../includes/header.php';
 </section>
 
 <section class="panel">
-    <h2>Representantes</h2>
-    <p class="panel-lead">Um professor pode dar mais de uma matéria nesta turma.</p>
-
-    <?php if (!$professores): ?>
-        <p class="empty">Nenhum representante vinculado.</p>
+    <h2>Representante</h2>
+    <?php $representante = obterRepresentanteDaTurma($pdo, $turmaId); ?>
+    <?php if (!$representante): ?>
+        <p class="empty">Esta turma ainda não tem um aluno representante.</p>
     <?php else: ?>
-        <div class="table-wrap">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Representante</th>
-                        <th>Matérias</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($professores as $item): ?>
-                        <tr>
-                            <td data-label="Representante">
-                                <?= e($item['nome']) ?>
-                                <?php if ((int) $item['professor_id'] === (int) $professor['id']): ?>
-                                    <span class="chip chip-ok">Você</span>
-                                <?php endif; ?>
-                            </td>
-                            <td data-label="Matérias">
-                                <?php foreach ($item['materias'] as $materia): ?>
-                                    <span class="chip chip-professor"><?= e(rotuloMateria($materia['materia'])) ?></span>
-                                <?php endforeach; ?>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+        <div class="rep-card">
+            <div>
+                <strong><?= e($representante['nome']) ?></strong>
+                <span><?= (int) $representante['usuario_id'] === (int) $_SESSION['usuario_id'] ? 'Você representa esta turma.' : e($representante['email']) ?></span>
+            </div>
         </div>
     <?php endif; ?>
 </section>
 
-<?php require __DIR__ . '/../includes/horario_painel.php'; ?>
+<section class="panel">
+    <div class="panel-head">
+        <h2>Horários</h2>
+    </div>
+    <p class="panel-lead">Segunda a sexta, no turno da manhã. Arraste uma aula para trocar de lugar, ou solte uma disciplina em um horário.</p>
+<?php
+$podeEditarQuadro = true;
+$grade = listarGradeDaTurma($pdo, $turmaId);
+$actionQuadro = BASE_URL . '/professor/turma.php?id=' . $turmaId;
+require __DIR__ . '/../includes/quadro_grade.php';
+?>
+</section>
 
 <section class="panel">
     <h2>Alunos</h2>

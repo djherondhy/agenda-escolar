@@ -257,6 +257,10 @@ function aplicarGradePadrao(PDO $pdo, int $turmaId, bool $substituir = false, ?s
     }
     $pdo->prepare('UPDATE turmas SET grade_aplicada = 1 WHERE id = :id')->execute(['id' => $turmaId]);
 
+    if (function_exists('aplicarHorarioPadrao')) {
+        aplicarHorarioPadrao($pdo, $turmaId, $substituir);
+    }
+
     return true;
 }
 

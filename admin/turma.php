@@ -33,35 +33,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    if ($acao === 'adicionar') {
-        $professorId = (int) ($_POST['professor_id'] ?? 0);
-        $materias = normalizarMaterias((string) ($_POST['materia'] ?? ''));
-
-        $existe = $pdo->prepare('SELECT id FROM professores WHERE id = :id LIMIT 1');
-        $existe->execute(['id' => $professorId]);
-
-        if (!$existe->fetchColumn()) {
-            $erros[] = 'Selecione um representante.';
-        } elseif (!$materias) {
-            $erros[] = 'Informe pelo menos uma matéria.';
+    if ($acao === 'definir_representante') {
+        $alunoId = (int) ($_POST['aluno_id'] ?? 0);
+        if ($alunoId <= 0) {
+            $erros[] = 'Selecione um aluno desta turma.';
+        } elseif (!definirRepresentanteDaTurma($pdo, $turmaId, $alunoId)) {
+            $erros[] = 'O representante precisa ser um aluno desta turma.';
         } else {
-            $inserir = $pdo->prepare(
-                'INSERT IGNORE INTO professor_turmas (professor_id, turma_id, materia)
-                 VALUES (:professor_id, :turma_id, :materia)'
-            );
-            $novas = 0;
-
-            foreach ($materias as $materia) {
-                $inserir->execute([
-                    'professor_id' => $professorId,
-                    'turma_id'     => $turmaId,
-                    'materia'      => $materia,
-                ]);
-                $novas += $inserir->rowCount();
-            }
-
-            redirecionar('/admin/turma.php?id=' . $turmaId . '&aba=representantes' . ($novas ? '&ok=vinculo' : '&ok=existe'));
+            redirecionar('/admin/turma.php?id=' . $turmaId . '&aba=representantes&ok=representante');
         }
+    }
+
+    if ($acao === 'remover_representante') {
+        definirRepresentanteDaTurma($pdo, $turmaId, 0);
+        redirecionar('/admin/turma.php?id=' . $turmaId . '&aba=representantes&ok=representante_removido');
     }
 
     if (in_array($acao, ['adicionar_horario', 'remover_horario'], true)) {
@@ -69,18 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($resultado) {
             redirecionar('/admin/turma.php?id=' . $turmaId . '&aba=horarios&ok=' . $resultado);
         }
-    }
-
-    if ($acao === 'remover') {
-        $vinculoId = (int) ($_POST['vinculo_id'] ?? 0);
-        $delete = $pdo->prepare(
-            'DELETE FROM professor_turmas WHERE id = :id AND turma_id = :turma_id'
-        );
-        $delete->execute([
-            'id'       => $vinculoId,
-            'turma_id' => $turmaId,
-        ]);
-        redirecionar('/admin/turma.php?id=' . $turmaId . '&aba=representantes&ok=removido');
     }
 
     if ($acao === 'adicionar_disciplina') {
@@ -162,11 +135,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $alunos = listarAlunosDaTurma($pdo, $turmaId);
-$professores = agruparProfessoresDaTurma(listarVinculosDaTurma($pdo, $turmaId));
-$todosProfessores = listarProfessores($pdo);
+$representante = obterRepresentanteDaTurma($pdo, $turmaId);
 $horariosPainel = listarHorariosDaTurma($pdo, $turmaId);
-$opcoesHorario = opcoesHorarioDaTurma($professores);
-$actionHorario = BASE_URL . '/admin/turma.php?id=' . $turmaId;
 $errosHorario = [];
 $grade = listarGradeDaTurma($pdo, $turmaId);
 $cursoDetectado = cursoDaTurma($turma['nome']);
@@ -191,7 +161,7 @@ if (!in_array($aba, $abasValidas, true)) {
 }
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $erros) {
     $aba = match ($_POST['acao'] ?? '') {
-        'adicionar', 'remover' => 'representantes',
+        'definir_representante', 'remover_representante' => 'representantes',
         'adicionar_horario', 'remover_horario', 'mover_horario', 'definir_horario', 'esvaziar_horario', 'gerar_horario' => 'horarios',
         default => 'grade',
     };
@@ -206,12 +176,10 @@ require __DIR__ . '/../includes/header.php';
 
 <p class="back-link"><a href="<?= BASE_URL ?>/admin/turmas.php">Turmas</a></p>
 
-<?php if (($_GET['ok'] ?? '') === 'vinculo'): ?>
-    <div class="alert alert-ok" role="status">Matéria vinculada ao representante.</div>
-<?php elseif (($_GET['ok'] ?? '') === 'existe'): ?>
-    <div class="alert alert-ok" role="status">Esse vínculo já existia.</div>
-<?php elseif (($_GET['ok'] ?? '') === 'removido'): ?>
-    <div class="alert alert-ok" role="status">Vínculo removido.</div>
+<?php if (($_GET['ok'] ?? '') === 'representante'): ?>
+    <div class="alert alert-ok" role="status">Representante da turma atualizado.</div>
+<?php elseif (($_GET['ok'] ?? '') === 'representante_removido'): ?>
+    <div class="alert alert-ok" role="status">Esta turma ficou sem representante.</div>
 <?php elseif (($_GET['ok'] ?? '') === 'editada'): ?>
     <div class="alert alert-ok" role="status">Turma atualizada.</div>
 <?php elseif (($_GET['erro'] ?? '') === 'alunos'): ?>
@@ -220,6 +188,7 @@ require __DIR__ . '/../includes/header.php';
     <div class="alert alert-ok" role="status">Grade de horários gerada. Arraste as aulas para ajustar.</div>
 <?php elseif (($_GET['ok'] ?? '') === 'horario_quadro'): ?>
     <div class="alert alert-ok" role="status">Grade de horários atualizada.</div>
+<?php elseif (($_GET['ok'] ?? '') === 'horario_ok'): ?>
     <div class="alert alert-ok" role="status">Horário adicionado.</div>
 <?php elseif (($_GET['ok'] ?? '') === 'horario_removido'): ?>
     <div class="alert alert-ok" role="status">Horário removido.</div>
@@ -240,7 +209,7 @@ require __DIR__ . '/../includes/header.php';
     <p>
         <?= e($turma['ano'] ?: 'Ano não informado') ?>
         · <?= count($alunos) ?> aluno<?= count($alunos) === 1 ? '' : 's' ?>
-        · <?= count($professores) ?> representante<?= count($professores) === 1 ? '' : 's' ?>
+        · <?= $representante ? '1 representante' : 'sem representante' ?>
     </p>
 </section>
 
@@ -248,7 +217,7 @@ require __DIR__ . '/../includes/header.php';
     <?php
     $abasTurma = [
         'grade'          => ['Grade', count($grade)],
-        'representantes' => ['Representantes', count($professores)],
+        'representantes' => ['Representante', $representante ? 1 : 0],
         'horarios'       => ['Horários', count($horariosPainel)],
         'alunos'         => ['Alunos', count($alunos)],
     ];
@@ -364,80 +333,45 @@ require __DIR__ . '/../includes/header.php';
 <?php if ($aba === 'representantes'): ?>
 <section class="panel">
     <div class="panel-head">
-        <h2>Representantes</h2>
+        <h2>Representante</h2>
     </div>
-    <p class="panel-lead">O mesmo representante pode cuidar de mais de uma matéria nesta turma.</p>
+    <p class="panel-lead">Cada turma tem um representante. Ele precisa ser um aluno desta turma.</p>
 
-    <?php if (!$professores): ?>
-        <p class="empty">Nenhum representante vinculado ainda.</p>
-    <?php else: ?>
-        <div class="table-wrap">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Representante</th>
-                        <th>E-mail</th>
-                        <th>Matérias</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($professores as $professor): ?>
-                        <tr>
-                            <td data-label="Representante"><?= e($professor['nome']) ?></td>
-                            <td data-label="E-mail"><?= e($professor['email']) ?></td>
-                            <td data-label="Matérias">
-                                <div class="materia-list">
-                                    <?php foreach ($professor['materias'] as $item): ?>
-                                        <span class="materia-item">
-                                            <span class="chip chip-professor"><?= e(rotuloMateria($item['materia'])) ?></span>
-                                            <form method="post" action="<?= BASE_URL ?>/admin/turma.php?id=<?= $turmaId ?>" data-confirm="Remover esta matéria deste representante?">
-                                                <input type="hidden" name="acao" value="remover">
-                                                <input type="hidden" name="turma_id" value="<?= $turmaId ?>">
-                                                <input type="hidden" name="vinculo_id" value="<?= (int) $item['id'] ?>">
-                                                <button class="btn btn-ghost btn-compact" type="submit">Remover</button>
-                                            </form>
-                                        </span>
-                                    <?php endforeach; ?>
-                                </div>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+    <?php if ($representante): ?>
+        <div class="rep-card">
+            <div>
+                <strong><?= e($representante['nome']) ?></strong>
+                <span><?= e($representante['email']) ?></span>
+            </div>
+            <form method="post" action="<?= BASE_URL ?>/admin/turma.php?id=<?= $turmaId ?>" data-confirm="Tirar o representante desta turma?">
+                <input type="hidden" name="acao" value="remover_representante">
+                <button class="btn btn-ghost" type="submit">Remover</button>
+            </form>
         </div>
+    <?php else: ?>
+        <p class="empty">Nenhum representante nesta turma.</p>
     <?php endif; ?>
 
-    <?php if ($todosProfessores): ?>
+    <?php if (!$alunos): ?>
+        <div class="empty-state">
+            <p>Cadastre um aluno desta turma para escolhê-lo como representante.</p>
+            <a class="btn btn-ghost empty-action" href="<?= BASE_URL ?>/admin/adicionar_usuario.php?tipo=aluno">Cadastrar aluno</a>
+        </div>
+    <?php else: ?>
         <form class="stack-form" method="post" action="<?= BASE_URL ?>/admin/turma.php?id=<?= $turmaId ?>">
-            <input type="hidden" name="acao" value="adicionar">
-            <input type="hidden" name="turma_id" value="<?= $turmaId ?>">
-            <h3 class="section-title">Adicionar matéria</h3>
-            <div class="form-grid">
-                <div class="field">
-                    <label for="professor_id">Representante</label>
-                    <select id="professor_id" name="professor_id" required>
-                        <option value="">Selecione</option>
-                        <?php foreach ($todosProfessores as $professor): ?>
-                            <option value="<?= (int) $professor['id'] ?>"><?= e($professor['nome']) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="field">
-                    <label for="materia">Matéria</label>
-                    <?php if ($grade): ?>
-                        <select id="materia" name="materia" required>
-                            <option value="">Selecione</option>
-                            <?php foreach ($grade as $disciplina): ?>
-                                <option value="<?= e($disciplina['nome']) ?>"><?= e($disciplina['nome']) ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    <?php else: ?>
-                        <input id="materia" name="materia" type="text" maxlength="100" required placeholder="Ex.: Matemática">
-                        <small class="field-help">Para várias de uma vez, separe por vírgula.</small>
-                    <?php endif; ?>
-                </div>
+            <input type="hidden" name="acao" value="definir_representante">
+            <div class="field">
+                <label for="aluno_id">Aluno da turma</label>
+                <select id="aluno_id" name="aluno_id" required>
+                    <option value="">Selecione</option>
+                    <?php foreach ($alunos as $aluno): ?>
+                        <option value="<?= (int) $aluno['id'] ?>" <?= $representante && (int) $representante['id'] === (int) $aluno['id'] ? 'selected' : '' ?>>
+                            <?= e($aluno['nome']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
             </div>
-            <button class="btn btn-stamp" type="submit">Adicionar</button>
+            <button class="btn btn-stamp" type="submit"><?= $representante ? 'Trocar representante' : 'Definir representante' ?></button>
         </form>
     <?php endif; ?>
 </section>
@@ -482,6 +416,9 @@ require __DIR__ . '/../includes/header.php';
                         <tr>
                             <td data-label="Nome">
                                 <a href="<?= BASE_URL ?>/admin/editar_usuario.php?id=<?= (int) $aluno['usuario_id'] ?>"><?= e($aluno['nome']) ?></a>
+                                <?php if ((int) $aluno['representante'] === 1): ?>
+                                    <span class="chip chip-ok">Representante</span>
+                                <?php endif; ?>
                             </td>
                             <td data-label="E-mail"><?= e($aluno['email']) ?></td>
                         </tr>

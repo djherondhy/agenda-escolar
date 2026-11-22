@@ -132,7 +132,7 @@ require __DIR__ . '/../includes/header.php';
                         <option value="">Selecione</option>
                         <?php foreach ($disciplinas as $disciplina): ?>
                             <option value="<?= (int) $disciplina['turma_id'] ?>|<?= e($disciplina['materia']) ?>">
-                                <?= e($disciplina['turma_nome']) ?> · <?= e(rotuloMateria($disciplina['materia'])) ?>
+                                <?= e($disciplina['turma_nome']) ?><?= trim((string) $disciplina['materia']) !== '' ? ' · ' . e(rotuloMateria($disciplina['materia'])) : '' ?>
                             </option>
                         <?php endforeach; ?>
                     </select>

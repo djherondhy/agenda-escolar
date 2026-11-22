@@ -93,6 +93,8 @@ function getPDO(): PDO
             garantirPerfilUsuario($pdo);
             require_once dirname(__DIR__) . '/includes/grades.php';
             garantirGradesTurmas($pdo);
+            require_once dirname(__DIR__) . '/includes/quadro.php';
+            garantirQuadroHorario($pdo);
             require_once dirname(__DIR__) . '/includes/comunidade.php';
             garantirComunidade($pdo);
             prepararProducao($pdo);
@@ -318,6 +320,21 @@ function garantirRepresentanteAluno(PDO $pdo): void
     $coluna = $pdo->query("SHOW COLUMNS FROM alunos LIKE 'representante'")->fetch();
     if (!$coluna) {
         $pdo->exec('ALTER TABLE alunos ADD COLUMN representante TINYINT(1) NOT NULL DEFAULT 0 AFTER turma_id');
+    }
+
+    $duplicadas = $pdo->query(
+        'SELECT turma_id, MIN(id) AS manter
+         FROM alunos
+         WHERE representante = 1
+         GROUP BY turma_id
+         HAVING COUNT(*) > 1'
+    )->fetchAll();
+    $ajustar = $pdo->prepare('UPDATE alunos SET representante = 0 WHERE turma_id = :turma AND id <> :manter');
+    foreach ($duplicadas as $turma) {
+        $ajustar->execute([
+            'turma'  => (int) $turma['turma_id'],
+            'manter' => (int) $turma['manter'],
+        ]);
     }
 }
 

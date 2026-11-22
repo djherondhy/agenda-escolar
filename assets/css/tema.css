@@ -296,6 +296,10 @@ html[data-tema="escuro"] .turma-perigo {
     border-color: #7f1d1d;
 }
 
+html[data-tema="escuro"] .rep-card {
+    background: #2a2140;
+}
+
 html[data-tema="escuro"] .quadro-intervalo th,
 html[data-tema="escuro"] .quadro-intervalo td,
 html[data-tema="escuro"] .quadro-celula.is-vazia {

@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $sql = 'SELECT t.id, t.nome, t.ano,
                (SELECT COUNT(*) FROM alunos a WHERE a.turma_id = t.id) AS total_alunos,
-               (SELECT COUNT(DISTINCT pt.professor_id) FROM professor_turmas pt WHERE pt.turma_id = t.id) AS total_professores
+               (SELECT COUNT(*) FROM alunos a WHERE a.turma_id = t.id AND a.representante = 1) AS total_representante
         FROM turmas t
         ORDER BY t.nome';
 $turmas = $pdo->query($sql)->fetchAll();
@@ -97,7 +97,7 @@ require __DIR__ . '/../includes/header.php';
                         <th>Turma</th>
                         <th>Ano</th>
                         <th>Alunos</th>
-                        <th>Representantes</th>
+                        <th>Representante</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
@@ -109,7 +109,7 @@ require __DIR__ . '/../includes/header.php';
                             </td>
                             <td data-label="Ano"><?= e($turma['ano'] ?: '—') ?></td>
                             <td data-label="Alunos"><?= (int) $turma['total_alunos'] ?></td>
-                            <td data-label="Representantes"><?= (int) $turma['total_professores'] ?></td>
+                            <td data-label="Representante"><?= (int) $turma['total_representante'] === 1 ? 'Sim' : '—' ?></td>
                             <td data-label="Ações">
                                 <div class="row-actions">
                                     <a class="btn btn-ghost" href="<?= BASE_URL ?>/admin/turma.php?id=<?= (int) $turma['id'] ?>">Abrir</a>

@@ -547,6 +547,27 @@ form .btn-stamp {
     box-shadow: none;
 }
 
+.rep-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: #f7f1ff;
+}
+
+.rep-card strong,
+.rep-card span {
+    display: block;
+}
+
+.rep-card span {
+    color: var(--muted);
+    font-size: 13px;
+}
+
 .quadro-rolagem {
     overflow-x: auto;
     margin: 0 -4px 8px;

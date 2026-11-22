@@ -132,8 +132,8 @@ function exigirLogin(): void
 }
 
 /**
- * Representante de turma: conta de professor (várias turmas) ou aluno marcado como representante,
- * com uma única turma e os mesmos poderes de controle da turma.
+ * Representante de turma: aluno marcado na própria turma.
+ * Contas antigas do tipo professor continuam entrando na área de gestão.
  */
 function ehRepresentantePorUsuario(PDO $pdo, int $usuarioId, string $tipo): bool
 {
