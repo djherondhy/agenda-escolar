@@ -24,35 +24,6 @@ require __DIR__ . '/../includes/header.php';
 <section class="panel">
     <h2>Avisos</h2>
     <p class="panel-lead">Atividades da turma, publicações, comentários e o lembrete do dia anterior aparecem aqui. Com os avisos ativados, o mesmo recado chega no navegador e no celular.</p>
-    <?php if ($chavePush !== ''): ?>
-        <div class="push-caixa">
-            <p class="push-status" id="push-status" role="status">Verificando…</p>
-            <div class="form-actions">
-                <button class="btn btn-stamp" type="button" id="push-ativar" hidden>Ativar avisos neste aparelho</button>
-                <button class="btn btn-ghost" type="button" id="push-teste" hidden>Enviar aviso de teste</button>
-                <button class="btn btn-ghost" type="button" id="push-desativar" hidden>Desativar</button>
-            </div>
-            <div class="push-dica" id="push-dica" hidden>
-                <strong>iPhone / iPad (iOS 16.4 ou mais novo)</strong>
-                <ol>
-                    <li>Abra este site no <strong>Safari</strong>.</li>
-                    <li>Toque em <strong>Compartilhar</strong> e depois em <strong>Adicionar à Tela de Início</strong>.</li>
-                    <li>Abra a Agenda pelo <strong>ícone na tela inicial</strong>, entre na conta e volte aqui para ativar os avisos.</li>
-                </ol>
-            </div>
-            <details class="push-ajuda">
-                <summary>Não recebi os avisos</summary>
-                <ul>
-                    <li>No <strong>Android</strong> (Chrome): permita as notificações quando o navegador perguntar. Se bloqueou, toque no cadeado ao lado do endereço &rarr; Permissões &rarr; Notificações.</li>
-                    <li>No <strong>iPhone</strong>: só funciona com o app adicionado à Tela de Início (passo a passo acima).</li>
-                    <li>No <strong>computador</strong>: deixe o navegador aberto (pode estar minimizado) e confira se o Windows/macOS não está em "Não perturbe".</li>
-                    <li>Cada aparelho e cada navegador precisa ser ativado uma vez.</li>
-                </ul>
-            </details>
-        </div>
-    <?php else: ?>
-        <p class="panel-lead">O sino dentro do sistema continua funcionando. O aviso no aparelho não pôde ser preparado neste servidor.</p>
-    <?php endif; ?>
 
     <?php if (!$notificacoes): ?>
         <div class="empty-state">
@@ -82,6 +53,36 @@ require __DIR__ . '/../includes/header.php';
                 </a>
             <?php endforeach; ?>
         </div>
+    <?php endif; ?>
+
+    <?php if ($chavePush !== ''): ?>
+        <div class="push-caixa">
+            <p class="push-status" id="push-status" role="status">Verificando…</p>
+            <div class="form-actions">
+                <button class="btn btn-stamp" type="button" id="push-ativar" hidden>Ativar avisos neste aparelho</button>
+                <button class="btn btn-ghost" type="button" id="push-teste" hidden>Enviar aviso de teste</button>
+                <button class="btn btn-ghost" type="button" id="push-desativar" hidden>Desativar</button>
+            </div>
+            <div class="push-dica" id="push-dica" hidden>
+                <strong>iPhone / iPad (iOS 16.4 ou mais novo)</strong>
+                <ol>
+                    <li>Abra este site no <strong>Safari</strong>.</li>
+                    <li>Toque em <strong>Compartilhar</strong> e depois em <strong>Adicionar à Tela de Início</strong>.</li>
+                    <li>Abra a Agenda pelo <strong>ícone na tela inicial</strong>, entre na conta e volte aqui para ativar os avisos.</li>
+                </ol>
+            </div>
+            <details class="push-ajuda">
+                <summary>Não recebi os avisos</summary>
+                <ul>
+                    <li>No <strong>Android</strong> (Chrome): permita as notificações quando o navegador perguntar. Se bloqueou, toque no cadeado ao lado do endereço &rarr; Permissões &rarr; Notificações.</li>
+                    <li>No <strong>iPhone</strong>: só funciona com o app adicionado à Tela de Início (passo a passo acima).</li>
+                    <li>No <strong>computador</strong>: deixe o navegador aberto (pode estar minimizado) e confira se o Windows/macOS não está em "Não perturbe".</li>
+                    <li>Cada aparelho e cada navegador precisa ser ativado uma vez.</li>
+                </ul>
+            </details>
+        </div>
+    <?php else: ?>
+        <p class="panel-lead">O sino dentro do sistema continua funcionando. O aviso no aparelho não pôde ser preparado neste servidor.</p>
     <?php endif; ?>
 </section>
 
