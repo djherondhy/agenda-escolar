@@ -2,13 +2,13 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Documento de Engenharia de Software — Calendário Escolar</title>
+<title>Documento de Engenharia de Software — Agenda Acadêmica</title>
 <style>
   @page {
     size: A4;
     margin: 16mm 15mm 18mm 15mm;
     @bottom-left {
-      content: "Calendário Escolar  ·  Documento de Engenharia de Software  ·  v1.0";
+      content: "Agenda Acadêmica  ·  Documento de Engenharia de Software  ·  v2.0";
       font-family: "Segoe UI", sans-serif;
       font-size: 8.5pt;
       color: #6b7a90;
@@ -174,28 +174,30 @@
 
 <section class="capa">
   <p class="capa-kicker">Engenharia de software</p>
-  <h1>Calendário Escolar</h1>
+  <h1>Agenda Acadêmica</h1>
   <p class="sub">Documento de requisitos, modelagem e arquitetura do sistema de organização da rotina escolar.</p>
   <div class="linha"></div>
-  <p style="max-width:145mm;color:#cbd5e1;font-size:12pt;">Contexto, escopo, linguagens e ferramentas, requisitos funcionais e não funcionais, regras de negócio, casos de uso, modelo e diagrama entidade-relacionamento, modelo relacional e limitações.</p>
+  <p style="max-width:155mm;color:#cbd5e1;font-size:12pt;">Contexto, escopo, linguagens e ferramentas, requisitos funcionais e não funcionais, regras de negócio, casos de uso, mural e salas de estudo, notificações no celular, perfil, modelo e diagrama entidade-relacionamento, modelo relacional e limitações.</p>
   <div class="capa-meta">
     <p><span>Sistema</span> c-estudantil</p>
     <p><span>Documento</span> DES-CE-001</p>
-    <p><span>Versão</span> 1.0</p>
-    <p><span>Data</span> 26 de outubro de 2026</p>
+    <p><span>Versão</span> 2.0</p>
+    <p><span>Data</span> 21 de novembro de 2026</p>
     <p><span>Estado</span> Documentação do sistema implementado</p>
     <p><span>Base de dados</span> calendario_estudantil</p>
+    <p><span>Produção</span> academico.wararadev.com</p>
   </div>
 </section>
 
 <h2 class="primeiro">Identificação e histórico</h2>
-<p>Este documento descreve o <strong>Calendário Escolar</strong>, aplicação web que organiza a rotina acadêmica de uma escola: o administrador mantém pessoas e turmas, o professor publica atividades e horários, e o aluno acompanha prazos, conclui o que já fez e registra compromissos pessoais.</p>
-<p>O texto foi elaborado a partir do código, do esquema SQL e do comportamento das telas em outubro de 2026. Ele registra o sistema como está construído, e não um plano anterior à implementação.</p>
+<p>Este documento descreve a <strong>Agenda Acadêmica</strong>, aplicação web que organiza a rotina de uma escola: o desenvolvedor ou conselheiro mantém pessoas e turmas, o representante de turma publica atividades e horários, e o aluno acompanha prazos, conversa no mural da turma, entra em salas de estudo e registra compromissos pessoais.</p>
+<p>O texto foi elaborado a partir do código, do esquema SQL e do comportamento das telas. A versão 1.0 descrevia o produto ainda chamado Calendário Escolar. A versão 2.0 registra o sistema como está construído em novembro de 2026, e não um plano anterior à implementação.</p>
 
 <table>
   <thead><tr><th>Versão</th><th>Data</th><th>Descrição</th></tr></thead>
   <tbody>
-    <tr><td>1.0</td><td>26/10/2026</td><td>Versão inicial do documento de engenharia de software, cobrindo requisitos, casos de uso, MER, DER, modelo relacional, arquitetura e limitações.</td></tr>
+    <tr><td>1.0</td><td>26/10/2026</td><td>Versão inicial: requisitos, casos de uso, MER, DER, modelo relacional, arquitetura e limitações do Calendário Escolar.</td></tr>
+    <tr><td>2.0</td><td>21/11/2026</td><td>Nome Agenda Acadêmica; papéis de representante e de conselheiro; mural e salas de estudo; foto e troca de senha; senha padrão no cadastro; avisos Web Push e PWA; QR Code de produção; tema claro e escuro; configuração por ambiente.</td></tr>
   </tbody>
 </table>
 
@@ -223,47 +225,57 @@
 <h2>1. Introdução</h2>
 
 <h3>1.1 Contexto</h3>
-<p>Em uma rotina escolar, provas, trabalhos, tarefas e reuniões nascem em conversas de corredor, grupos de mensagem e avisos soltos. O aluno da turma precisa reunir esses prazos num único lugar, e o professor precisa publicar o aviso uma vez para a turma inteira, sem controlar o caderno de cada estudante.</p>
-<p>O Calendário Escolar responde a esse contexto com três áreas separadas por perfil. A escola cadastra turmas, alunos e professores. Cada professor publica atividades apenas nas turmas em que leciona. Cada aluno vê o calendário da própria turma, marca o que já concluiu sem alterar o status dos colegas e ainda guarda atividades pessoais, que não aparecem para a turma.</p>
-<p>O cenário de demonstração do banco cobre o ano letivo de 2026, com turmas de Informática, Administração e Agropecuária, professores vinculados a matérias e um conjunto inicial de provas, trabalhos, atividades e uma reunião.</p>
+<p>Em uma rotina escolar, provas, trabalhos, tarefas e reuniões nascem em conversas de corredor, grupos de mensagem e avisos soltos. O aluno da turma precisa reunir esses prazos num único lugar, e quem organiza a turma precisa publicar o aviso uma vez, sem controlar o caderno de cada estudante.</p>
+<p>A Agenda Acadêmica responde com três áreas separadas por perfil. O desenvolvedor ou conselheiro cadastra turmas, alunos e representantes. Cada representante publica atividades nas turmas em que está vinculado. Cada aluno abre o mural da própria turma, vê o calendário, marca o que já concluiu sem alterar o status dos colegas, guarda atividades pessoais e pode entrar em salas de estudo abertas a outras turmas.</p>
+<p>O nome exibido nas telas é Agenda Acadêmica. A pasta do projeto continua <span class="mono">c-estudantil</span> e a base continua <span class="mono">calendario_estudantil</span>. O valor gravado em <span class="mono">usuarios.tipo</span> continua <span class="mono">administrador</span>, <span class="mono">professor</span> ou <span class="mono">aluno</span>; a interface traduz os dois primeiros para Desenvolvedor / Conselheiro e Representante de turma.</p>
 
 <h3>1.2 Problema</h3>
-<p>Sem um registro comum, três falhas se repetem:</p>
+<p>Sem um registro comum, quatro falhas se repetem:</p>
 <ul>
   <li>o aluno descobre o prazo tarde, porque o aviso ficou num canal que ele não consulta;</li>
-  <li>o professor não tem uma lista única do que já publicou para cada turma;</li>
-  <li>a conclusão de um aluno, se fosse gravada na atividade da turma, apagaria o controle dos demais.</li>
+  <li>o representante não tem uma lista única do que já publicou para cada turma;</li>
+  <li>a conclusão de um aluno, se fosse gravada na atividade da turma, apagaria o controle dos demais;</li>
+  <li>material de estudo e conversa da turma ficam espalhados, sem um mural da classe nem uma sala que misture alunos de cursos diferentes.</li>
 </ul>
-<p>O sistema separa o fato acadêmico (a atividade existe para a turma) do progresso individual (este aluno já concluiu). Essa separação é a decisão central do produto.</p>
+<p>O sistema separa o fato acadêmico (a atividade existe para a turma) do progresso individual (este aluno já concluiu). Essa separação continua sendo a decisão central da agenda. O mural e as salas acrescentam a conversa, sem virar diário de classe nem correção de trabalho.</p>
 
 <h3>1.3 Objetivos</h3>
-<p><strong>Objetivo geral.</strong> Oferecer um sistema web em que a escola publique e acompanhe a agenda acadêmica da turma, com acesso distinto para administrador, professor e aluno.</p>
+<p><strong>Objetivo geral.</strong> Oferecer um sistema web em que a escola publique e acompanhe a agenda da turma, com mural, salas de estudo e aviso no celular, e com acesso distinto para conselheiro, representante e aluno.</p>
 <p><strong>Objetivos específicos.</strong></p>
 <ul>
   <li>Autenticar usuários e conduzir cada perfil ao seu painel.</li>
-  <li>Cadastrar usuários, turmas, vínculos de aluno e matérias do professor.</li>
-  <li>Permitir que o professor crie, edite, anexe arquivos e encerre atividades da turma.</li>
+  <li>Cadastrar usuários, turmas, vínculo de aluno e matérias do representante, com senha padrão quando o cadastro vier em branco.</li>
+  <li>Permitir que o próprio usuário troque a senha e envie uma foto de perfil.</li>
+  <li>Permitir que o representante crie, edite, anexe arquivos e encerre atividades da turma.</li>
   <li>Permitir que o aluno filtre, consulte e conclua atividades sem efeito sobre os colegas.</li>
-  <li>Exibir calendário mensal, grade de horários, disciplinas e notificações de novas atividades.</li>
+  <li>Exibir mural da turma, calendário mensal, grade de horários, disciplinas e avisos de atividades novas.</li>
+  <li>Levar o aviso também ao navegador e ao celular, quando o aluno ativar.</li>
+  <li>Permitir posts e comentários no mural da turma e em salas de estudo por inscrição.</li>
   <li>Permitir que o aluno mantenha uma agenda pessoal, visível só para ele.</li>
+  <li>Abrir o site no celular pelo QR Code da página inicial e instalá-lo como atalho.</li>
 </ul>
 
 <h3>1.4 Público-alvo</h3>
-<p>O uso previsto é uma escola de ensino médio ou técnico, com turmas nomeadas por ano e curso. Os operadores diretos são a secretaria ou coordenação (administrador), o corpo docente e os estudantes. O documento também serve a quem for manter o código: a organização das pastas, o esquema e as regras estão descritos para esse leitor.</p>
+<p>O uso previsto é uma escola de ensino médio ou técnico, com turmas nomeadas por ano e curso. Os operadores diretos são desenvolvedores e professores conselheiros (administrador), os representantes de turma e os estudantes. O documento também serve a quem for manter o código: a organização das pastas, o esquema e as regras estão descritos para esse leitor.</p>
 
 <h3>1.5 Glossário</h3>
 <table>
   <thead><tr><th>Termo</th><th>Significado neste sistema</th></tr></thead>
   <tbody>
-    <tr><td>Atividade / evento</td><td>Compromisso publicado pelo professor para uma turma. Tipos: prova, trabalho, atividade e reunião.</td></tr>
-    <tr><td>Conclusão da turma</td><td>Marca do professor em <span class="mono">eventos.concluido</span>. Indica que a atividade, como item da turma, foi encerrada.</td></tr>
-    <tr><td>Conclusão individual</td><td>Marca do aluno em <span class="mono">aluno_eventos</span>. Não altera a conclusão dos colegas nem a marca do professor.</td></tr>
-    <tr><td>Atividade pessoal</td><td>Compromisso criado pelo próprio aluno. Não é visível ao professor nem aos colegas.</td></tr>
-    <tr><td>Matéria</td><td>Nome da disciplina informado no vínculo professor–turma. Não existe cadastro próprio de disciplinas.</td></tr>
-    <tr><td>Notificação</td><td>Aviso interno, criado para cada aluno da turma quando uma atividade nova é publicada.</td></tr>
+    <tr><td>Representante de turma</td><td>Quem publica atividades e horários. No banco, o perfil é <span class="mono">professor</span>. Também vale para um aluno com <span class="mono">alunos.representante = 1</span> que tenha linha em <span class="mono">professores</span>.</td></tr>
+    <tr><td>Desenvolvedor / Conselheiro</td><td>Perfil <span class="mono">administrador</span>. Mantém usuários e turmas. Não publica a agenda da turma.</td></tr>
+    <tr><td>Atividade / evento</td><td>Compromisso publicado pelo representante para uma turma. Tipos: prova, trabalho, atividade e reunião.</td></tr>
+    <tr><td>Conclusão da turma</td><td>Marca do representante em <span class="mono">eventos.concluido</span>. Indica que a atividade, como item da turma, foi encerrada.</td></tr>
+    <tr><td>Conclusão individual</td><td>Marca do aluno em <span class="mono">aluno_eventos</span>. Não altera a conclusão dos colegas nem a marca da turma.</td></tr>
+    <tr><td>Atividade pessoal</td><td>Compromisso criado pelo próprio aluno. Não é visível ao representante nem aos colegas.</td></tr>
+    <tr><td>Mural</td><td>Feed da turma: texto, anexos e comentários. É a tela inicial do aluno.</td></tr>
+    <tr><td>Sala de estudo</td><td>Espaço criado por qualquer aluno ou representante, aberto a outras turmas, com inscrição, posts e comentários.</td></tr>
+    <tr><td>Matéria</td><td>Nome da disciplina no vínculo representante–turma. Não existe cadastro próprio de disciplinas.</td></tr>
+    <tr><td>Notificação</td><td>Aviso interno, criado para cada aluno da turma quando uma atividade nova é publicada. Pode também sair como push.</td></tr>
+    <tr><td>Senha provisória</td><td>Senha <span class="mono">ifam2026</span> gravada quando o conselheiro cadastra o usuário sem informar senha. O usuário troca em Meu perfil.</td></tr>
     <tr><td>MER</td><td>Modelo entidade-relacionamento: visão conceitual, independente do SGBD.</td></tr>
     <tr><td>DER</td><td>Diagrama do modelo entidade-relacionamento já próximo do esquema lógico.</td></tr>
-    <tr><td>Perfil</td><td>Papel do usuário: administrador, professor ou aluno. Um usuário tem exatamente um perfil.</td></tr>
+    <tr><td>Perfil</td><td>Papel gravado: administrador, professor ou aluno. Um usuário tem exatamente um desses valores.</td></tr>
   </tbody>
 </table>
 
@@ -271,47 +283,52 @@
 
 <h3>2.1 Dentro do escopo</h3>
 <ul>
-  <li>Página inicial pública e autenticação por e-mail e senha.</li>
-  <li>Sessões separadas para o administrador e para professor ou aluno, no mesmo navegador.</li>
-  <li>CRUD de usuários e de turmas, com vínculo de aluno a uma turma e de professor a várias turmas e matérias.</li>
-  <li>CRUD de atividades da turma, com tipo, data, hora opcional, matéria, descrição formatada e anexos.</li>
-  <li>Conclusão pelo professor (âmbito da turma) e conclusão pelo aluno (âmbito individual).</li>
+  <li>Página inicial pública, QR Code para o celular e autenticação por e-mail e senha.</li>
+  <li>Sessões separadas para o administrador e para representante ou aluno, no mesmo navegador.</li>
+  <li>CRUD de usuários e de turmas, com vínculo de aluno a uma turma e de representante a várias turmas e matérias.</li>
+  <li>Senha padrão <span class="mono">ifam2026</span> quando o cadastro é salvo sem senha, e troca de senha pelo próprio usuário.</li>
+  <li>Foto de perfil para qualquer perfil autenticado.</li>
+  <li>CRUD de atividades da turma, com tipo, data, hora opcional, matéria, descrição formatada e anexos (imagem, PDF, Word, planilha, slides, texto e ZIP).</li>
+  <li>Conclusão pelo representante (âmbito da turma) e conclusão pelo aluno (âmbito individual).</li>
+  <li>Mural da turma, com publicação, comentário, anexo e moderação do representante.</li>
+  <li>Salas de estudo por inscrição, abertas a alunos de outras turmas, com o mesmo tipo de conversa.</li>
   <li>Calendário mensal, listagem com filtros, painéis e detalhe da atividade.</li>
   <li>Grade semanal de aulas, consulta de disciplinas da turma e próxima aula.</li>
-  <li>Agenda pessoal do aluno.</li>
-  <li>Notificações internas de atividade nova, com contagem de não lidas.</li>
-  <li>Criação automática do banco e ajustes de esquema na primeira execução.</li>
+  <li>Agenda pessoal do aluno, também com anexos.</li>
+  <li>Notificações internas de atividade nova e Web Push no navegador e no celular.</li>
+  <li>Atalho instalável (PWA) e tema claro ou escuro.</li>
+  <li>Criação automática do banco, leitura de <span class="mono">.env</span> e ajustes de esquema na execução.</li>
 </ul>
 
 <h3>2.2 Fora do escopo</h3>
 <ul>
   <li>Notas, frequência, boletim, diário de classe e plano de ensino.</li>
   <li>Matrícula institucional, histórico escolar e vários anos letivos convivendo como períodos formais.</li>
-  <li>Auto-cadastro, recuperação de senha e confirmação por e-mail.</li>
-  <li>Aplicativo móvel nativo, API pública e integração com Google Classroom ou SIGAA.</li>
-  <li>Chat, fórum, entrega de trabalho com correção e detecção de plágio.</li>
+  <li>Auto-cadastro, recuperação de senha por e-mail e confirmação de conta.</li>
+  <li>Aplicativo móvel nativo nas lojas, API pública e integração com Google Classroom ou SIGAA.</li>
+  <li>Entrega de trabalho com correção, nota e detecção de plágio. O mural discute e anexa; não corrige.</li>
   <li>Múltiplas escolas no mesmo banco (multi-inquilino).</li>
-  <li>Envio de e-mail, SMS ou notificação push. O aviso existe só dentro do sistema.</li>
+  <li>E-mail e SMS. O aviso sai dentro do sistema e, se o aluno ativar, por Web Push.</li>
   <li>Relatórios gerenciais exportados (PDF, planilha) e trilha de auditoria.</li>
 </ul>
 
-<div class="nota">O limite do produto é a agenda: o que vai acontecer, para quem, até quando, e se a pessoa já deu aquilo por feito. Avaliação e vida acadêmica formal ficam de fora.</div>
+<div class="nota">O limite do produto é a agenda e a conversa da turma: o que vai acontecer, para quem, até quando, se a pessoa já deu aquilo por feito, e onde o material e a dúvida ficam. Avaliação e vida acadêmica formal ficam de fora.</div>
 
 <h2>3. Visão do produto e atores</h2>
-<p>O visitante vê a página institucional e a tela de entrada. Depois do login, o sistema escolhe o painel pelo campo <span class="mono">usuarios.tipo</span>. Administrador, professor e aluno não compartilham menu. Um administrador não administra turmas “por dentro” da área do professor: ele cadastra a estrutura; quem publica a atividade é o professor.</p>
+<p>O visitante vê a página institucional, o QR Code e a tela de entrada. Depois do login, o sistema escolhe o painel pelo campo <span class="mono">usuarios.tipo</span>. Conselheiro, representante e aluno não compartilham o mesmo menu. O conselheiro cadastra a estrutura; quem publica a atividade é o representante.</p>
 
 <table>
   <thead><tr><th>Ator</th><th>Descrição</th><th>Área</th></tr></thead>
   <tbody>
-    <tr><td>Visitante</td><td>Pessoa sem sessão, ou com sessão que ainda não foi retomada. Acessa a página inicial e o login.</td><td><span class="mono">/</span> e <span class="mono">/login.php</span></td></tr>
-    <tr><td>Administrador</td><td>Mantém usuários e turmas. Não publica atividades.</td><td><span class="mono">/admin</span></td></tr>
-    <tr><td>Professor</td><td>Publica atividades, anexos e horários nas turmas em que está vinculado.</td><td><span class="mono">/professor</span></td></tr>
-    <tr><td>Aluno</td><td>Consulta a agenda da própria turma, conclui itens e mantém a agenda pessoal.</td><td><span class="mono">/aluno</span></td></tr>
-    <tr><td>Sistema</td><td>Cria o banco na primeira carga, gera notificações e aplica migrações leves de esquema.</td><td><span class="mono">config/database.php</span></td></tr>
+    <tr><td>Visitante</td><td>Pessoa sem sessão. Acessa a página inicial, o QR Code e o login.</td><td><span class="mono">/</span> e <span class="mono">/login.php</span></td></tr>
+    <tr><td>Desenvolvedor / Conselheiro</td><td>Perfil <span class="mono">administrador</span>. Mantém usuários e turmas. Não publica atividades. Também troca a própria senha e a foto.</td><td><span class="mono">/admin</span></td></tr>
+    <tr><td>Representante de turma</td><td>Perfil <span class="mono">professor</span>, ou aluno marcado como representante e também presente em <span class="mono">professores</span>. Publica atividades, anexos e horários, modera o mural das turmas vinculadas e entra nas salas de estudo.</td><td><span class="mono">/professor</span> e salas em <span class="mono">/aluno/salas.php</span></td></tr>
+    <tr><td>Aluno</td><td>Consulta o mural e a agenda da própria turma, conclui itens, publica no mural, entra em salas e mantém a agenda pessoal e o perfil.</td><td><span class="mono">/aluno</span></td></tr>
+    <tr><td>Sistema</td><td>Cria o banco, lê o ambiente, gera notificações e push, e aplica migrações leves de esquema.</td><td><span class="mono">config/</span></td></tr>
   </tbody>
 </table>
 
-<p>Há uma especialização total e disjunta de usuário: todo cadastro é exatamente um entre administrador, professor e aluno. Administrador não possui tabela filha. Professor e aluno possuem, porque carregam vínculos que o administrador não tem (turmas e, no caso do aluno, uma turma obrigatória).</p>
+<p>Há uma especialização total e disjunta de usuário: todo cadastro é exatamente um entre administrador, professor e aluno. Administrador não possui tabela filha. Professor e aluno possuem, porque carregam vínculos que o administrador não tem. O cadastro feito na tela cria o representante como perfil <span class="mono">professor</span>, com uma ou mais turmas. O código ainda reconhece um segundo caminho: aluno com <span class="mono">representante = 1</span> e linha correspondente em <span class="mono">professores</span> ganha o menu Gerenciar, edita horários na área do representante e modera o mural da própria turma.</p>
 
 <h2>4. Linguagens, ferramentas e ambiente</h2>
 
@@ -319,47 +336,56 @@
 <table>
   <thead><tr><th>Camada</th><th>Tecnologia</th><th>Papel</th></tr></thead>
   <tbody>
-    <tr><td>Servidor HTTP</td><td>Apache (XAMPP)</td><td>Publica a pasta do projeto em <span class="mono">http://localhost/c-estudantil</span>.</td></tr>
-    <tr><td>Linguagem de servidor</td><td>PHP 8 ou superior</td><td>Páginas, regras, sessão, validação e acesso a dados. Usa <span class="mono">match</span>, tipos e PDO.</td></tr>
-    <tr><td>Banco de dados</td><td>MySQL ou MariaDB</td><td>Base <span class="mono">calendario_estudantil</span>, charset <span class="mono">utf8mb4</span>.</td></tr>
+    <tr><td>Servidor HTTP</td><td>Apache (XAMPP ou hospedagem)</td><td>Local em <span class="mono">http://localhost/c-estudantil</span>. Produção em HTTPS, com <span class="mono">APP_URL</span> apontando para <span class="mono">https://academico.wararadev.com</span>.</td></tr>
+    <tr><td>Linguagem de servidor</td><td>PHP 8 ou superior</td><td>Páginas, regras, sessão, validação, push e acesso a dados. Usa <span class="mono">match</span>, tipos, OpenSSL e PDO.</td></tr>
+    <tr><td>Banco de dados</td><td>MySQL ou MariaDB</td><td>Base <span class="mono">calendario_estudantil</span>, charset <span class="mono">utf8mb4</span>. Credenciais vêm do ambiente ou do <span class="mono">.env</span>.</td></tr>
     <tr><td>Acesso a dados</td><td>PDO com prepared statements</td><td>Consultas parametrizadas e exceções em erro de SQL.</td></tr>
-    <tr><td>Interface</td><td>HTML5, CSS3, JavaScript</td><td>Telas renderizadas no servidor. Script próprio em <span class="mono">assets/js/script.js</span>.</td></tr>
-    <tr><td>Editor de texto</td><td>Quill 1.3.7 (CDN)</td><td>Descrição rica da atividade do professor.</td></tr>
-    <tr><td>Tipografia</td><td>Inter (Google Fonts) e ícone SVG</td><td>Identidade visual das telas. O ícone é <span class="mono">assets/img/lapis.svg</span>.</td></tr>
+    <tr><td>Interface</td><td>HTML5, CSS3, JavaScript</td><td>Telas renderizadas no servidor. Scripts em <span class="mono">assets/js/script.js</span> e <span class="mono">assets/js/push.js</span>.</td></tr>
+    <tr><td>Editor de texto</td><td>Quill 1.3.7 (CDN)</td><td>Descrição rica da atividade do representante.</td></tr>
+    <tr><td>Tipografia</td><td>Inter e Nunito (Google Fonts)</td><td>Identidade visual. Ícones em SVG e PNG para o PWA.</td></tr>
+    <tr><td>Aplicativo web</td><td>Manifest e service worker</td><td><span class="mono">manifest.php</span> e <span class="mono">sw.js</span>. Atalho instalável e recepção de Web Push.</td></tr>
+    <tr><td>Aviso no aparelho</td><td>Web Push (VAPID)</td><td>Chaves P-256 em <span class="mono">config/vapid.php</span>. Carga cifrada com ECDH e AES-128-GCM. Sem serviço externo de push além do navegador.</td></tr>
+    <tr><td>QR Code</td><td>SVG próprio</td><td><span class="mono">includes/qr.php</span> monta a matriz (Reed-Solomon) e desenha o código. Não chama API de terceiros.</td></tr>
+    <tr><td>Imagem de perfil</td><td>GD, quando disponível</td><td>Recorte quadrado, redução e limpeza de metadados da foto.</td></tr>
     <tr><td>Controle de versão</td><td>Git</td><td>Histórico do código-fonte do projeto.</td></tr>
-    <tr><td>Ambiente de desenvolvimento</td><td>XAMPP no Windows</td><td>Apache e MySQL locais. Usuário padrão do banco: <span class="mono">root</span> sem senha.</td></tr>
+    <tr><td>Ambiente</td><td>XAMPP no Windows e hospedagem PHP</td><td>Sem <span class="mono">.env</span>, o banco cai no padrão local (<span class="mono">root</span> sem senha). Com <span class="mono">.env</span>, usa as credenciais de produção.</td></tr>
   </tbody>
 </table>
 
-<p>Não há framework PHP, empacotador de front-end nem ORM. A aplicação é um monólito de páginas PHP. Isso reduz a instalação a copiar a pasta, subir o Apache e o MySQL e abrir o endereço local. O custo é a ausência de roteador, migrações versionadas e suíte de testes.</p>
+<p>Não há framework PHP, empacotador de front-end nem ORM. A aplicação é um monólito de páginas PHP. Isso reduz a instalação a copiar a pasta, configurar o <span class="mono">.env</span> quando não for o XAMPP, subir o Apache e o MySQL e abrir o endereço. O custo é a ausência de roteador, migrações numeradas e suíte de testes.</p>
 
 <h3>4.2 Organização do código</h3>
 <table>
   <thead><tr><th>Caminho</th><th>Responsabilidade</th></tr></thead>
   <tbody>
     <tr><td><span class="mono">index.php</span>, <span class="mono">login.php</span>, <span class="mono">logout.php</span></td><td>Entrada pública, autenticação e encerramento da sessão do contexto atual.</td></tr>
-    <tr><td><span class="mono">admin/</span></td><td>Painel, usuários e turmas.</td></tr>
-    <tr><td><span class="mono">professor/</span></td><td>Painel, atividades, horários e turmas do docente.</td></tr>
-    <tr><td><span class="mono">aluno/</span></td><td>Painel, calendário, atividades, disciplinas, horários e notificações.</td></tr>
+    <tr><td><span class="mono">admin/</span></td><td>Painel, usuários, turmas e perfil do conselheiro.</td></tr>
+    <tr><td><span class="mono">professor/</span></td><td>Painel, mural, atividades, horários e turmas do representante.</td></tr>
+    <tr><td><span class="mono">aluno/</span></td><td>Mural, salas, calendário, atividades, disciplinas, horários, notificações, push e perfil.</td></tr>
     <tr><td><span class="mono">ajax/</span></td><td>JSON de detalhe de atividade, atividade pessoal, turma e upload de imagem do editor.</td></tr>
-    <tr><td><span class="mono">includes/auth.php</span></td><td>Sessão, guarda de perfil e redirecionamento.</td></tr>
-    <tr><td><span class="mono">includes/functions.php</span></td><td>Regras, consultas, validação, anexos e formatação.</td></tr>
-    <tr><td><span class="mono">includes/header.php</span> e <span class="mono">footer.php</span></td><td>Casca visual e menu por perfil.</td></tr>
-    <tr><td><span class="mono">config/database.php</span></td><td>Conexão, criação do banco e migrações leves.</td></tr>
-    <tr><td><span class="mono">database/</span></td><td>Script inicial e scripts auxiliares de evolução.</td></tr>
-    <tr><td><span class="mono">uploads/</span></td><td>Arquivos de atividades e imagens do editor. Fora do versionamento de conteúdo do usuário.</td></tr>
-    <tr><td><span class="mono">assets/</span></td><td>CSS, JavaScript e ícone.</td></tr>
+    <tr><td><span class="mono">includes/auth.php</span></td><td>Sessão, guarda de perfil, reconhecimento do representante e redirecionamento.</td></tr>
+    <tr><td><span class="mono">includes/functions.php</span></td><td>Regras da agenda, consultas, validação, anexos e formatação.</td></tr>
+    <tr><td><span class="mono">includes/comunidade.php</span></td><td>Esquema e regras do mural e das salas.</td></tr>
+    <tr><td><span class="mono">includes/perfil.php</span></td><td>Foto, troca de senha e token do formulário de perfil.</td></tr>
+    <tr><td><span class="mono">includes/push.php</span> e <span class="mono">qr.php</span></td><td>Web Push VAPID e QR Code em SVG.</td></tr>
+    <tr><td><span class="mono">includes/header.php</span> e <span class="mono">footer.php</span></td><td>Casca visual, menu por perfil, tema e aviso de senha provisória.</td></tr>
+    <tr><td><span class="mono">config/database.php</span> e <span class="mono">env.php</span></td><td>Conexão, <span class="mono">.env</span>, criação do banco e migrações leves.</td></tr>
+    <tr><td><span class="mono">sw.js</span> e <span class="mono">manifest.php</span></td><td>Service worker do push e manifesto do atalho.</td></tr>
+    <tr><td><span class="mono">database/</span></td><td>Script inicial e evolução do esquema.</td></tr>
+    <tr><td><span class="mono">uploads/</span></td><td>Anexos, fotos de perfil e imagens do editor.</td></tr>
+    <tr><td><span class="mono">assets/</span></td><td>CSS (incluindo tema), JavaScript e ícones do PWA.</td></tr>
   </tbody>
 </table>
 
 <h3>4.3 Ambiente de execução</h3>
+<p>As credenciais saem de <span class="mono">config/env.php</span>, nesta ordem: URL completa (<span class="mono">DATABASE_URL</span> e equivalentes), variáveis <span class="mono">DB_*</span> ou <span class="mono">MYSQL*</span>, arquivo <span class="mono">.env</span> na raiz, e por último o padrão do XAMPP. <span class="mono">APP_URL</span> define a origem pública usada no QR Code e nos links do push. <span class="mono">APP_BASE_URL</span> só é necessário quando a pasta publicada não puder ser detectada.</p>
 <ol>
-  <li>Instalar o XAMPP e iniciar Apache e MySQL.</li>
-  <li>Colocar o projeto em <span class="mono">C:\xampp\htdocs\c-estudantil</span>.</li>
-  <li>Na primeira página acessada, <span class="mono">instalarBancoSeNecessario()</span> cria a base e importa <span class="mono">database/calendario_estudantil.sql</span> se a tabela <span class="mono">usuarios</span> ainda não existir.</li>
-  <li>Ajustar <span class="mono">DB_HOST</span>, <span class="mono">DB_NAME</span>, <span class="mono">DB_USER</span>, <span class="mono">DB_PASS</span> e <span class="mono">BASE_URL</span> em <span class="mono">config/database.php</span> quando o ambiente não for o padrão do XAMPP.</li>
+  <li>No laboratório, instalar o XAMPP, iniciar Apache e MySQL e colocar o projeto em <span class="mono">C:\xampp\htdocs\c-estudantil</span>. Sem <span class="mono">.env</span> de produção, o banco local é usado.</li>
+  <li>Em produção, publicar os arquivos e conferir <span class="mono">DB_HOST</span>, <span class="mono">DB_PORT</span>, <span class="mono">DB_NAME</span>, <span class="mono">DB_USER</span>, <span class="mono">DB_PASS</span> e <span class="mono">APP_URL</span>.</li>
+  <li>Na primeira página, <span class="mono">instalarBancoSeNecessario()</span> cria a base e importa <span class="mono">database/calendario_estudantil.sql</span> se <span class="mono">usuarios</span> ainda não existir. A conexão seguinte completa colunas e tabelas que faltem.</li>
+  <li>Uma migração marcada em <span class="mono">migracoes</span> remove, uma única vez, as contas de demonstração e garante um administrador. A senha desse administrador pode ser trocada depois em Meu perfil.</li>
 </ol>
-<p>O script SQL também insere turmas, professores, alunos e atividades de demonstração. As senhas desses usuários ficam armazenadas apenas como hash gerado por <span class="mono">password_hash()</span>.</p>
+<p>As senhas ficam armazenadas apenas como hash gerado por <span class="mono">password_hash()</span>. O push no celular exige HTTPS. No iPhone ou iPad, o aviso só chega depois de adicionar o site à Tela de Início e abrir por esse ícone.</p>
 
 <h2>5. Arquitetura</h2>
 <p>A arquitetura é em três camadas lógicas, todas no mesmo processo PHP. Não há fila, cache distribuído nem serviço separado de arquivos: o upload grava disco local e o caminho relativo fica no MySQL.</p>
@@ -368,42 +394,45 @@
 <svg viewBox="0 0 760 250" role="img" aria-label="Arquitetura em camadas">
   <rect x="40" y="16" width="680" height="58" rx="6" fill="#1d4ed8"/>
   <text x="380" y="40" text-anchor="middle" fill="#fff" font-family="Segoe UI" font-size="14" font-weight="700">Apresentação</text>
-  <text x="380" y="58" text-anchor="middle" fill="#dbe7ff" font-family="Segoe UI" font-size="11">Páginas PHP por perfil, header, CSS, JavaScript e respostas JSON em ajax/</text>
+  <text x="380" y="58" text-anchor="middle" fill="#dbe7ff" font-family="Segoe UI" font-size="11">Páginas PHP por perfil, header, CSS, JavaScript, service worker e JSON em ajax/</text>
   <rect x="40" y="96" width="680" height="58" rx="6" fill="#153eb0"/>
   <text x="380" y="120" text-anchor="middle" fill="#fff" font-family="Segoe UI" font-size="14" font-weight="700">Aplicação</text>
-  <text x="380" y="138" text-anchor="middle" fill="#dbe7ff" font-family="Segoe UI" font-size="11">auth.php (sessão e perfil) e functions.php (validação, permissão, notificações, anexos)</text>
+  <text x="380" y="138" text-anchor="middle" fill="#dbe7ff" font-family="Segoe UI" font-size="11">auth, functions, comunidade, perfil, push e qr</text>
   <rect x="40" y="176" width="680" height="58" rx="6" fill="#0f1728"/>
   <text x="380" y="200" text-anchor="middle" fill="#fff" font-family="Segoe UI" font-size="14" font-weight="700">Persistência</text>
-  <text x="380" y="218" text-anchor="middle" fill="#cbd5e1" font-family="Segoe UI" font-size="11">MySQL calendario_estudantil via PDO  ·  arquivos em uploads/</text>
+  <text x="380" y="218" text-anchor="middle" fill="#cbd5e1" font-family="Segoe UI" font-size="11">MySQL calendario_estudantil via PDO  ·  arquivos em uploads/  ·  push no navegador</text>
 </svg>
 <figcaption>Figura 1. Camadas lógicas. A seta de dependência aponta sempre para baixo: a página chama a função, e a função usa o PDO.</figcaption>
 </figure>
 
 <h3>5.1 Fluxo de uma requisição</h3>
 <ol>
-  <li>A página inclui <span class="mono">auth.php</span> e chama <span class="mono">exigirAdministrador()</span>, <span class="mono">exigirProfessor()</span> ou <span class="mono">exigirAluno()</span>.</li>
-  <li>A guarda abre o cookie de sessão correto (<span class="mono">ce_admin</span> ou <span class="mono">ce_user</span>). Sem login, redireciona para <span class="mono">/login.php</span>. Com perfil errado, redireciona ao painel daquele perfil.</li>
-  <li>A página obtém o PDO, carrega o professor ou o aluno vinculado ao usuário e consulta só os registros autorizados.</li>
-  <li>O HTML é montado com <span class="mono">header.php</span>. Texto exibido passa por <span class="mono">htmlspecialchars()</span>. Descrição rica passa por uma lista fechada de tags.</li>
-  <li>Ações de escrita chegam por POST. O detalhe rápido de uma atividade chega por GET em <span class="mono">ajax/evento.php</span>, que devolve JSON só se <span class="mono">usuarioPodeVerEvento()</span> autorizar.</li>
+  <li>A página inclui <span class="mono">auth.php</span> e chama <span class="mono">exigirAdministrador()</span>, <span class="mono">exigirProfessor()</span>, <span class="mono">exigirAluno()</span> ou <span class="mono">exigirEscola()</span>. A guarda do representante aceita o perfil <span class="mono">professor</span> e também o aluno marcado como representante.</li>
+  <li>A guarda abre o cookie de sessão correto (<span class="mono">ce_admin</span> ou <span class="mono">ce_user</span>). Sem login, redireciona para <span class="mono">/login.php</span>. Com perfil errado, redireciona ao painel daquele perfil. Em HTTPS o cookie leva a flag Secure.</li>
+  <li>A página obtém o PDO, carrega o representante ou o aluno vinculado ao usuário e consulta só os registros autorizados.</li>
+  <li>O HTML é montado com <span class="mono">header.php</span>. Texto exibido passa por <span class="mono">htmlspecialchars()</span>. Descrição rica passa por uma lista fechada de tags. O tema claro ou escuro é lido de <span class="mono">localStorage</span> antes da pintura da página.</li>
+  <li>Ações de escrita chegam por POST. O mural e as salas passam por <span class="mono">aluno/social.php</span>, que devolve HTML parcial quando o pedido traz o cabeçalho de Ajax. O detalhe rápido de uma atividade chega por GET em <span class="mono">ajax/evento.php</span>, que devolve JSON só se <span class="mono">usuarioPodeVerEvento()</span> autorizar.</li>
 </ol>
 
 <h3>5.2 Mapa de navegação</h3>
 <table>
   <thead><tr><th>Perfil</th><th>Menu</th></tr></thead>
   <tbody>
-    <tr><td>Administrador</td><td>Dashboard, Usuários, Turmas. Ações: novo usuário, editar, excluir, abrir a turma.</td></tr>
-    <tr><td>Professor</td><td>Dashboard, Horários, Atividades, Turmas. Ações: nova atividade, editar, excluir, concluir, anexar.</td></tr>
-    <tr><td>Aluno</td><td>Dashboard, Horários, Disciplinas, Atividades, Calendário, sino de notificações. Ações: concluir, nova atividade pessoal.</td></tr>
+    <tr><td>Conselheiro</td><td>Dashboard, Usuários, Turmas, Meu perfil. Ações: novo usuário, editar, excluir, abrir a turma, trocar senha e foto.</td></tr>
+    <tr><td>Representante</td><td>Dashboard, Mural, Salas, Horários, Atividades, Turmas, Meu perfil. Ações: publicar no mural, nova atividade, editar, excluir, concluir, anexar.</td></tr>
+    <tr><td>Aluno</td><td>Mural (tela inicial), Salas, Horários, Disciplinas, Atividades, Calendário, sino de notificações, Meu perfil. Ações: publicar, comentar, inscrever-se em sala, concluir, nova atividade pessoal, ativar push. Se também for representante, o menu ganha Gerenciar.</td></tr>
   </tbody>
 </table>
 
 <h3>5.3 Decisões de arquitetura</h3>
 <ul>
-  <li><strong>Página por caso de uso, não por roteador.</strong> Cada arquivo em <span class="mono">admin</span>, <span class="mono">professor</span> e <span class="mono">aluno</span> é uma tela ou uma ação POST. O endereço é estável e fácil de proteger.</li>
-  <li><strong>Duas sessões no mesmo navegador.</strong> O administrador usa o nome de sessão <span class="mono">ce_admin</span>; professor e aluno usam <span class="mono">ce_user</span>. Dá para entrar com os dois contextos sem derrubar o outro. Professor e aluno compartilham o mesmo cookie e, portanto, não ficam logados ao mesmo tempo.</li>
-  <li><strong>Esquema que se completa sozinho.</strong> Se a base antiga não tiver coluna <span class="mono">materia</span>, tabela <span class="mono">notificacoes</span>, <span class="mono">horarios_aula</span> ou <span class="mono">aluno_atividades</span>, a conexão tenta criá-las. Falha de migração não impede o login.</li>
-  <li><strong>Matéria como texto, não como entidade.</strong> O nome da disciplina vive no vínculo, na atividade, no horário e na atividade pessoal. Evita um cadastro extra e aceita o mesmo professor com várias matérias na mesma turma.</li>
+  <li><strong>Página por caso de uso, não por roteador.</strong> Cada arquivo em <span class="mono">admin</span>, <span class="mono">professor</span> e <span class="mono">aluno</span> é uma tela ou uma ação POST. O endereço é estável e fácil de proteger. É o padrão Page Controller.</li>
+  <li><strong>Casca compartilhada.</strong> <span class="mono">header.php</span> e <span class="mono">footer.php</span> montam menu, tema e aviso de senha. O feed do mural e o das salas usam o mesmo include <span class="mono">feed_social.php</span>.</li>
+  <li><strong>Duas sessões no mesmo navegador.</strong> O administrador usa o nome de sessão <span class="mono">ce_admin</span>; representante e aluno usam <span class="mono">ce_user</span>. Dá para entrar com os dois contextos sem derrubar o outro. Representante e aluno compartilham o mesmo cookie e, portanto, não ficam logados ao mesmo tempo.</li>
+  <li><strong>Esquema que se completa sozinho.</strong> Se a base antiga não tiver mural, salas, push, foto, senha provisória, coluna <span class="mono">materia</span>, <span class="mono">notificacoes</span>, <span class="mono">horarios_aula</span> ou <span class="mono">aluno_atividades</span>, a conexão tenta criá-los. Falha de migração não impede o login.</li>
+  <li><strong>Push como efeito colateral.</strong> A notificação interna é gravada primeiro. O envio ao celular acontece em seguida e, se falhar, a atividade e o aviso interno permanecem.</li>
+  <li><strong>Matéria como texto, não como entidade.</strong> O nome da disciplina vive no vínculo, na atividade, no horário e na atividade pessoal. Evita um cadastro extra e aceita o mesmo representante com várias matérias na mesma turma.</li>
+  <li><strong>Tema no cliente.</strong> A preferência <span class="mono">ce-tema</span> fica no navegador. Sem escolha salva, segue o esquema de cor do sistema operacional.</li>
 </ul>
 
 <h2>6. Requisitos funcionais</h2>
@@ -413,33 +442,40 @@
   <thead><tr><th>ID</th><th>Requisito</th><th>Prioridade</th></tr></thead>
   <tbody>
     <tr><td class="id">RF01</td><td>O visitante autentica-se com e-mail e senha. Credencial inválida ou campo vazio produz mensagem, sem revelar qual dos dois falhou.</td><td>Essencial</td></tr>
-    <tr><td class="id">RF02</td><td>Após o login, o sistema abre o painel do perfil: administrador, professor ou aluno.</td><td>Essencial</td></tr>
+    <tr><td class="id">RF02</td><td>Após o login, o sistema abre o painel do perfil: conselheiro, representante ou aluno. O aluno entra no mural da turma.</td><td>Essencial</td></tr>
     <tr><td class="id">RF03</td><td>Se já houver sessão, a página inicial e o login oferecem continuar naquele perfil ou entrar com outro.</td><td>Importante</td></tr>
     <tr><td class="id">RF04</td><td>O usuário encerra apenas a sessão do contexto atual (administrador ou usuário comum).</td><td>Essencial</td></tr>
-    <tr><td class="id">RF05</td><td>A página inicial explica o produto e leva ao login, sem exigir cadastro público.</td><td>Importante</td></tr>
-    <tr><td class="id">RF06</td><td>O administrador cadastra aluno, professor ou outro administrador, com nome, e-mail único e senha.</td><td>Essencial</td></tr>
+    <tr><td class="id">RF05</td><td>A página inicial explica o produto, mostra o QR Code do endereço público e leva ao login, sem exigir cadastro público.</td><td>Importante</td></tr>
+    <tr><td class="id">RF06</td><td>O conselheiro cadastra aluno, representante ou outro conselheiro, com nome, e-mail único e senha. Senha em branco grava <span class="mono">ifam2026</span> e marca a conta como senha provisória.</td><td>Essencial</td></tr>
     <tr><td class="id">RF07</td><td>O administrador edita dados do usuário, troca o perfil e, se informar nova senha, substitui o hash.</td><td>Essencial</td></tr>
     <tr><td class="id">RF08</td><td>O administrador exclui usuário. O sistema recusa excluir ou rebaixar o último administrador.</td><td>Essencial</td></tr>
-    <tr><td class="id">RF09</td><td>Ao salvar um aluno, o administrador informa exatamente uma turma. Ao salvar um professor, informa uma ou mais turmas e, em cada uma, as matérias separadas por vírgula.</td><td>Essencial</td></tr>
-    <tr><td class="id">RF10</td><td>O administrador cadastra, edita e exclui turmas (nome e ano). Turma com alunos não é excluída.</td><td>Essencial</td></tr>
-    <tr><td class="id">RF11</td><td>O painel do administrador mostra totais de alunos, professores, administradores e turmas, e os últimos cadastros.</td><td>Importante</td></tr>
-    <tr><td class="id">RF12</td><td>O painel do professor mostra turmas vinculadas, atividades dos próximos sete dias, próximas atividades e a atividade mais próxima.</td><td>Importante</td></tr>
-    <tr><td class="id">RF13</td><td>O professor cadastra atividade com título, tipo (prova, trabalho, atividade ou reunião), turma autorizada, data, hora opcional, matéria e descrição.</td><td>Essencial</td></tr>
-    <tr><td class="id">RF14</td><td>O professor edita e exclui somente atividades que ele mesmo publicou. A exclusão pede confirmação e apaga anexos no disco.</td><td>Essencial</td></tr>
-    <tr><td class="id">RF15</td><td>O professor anexa arquivos à atividade e remove anexos já gravados.</td><td>Importante</td></tr>
-    <tr><td class="id">RF16</td><td>O professor alterna a conclusão da atividade no âmbito da turma.</td><td>Importante</td></tr>
-    <tr><td class="id">RF17</td><td>Ao publicar uma atividade, o sistema cria uma notificação para cada aluno da turma de destino.</td><td>Importante</td></tr>
-    <tr><td class="id">RF18</td><td>O professor consulta as turmas em que leciona, com matérias e alunos.</td><td>Importante</td></tr>
-    <tr><td class="id">RF19</td><td>O professor inclui, altera e remove horários de aula (dia, início, fim opcional e matéria) nas suas turmas.</td><td>Importante</td></tr>
-    <tr><td class="id">RF20</td><td>O painel do aluno mostra o progresso da turma, as próximas atividades da turma e as pessoais, e a próxima aula do dia.</td><td>Importante</td></tr>
+    <tr><td class="id">RF09</td><td>Ao salvar um aluno, o conselheiro informa exatamente uma turma. Ao salvar um representante, informa uma ou mais turmas e, em cada uma, as matérias separadas por vírgula.</td><td>Essencial</td></tr>
+    <tr><td class="id">RF10</td><td>O conselheiro cadastra, edita e exclui turmas (nome e ano). Turma com alunos não é excluída.</td><td>Essencial</td></tr>
+    <tr><td class="id">RF11</td><td>O painel do conselheiro mostra totais de alunos, representantes, conselheiros e turmas, e os últimos cadastros.</td><td>Importante</td></tr>
+    <tr><td class="id">RF12</td><td>O painel do representante mostra turmas vinculadas, atividades dos próximos sete dias, próximas atividades e a atividade mais próxima.</td><td>Importante</td></tr>
+    <tr><td class="id">RF13</td><td>O representante cadastra atividade com título, tipo (prova, trabalho, atividade ou reunião), turma autorizada, data, hora opcional, matéria e descrição.</td><td>Essencial</td></tr>
+    <tr><td class="id">RF14</td><td>O representante edita e exclui somente atividades que ele mesmo publicou. A exclusão pede confirmação e apaga anexos no disco.</td><td>Essencial</td></tr>
+    <tr><td class="id">RF15</td><td>O representante anexa arquivos à atividade e remove anexos já gravados. O aluno também anexa na atividade pessoal, no mural e nas salas.</td><td>Importante</td></tr>
+    <tr><td class="id">RF16</td><td>O representante alterna a conclusão da atividade no âmbito da turma.</td><td>Importante</td></tr>
+    <tr><td class="id">RF17</td><td>Ao publicar uma atividade, o sistema cria uma notificação para cada aluno da turma e tenta enviar push a quem ativou o aviso naquele aparelho.</td><td>Importante</td></tr>
+    <tr><td class="id">RF18</td><td>O representante consulta as turmas em que está vinculado, com matérias e alunos.</td><td>Importante</td></tr>
+    <tr><td class="id">RF19</td><td>O representante inclui, altera e remove horários de aula (dia, início, fim opcional e matéria) nas suas turmas.</td><td>Importante</td></tr>
+    <tr><td class="id">RF20</td><td>A entrada do aluno é o mural da turma, com o perfil, o progresso, as próximas atividades, a próxima aula e as salas sugeridas ao lado do feed.</td><td>Importante</td></tr>
     <tr><td class="id">RF21</td><td>O aluno consulta um calendário mensal com indicadores nos dias que têm atividade.</td><td>Essencial</td></tr>
     <tr><td class="id">RF22</td><td>O aluno lista atividades da turma com filtro por tipo e por situação, e abre o detalhe com descrição e anexos.</td><td>Essencial</td></tr>
     <tr><td class="id">RF23</td><td>O aluno marca ou desmarca a própria conclusão. A operação não muda a conclusão de outro aluno.</td><td>Essencial</td></tr>
     <tr><td class="id">RF24</td><td>O aluno cadastra, edita, exclui e conclui atividades pessoais, opcionalmente ligadas a uma matéria da turma.</td><td>Importante</td></tr>
-    <tr><td class="id">RF25</td><td>O aluno consulta as disciplinas da turma (matéria e professor) e a grade de horários.</td><td>Importante</td></tr>
+    <tr><td class="id">RF25</td><td>O aluno consulta as disciplinas da turma (matéria e representante) e a grade de horários.</td><td>Importante</td></tr>
     <tr><td class="id">RF26</td><td>O aluno vê a quantidade de notificações não lidas, a lista e, ao abrir um aviso, o sistema marca como lido e leva à atividade.</td><td>Importante</td></tr>
     <tr><td class="id">RF27</td><td>Telas de detalhe podem carregar atividade, atividade pessoal ou resumo da turma via JSON, somente se o usuário puder ver aquele registro.</td><td>Desejável</td></tr>
-    <tr><td class="id">RF28</td><td>Na primeira execução, o sistema cria a base, as tabelas e os dados de demonstração se <span class="mono">usuarios</span> não existir, e completa colunas ou tabelas que faltem em bases antigas.</td><td>Essencial</td></tr>
+    <tr><td class="id">RF28</td><td>Na primeira execução, o sistema cria a base e completa colunas ou tabelas que faltem. Em produção, uma migração única remove as contas de demonstração e garante um administrador.</td><td>Essencial</td></tr>
+    <tr><td class="id">RF29</td><td>Qualquer usuário autenticado abre Meu perfil, envia ou remove a foto e troca a senha informando a senha atual, a nova e a confirmação.</td><td>Essencial</td></tr>
+    <tr><td class="id">RF30</td><td>Enquanto a senha for provisória, as telas internas avisam para trocá-la. A nova senha não pode ser a senha padrão.</td><td>Importante</td></tr>
+    <tr><td class="id">RF31</td><td>Aluno da turma e representante vinculado publicam texto no mural, comentam e anexam arquivos. O autor apaga o próprio post ou comentário. O representante daquela turma também apaga os dos demais.</td><td>Essencial</td></tr>
+    <tr><td class="id">RF32</td><td>Aluno ou representante cria sala de estudo (título, tema e descrição), é inscrito automaticamente e passa a publicar. Qualquer outro usuário da escola se inscreve e, a partir daí, publica e comenta. Quem criou a sala modera posts e comentários.</td><td>Essencial</td></tr>
+    <tr><td class="id">RF33</td><td>O aluno ativa, testa e desativa avisos neste aparelho. A inscrição guarda endpoint e chaves do navegador. Inscrição recusada pelo serviço de push é removida.</td><td>Importante</td></tr>
+    <tr><td class="id">RF34</td><td>O QR Code da página inicial aponta para <span class="mono">APP_URL</span> quando essa variável existe. O manifesto permite abrir o site como atalho, com ícones e tela inicial no login.</td><td>Importante</td></tr>
+    <tr><td class="id">RF35</td><td>O usuário alterna tema claro e escuro. A escolha fica no navegador e vale na próxima visita.</td><td>Desejável</td></tr>
   </tbody>
 </table>
 
@@ -450,19 +486,21 @@
   <tbody>
     <tr><td class="id">RNF01</td><td>Usabilidade</td><td>Interface em português, com rótulos de prazo relativos (hoje, amanhã, ontem, em N dias) e cor por tipo de atividade.</td></tr>
     <tr><td class="id">RNF02</td><td>Usabilidade</td><td>Em viewport estreita, o menu lateral recolhe e abre por um botão, com foco e rótulos acessíveis nos controles principais.</td></tr>
-    <tr><td class="id">RNF03</td><td>Segurança</td><td>Senha armazenada com <span class="mono">password_hash()</span> e conferida com <span class="mono">password_verify()</span>. A senha nova tem no mínimo 5 caracteres.</td></tr>
+    <tr><td class="id">RNF03</td><td>Segurança</td><td>Senha armazenada com <span class="mono">password_hash()</span> e conferida com <span class="mono">password_verify()</span>. No cadastro, senha informada tem no mínimo 5 caracteres. Na troca pelo usuário, o mínimo é 6, com a senha atual e a confirmação.</td></tr>
     <tr><td class="id">RNF04</td><td>Segurança</td><td>Consultas com parâmetros vinculados. Saída HTML escapada. Descrição rica restrita a um conjunto de tags, sem atributos de evento nem URLs <span class="mono">javascript:</span>.</td></tr>
-    <tr><td class="id">RNF05</td><td>Segurança</td><td>Cookie de sessão com <span class="mono">HttpOnly</span> e <span class="mono">SameSite=Lax</span>. O identificador de sessão é regenerado no login.</td></tr>
-    <tr><td class="id">RNF06</td><td>Segurança</td><td>Cada página interna exige o perfil. Professor só altera evento próprio. Aluno só lê evento da própria turma e atividade pessoal própria.</td></tr>
-    <tr><td class="id">RNF07</td><td>Segurança</td><td>Upload aceita até 5 MB, confere extensão e o MIME real, e grava o arquivo com nome aleatório.</td></tr>
+    <tr><td class="id">RNF05</td><td>Segurança</td><td>Cookie de sessão com <span class="mono">HttpOnly</span> e <span class="mono">SameSite=Lax</span>. A flag Secure entra quando a requisição é HTTPS. O identificador de sessão é regenerado no login.</td></tr>
+    <tr><td class="id">RNF06</td><td>Segurança</td><td>Cada página interna exige o perfil. Representante só altera evento próprio. Aluno só lê evento da própria turma e atividade pessoal própria. Mural exige vínculo com a turma. Sala exige inscrição para publicar.</td></tr>
+    <tr><td class="id">RNF07</td><td>Segurança</td><td>Upload aceita até 5 MB, confere extensão e o MIME, e grava o arquivo com nome aleatório. Foto de perfil aceita JPG, PNG, GIF ou WebP, recusa imagens acima de 16 megapixels e, com GD, regrava um JPEG quadrado de 320 px.</td></tr>
     <tr><td class="id">RNF08</td><td>Integridade</td><td>Chaves estrangeiras com <span class="mono">ON DELETE CASCADE</span> onde o filho não faz sentido sem o pai. Unicidade de e-mail, de conclusão aluno–evento e de professor–turma–matéria.</td></tr>
     <tr><td class="id">RNF09</td><td>Confiabilidade</td><td>Falha ao completar o esquema de uma base antiga não derruba login nem as telas já suportadas.</td></tr>
     <tr><td class="id">RNF10</td><td>Desempenho</td><td>Uso previsto é uma escola em servidor local ou de pequena carga. Listas do painel limitam-se às próximas atividades (até seis) e notificações às 40 mais recentes.</td></tr>
     <tr><td class="id">RNF11</td><td>Compatibilidade</td><td>PHP 8+, MySQL com <span class="mono">utf8mb4</span>, Apache e navegador atual. Datas internas em ISO; exibição em <span class="mono">dd/mm/aaaa</span>.</td></tr>
     <tr><td class="id">RNF12</td><td>Manutenibilidade</td><td>Regras compartilhadas ficam em <span class="mono">includes/functions.php</span> e a sessão em <span class="mono">includes/auth.php</span>, para as páginas não duplicarem SQL de permissão.</td></tr>
-    <tr><td class="id">RNF13</td><td>Portabilidade</td><td>O endereço base é a constante <span class="mono">BASE_URL</span>. Mudar a pasta do projeto exige alterar essa constante e as credenciais do banco.</td></tr>
-    <tr><td class="id">RNF14</td><td>Disponibilidade</td><td>Não há meta formal de disponibilidade. O sistema depende do Apache, do MySQL e do disco de uploads estarem no mesmo hospedeiro.</td></tr>
+    <tr><td class="id">RNF13</td><td>Portabilidade</td><td>O endereço base é detectado pela pasta publicada. <span class="mono">APP_BASE_URL</span> e <span class="mono">APP_URL</span> forçam pasta e origem quando o ambiente não puder ser deduzido.</td></tr>
+    <tr><td class="id">RNF14</td><td>Disponibilidade</td><td>Não há meta formal de disponibilidade. O sistema depende do Apache, do MySQL e do disco de uploads no mesmo hospedeiro. A falha do push não derruba a publicação da atividade.</td></tr>
     <tr><td class="id">RNF15</td><td>Acessibilidade</td><td>Formulários usam <span class="mono">label</span> associado, alerta de login com <span class="mono">role="alert"</span> e o sino de notificações tem nome acessível com a contagem.</td></tr>
+    <tr><td class="id">RNF16</td><td>Usabilidade</td><td>Tema claro e escuro, com a preferência do sistema operacional como ponto de partida.</td></tr>
+    <tr><td class="id">RNF17</td><td>Compatibilidade</td><td>Web Push exige HTTPS e navegador com service worker. No iOS 16.4 ou superior, o site precisa estar na Tela de Início.</td></tr>
   </tbody>
 </table>
 
@@ -470,22 +508,28 @@
 <table>
   <thead><tr><th>ID</th><th>Regra</th></tr></thead>
   <tbody>
-    <tr><td class="id">RN01</td><td>Um usuário tem exatamente um perfil: administrador, professor ou aluno.</td></tr>
+    <tr><td class="id">RN01</td><td>Um usuário tem exatamente um perfil gravado: administrador, professor ou aluno. Na tela, professor é representante e administrador é desenvolvedor ou conselheiro.</td></tr>
     <tr><td class="id">RN02</td><td>O e-mail é único em toda a base, independentemente do perfil.</td></tr>
-    <tr><td class="id">RN03</td><td>Aluno pertence a exatamente uma turma. Professor pode pertencer a várias.</td></tr>
-    <tr><td class="id">RN04</td><td>O mesmo professor pode lecionar várias matérias na mesma turma. O trio professor, turma e matéria não se repete.</td></tr>
-    <tr><td class="id">RN05</td><td>Matéria vazia é permitida no vínculo, para o caso de o professor estar na turma sem disciplina nomeada.</td></tr>
-    <tr><td class="id">RN06</td><td>Atividade da turma tem um professor autor e uma turma. O professor só escolhe turma à qual está vinculado.</td></tr>
+    <tr><td class="id">RN03</td><td>Aluno pertence a exatamente uma turma. Representante (perfil professor) pode pertencer a várias.</td></tr>
+    <tr><td class="id">RN04</td><td>O mesmo representante pode cuidar de várias matérias na mesma turma. O trio representante, turma e matéria não se repete.</td></tr>
+    <tr><td class="id">RN05</td><td>Matéria vazia é permitida no vínculo, para o caso de o representante estar na turma sem disciplina nomeada.</td></tr>
+    <tr><td class="id">RN06</td><td>Atividade da turma tem um autor representante e uma turma. Ele só escolhe turma à qual está vinculado.</td></tr>
     <tr><td class="id">RN07</td><td>Tipos válidos de atividade: prova, trabalho, atividade e reunião. Hora é opcional; data é obrigatória.</td></tr>
     <tr><td class="id">RN08</td><td>A conclusão individual é um registro por par aluno–atividade. O primeiro clique cria o registro como concluído; o seguinte alterna.</td></tr>
-    <tr><td class="id">RN09</td><td>A conclusão feita pelo professor não substitui a conclusão individual, e o inverso também não.</td></tr>
+    <tr><td class="id">RN09</td><td>A conclusão feita pelo representante não substitui a conclusão individual, e o inverso também não.</td></tr>
     <tr><td class="id">RN10</td><td>Atividade pessoal só existe para o aluno que a criou. A matéria, se preenchida, precisa ser uma disciplina da turma dele.</td></tr>
-    <tr><td class="id">RN11</td><td>Notificação nasce para todos os alunos da turma no momento da publicação. Marcar como lida não apaga o aviso.</td></tr>
+    <tr><td class="id">RN11</td><td>Notificação interna nasce para todos os alunos da turma no momento da publicação. O push só vai para alunos dessa turma que tenham inscrição ativa. Marcar como lida não apaga o aviso interno.</td></tr>
     <tr><td class="id">RN12</td><td>Horário de aula tem dia de segunda a sábado, hora de início e hora de fim opcional. Se o fim existir, precisa ser depois do início.</td></tr>
     <tr><td class="id">RN13</td><td>Turma com pelo menos um aluno não pode ser excluída. Turma sem aluno pode; os eventos dessa turma são removidos junto com os arquivos.</td></tr>
     <tr><td class="id">RN14</td><td>Deve permanecer ao menos um administrador.</td></tr>
-    <tr><td class="id">RN15</td><td>Anexo de atividade: no máximo 5 MB; tipos aceitos são imagem, PDF, documento Office, texto e ZIP. Imagem do editor segue a mesma regra e ainda precisa ser imagem.</td></tr>
+    <tr><td class="id">RN15</td><td>Anexo de atividade, de post e de atividade pessoal: no máximo 5 MB; tipos aceitos são imagem, PDF, Word, planilha, slides, texto e ZIP. Documento Office pode chegar com MIME de ZIP e ainda assim é aceito. Imagem do editor precisa ser imagem.</td></tr>
     <tr><td class="id">RN16</td><td>Ao trocar o perfil de um usuário, os vínculos do perfil anterior são removidos e os do perfil novo são gravados.</td></tr>
+    <tr><td class="id">RN17</td><td>Senha em branco no cadastro vira <span class="mono">ifam2026</span> e <span class="mono">senha_provisoria = 1</span>. A troca em Meu perfil exige a senha atual, no mínimo 6 caracteres, confirmação igual e uma senha diferente da atual e da padrão. Ao concluir, a marca provisória sai.</td></tr>
+    <tr><td class="id">RN18</td><td>Post do mural pertence a uma turma. Só aluno dessa turma ou representante vinculado a ela publica, comenta e lê. Texto do post até 4000 caracteres; comentário até 1000.</td></tr>
+    <tr><td class="id">RN19</td><td>Sala de estudo não pertence a uma turma. Qualquer aluno ou representante autenticado cria e se inscreve. Publicar e comentar exige inscrição. O criador modera; o autor também apaga o que ele mesmo escreveu.</td></tr>
+    <tr><td class="id">RN20</td><td>Foto de perfil fica em <span class="mono">uploads/perfil/</span>, no máximo 5 MB. Uma foto nova substitui a anterior no disco. O formulário de perfil exige o token da sessão.</td></tr>
+    <tr><td class="id">RN21</td><td>Deve permanecer ao menos um administrador, e a conta de administrador padrão é garantida se não houver nenhum.</td></tr>
+    <tr><td class="id">RN22</td><td>Aluno com <span class="mono">representante = 1</span> só exerce o papel de representante se também existir em <span class="mono">professores</span> com o mesmo usuário.</td></tr>
   </tbody>
 </table>
 
@@ -496,7 +540,7 @@
 <figure>
 <svg viewBox="0 0 760 430" role="img" aria-label="Casos de uso de acesso e administração">
   <rect class="sys" x="150" y="16" width="460" height="398" rx="8"/>
-  <text class="st" x="380" y="38" text-anchor="middle">Calendário Escolar</text>
+  <text class="st" x="380" y="38" text-anchor="middle">Agenda Acadêmica</text>
   <ellipse class="uc" cx="310" cy="78" rx="108" ry="22"/><text class="ut" x="310" y="82" text-anchor="middle">UC01 Página inicial</text>
   <ellipse class="uc" cx="310" cy="132" rx="108" ry="22"/><text class="ut" x="310" y="136" text-anchor="middle">UC02 Autenticar</text>
   <ellipse class="uc" cx="310" cy="186" rx="108" ry="22"/><text class="ut" x="310" y="190" text-anchor="middle">UC03 Encerrar sessão</text>
@@ -516,19 +560,19 @@
 <figcaption>Figura 2. Casos de uso do visitante e do administrador. O administrador também autentica e encerra sessão.</figcaption>
 </figure>
 
-<h3>9.2 Professor</h3>
+<h3>9.2 Representante de turma</h3>
 <figure>
-<svg viewBox="0 0 760 390" role="img" aria-label="Casos de uso do professor">
+<svg viewBox="0 0 760 390" role="img" aria-label="Casos de uso do representante">
   <rect class="sys" x="170" y="16" width="520" height="360" rx="8"/>
-  <text class="st" x="420" y="38" text-anchor="middle">Área do professor</text>
-  <ellipse class="uc" cx="360" cy="78" rx="130" ry="22"/><text class="ut" x="360" y="82" text-anchor="middle">UC07 Painel do professor</text>
+  <text class="st" x="420" y="38" text-anchor="middle">Área do representante</text>
+  <ellipse class="uc" cx="360" cy="78" rx="130" ry="22"/><text class="ut" x="360" y="82" text-anchor="middle">UC07 Painel</text>
   <ellipse class="uc" cx="360" cy="132" rx="130" ry="22"/><text class="ut" x="360" y="136" text-anchor="middle">UC08 Manter atividades</text>
   <ellipse class="uc" cx="560" cy="186" rx="90" ry="20"/><text class="ut" x="560" y="190" text-anchor="middle">UC09 Anexos</text>
   <ellipse class="uc" cx="360" cy="230" rx="140" ry="22"/><text class="ut" x="360" y="234" text-anchor="middle">UC10 Concluir na turma</text>
   <ellipse class="uc" cx="320" cy="284" rx="115" ry="22"/><text class="ut" x="320" y="288" text-anchor="middle">UC11 Manter horários</text>
   <ellipse class="uc" cx="575" cy="284" rx="80" ry="20"/><text class="ut" x="575" y="288" text-anchor="middle">UC12 Ver turmas</text>
   <circle class="actor" cx="52" cy="160" r="13"/><line class="actor" x1="52" y1="173" x2="52" y2="210"/><line class="actor" x1="32" y1="188" x2="72" y2="188"/><line class="actor" x1="52" y1="210" x2="36" y2="238"/><line class="actor" x1="52" y1="210" x2="68" y2="238"/>
-  <text class="an" x="52" y="256" text-anchor="middle">Professor</text>
+  <text class="an" x="52" y="256" text-anchor="middle">Representante</text>
   <line class="ln" x1="74" y1="170" x2="230" y2="78"/>
   <line class="ln" x1="74" y1="180" x2="230" y2="132"/>
   <line class="ln" x1="74" y1="190" x2="220" y2="230"/>
@@ -537,7 +581,7 @@
   <path class="ln" d="M490 142 C 530 142, 540 160, 540 166" stroke-dasharray="4 3"/>
   <text class="lb" x="492" y="136">«include»</text>
 </svg>
-<figcaption>Figura 3. Casos de uso do professor. Anexar arquivo está incluído na manutenção da atividade.</figcaption>
+<figcaption>Figura 3. Casos de uso do representante. Anexar arquivo está incluído na manutenção da atividade.</figcaption>
 </figure>
 
 <h3>9.3 Aluno</h3>
@@ -560,7 +604,7 @@
   <line class="ln" x1="78" y1="200" x2="255" y2="280"/>
   <line class="ln" x1="78" y1="208" x2="255" y2="332"/>
 </svg>
-<figcaption>Figura 4. Casos de uso do aluno. A publicação da atividade, feita pelo professor, é o que gera a notificação.</figcaption>
+<figcaption>Figura 4. Casos de uso do aluno. A publicação da atividade, feita pelo representante, é o que gera a notificação.</figcaption>
 </figure>
 
 <h3>9.4 Especificação</h3>
@@ -592,7 +636,7 @@
 <h4>UC03 — Encerrar sessão</h4>
 <table>
   <tbody>
-    <tr><th style="width:34mm">Ator</th><td>Administrador, professor ou aluno</td></tr>
+    <tr><th style="width:34mm">Ator</th><td>Conselheiro, representante ou aluno</td></tr>
     <tr><th>Fluxo principal</th><td>1. O usuário aciona Sair. 2. O sistema abre só o cookie daquele contexto. 3. Limpa a sessão, expira o cookie e destrói a sessão. 4. Volta ao login.</td></tr>
     <tr><th>Pós-condição</th><td>A outra sessão, se existir, permanece.</td></tr>
     <tr><th>Requisitos</th><td>RF04</td></tr>
@@ -612,7 +656,7 @@
 <table>
   <tbody>
     <tr><th style="width:34mm">Ator</th><td>Administrador</td></tr>
-    <tr><th>Fluxo principal</th><td>1. O administrador abre a lista, podendo filtrar por perfil. 2. Para incluir, informa nome, e-mail, senha e perfil. 3. Se for aluno, escolhe a turma. Se for professor, escolhe turmas e matérias. 4. O sistema valida e-mail único e senha com ao menos 5 caracteres. 5. Grava o usuário, o hash da senha e a tabela filha correspondente.</td></tr>
+    <tr><th>Fluxo principal</th><td>1. O conselheiro abre a lista, podendo filtrar por perfil. 2. Para incluir, informa nome, e-mail, senha e perfil. 3. Se for aluno, escolhe a turma. Se for representante, escolhe turmas e matérias. 4. O sistema valida e-mail único. Senha preenchida precisa de ao menos 5 caracteres; senha vazia grava <span class="mono">ifam2026</span> e marca senha provisória. 5. Grava o usuário, o hash e a tabela filha correspondente.</td></tr>
     <tr><th>Alternativos</th><td>FA01. Editar: a senha em branco mantém o hash atual; perfil alterado reconstrói os vínculos (RN16). FA02. Excluir: remove o usuário e, por cascata, o perfil filho. FA03. Último administrador: exclusão ou troca de perfil é recusada. FA04. E-mail repetido: o formulário volta com o erro.</td></tr>
     <tr><th>Pós-condição</th><td>Usuário consistente com o perfil e com os vínculos acadêmicos.</td></tr>
     <tr><th>Requisitos</th><td>RF06, RF07, RF08, RF09</td></tr>
@@ -629,12 +673,12 @@
   </tbody>
 </table>
 
-<h4>UC07 — Consultar painel do professor</h4>
+<h4>UC07 — Consultar painel do representante</h4>
 <table>
   <tbody>
-    <tr><th style="width:34mm">Ator</th><td>Professor</td></tr>
-    <tr><th>Fluxo principal</th><td>1. O professor entra no painel. 2. O sistema conta vínculos, atividades da semana e atividades futuras. 3. Lista até seis próximas atividades, da mais próxima para a mais distante. 4. Destaca a primeira como próxima atividade.</td></tr>
-    <tr><th>Alternativos</th><td>FA01. Usuário professor sem linha em <span class="mono">professores</span>: a sessão é encerrada e o login é exibido de novo.</td></tr>
+    <tr><th style="width:34mm">Ator</th><td>Representante</td></tr>
+    <tr><th>Fluxo principal</th><td>1. O representante entra no painel. 2. O sistema conta vínculos, atividades da semana e atividades futuras. 3. Lista até seis próximas atividades, da mais próxima para a mais distante. 4. Destaca a primeira como próxima atividade.</td></tr>
+    <tr><th>Alternativos</th><td>FA01. Usuário sem linha em <span class="mono">professores</span>: a sessão é encerrada e o login é exibido de novo.</td></tr>
     <tr><th>Requisitos</th><td>RF12</td></tr>
   </tbody>
 </table>
@@ -642,9 +686,9 @@
 <h4>UC08 — Manter atividades</h4>
 <table>
   <tbody>
-    <tr><th style="width:34mm">Ator</th><td>Professor. Inclui UC09 e dispara UC18 para os alunos da turma.</td></tr>
-    <tr><th>Fluxo principal</th><td>1. O professor abre o formulário de nova atividade. 2. Informa título, tipo, turma, data, hora opcional, matéria e descrição. 3. O sistema valida tipo, turma pertencente ao professor, data e hora. 4. Grava o evento com o professor autenticado como autor. 5. Notifica cada aluno da turma. 6. Volta à lista.</td></tr>
-    <tr><th>Alternativos</th><td>FA01. Editar: só se o evento for do professor; a validação se repete. FA02. Excluir: a tela pede confirmação; os arquivos são apagados e o registro sai, levando anexos, conclusões e notificações. FA03. Turma fora do vínculo ou data inválida: o formulário exibe os erros e nada é gravado.</td></tr>
+    <tr><th style="width:34mm">Ator</th><td>Representante. Inclui UC09 e dispara UC18 para os alunos da turma.</td></tr>
+    <tr><th>Fluxo principal</th><td>1. O representante abre o formulário de nova atividade. 2. Informa título, tipo, turma, data, hora opcional, matéria e descrição. 3. O sistema valida tipo, turma pertencente a ele, data e hora. 4. Grava o evento com o <span class="mono">professor_id</span> da sessão como autor. 5. Notifica cada aluno da turma e tenta o push. 6. Volta à lista.</td></tr>
+    <tr><th>Alternativos</th><td>FA01. Editar: só se o evento for desse representante; a validação se repete e não gera aviso novo. FA02. Excluir: a tela pede confirmação; os arquivos são apagados e o registro sai, levando anexos, conclusões e notificações. FA03. Turma fora do vínculo ou data inválida: o formulário exibe os erros e nada é gravado.</td></tr>
     <tr><th>Pós-condição</th><td>A atividade passa a aparecer no calendário e na lista dos alunos daquela turma.</td></tr>
     <tr><th>Requisitos</th><td>RF13, RF14, RF17</td></tr>
   </tbody>
@@ -653,8 +697,8 @@
 <h4>UC09 — Gerenciar anexos</h4>
 <table>
   <tbody>
-    <tr><th style="width:34mm">Ator</th><td>Professor, no fluxo de criar ou editar atividade. Imagem do editor segue a mesma porta de upload, restrita a imagem.</td></tr>
-    <tr><th>Fluxo principal</th><td>1. O professor seleciona um ou mais arquivos. 2. O sistema recusa o que passar de 5 MB, a extensão fora da lista ou o MIME divergente. 3. Grava o arquivo com nome aleatório em <span class="mono">uploads/eventos/{id}</span>. 4. Registra nome original, caminho, MIME e tamanho.</td></tr>
+    <tr><th style="width:34mm">Ator</th><td>Representante, no fluxo de criar ou editar atividade. O mesmo tipo de arquivo vale para atividade pessoal, mural e sala. Imagem do editor continua restrita a imagem.</td></tr>
+    <tr><th>Fluxo principal</th><td>1. A pessoa seleciona um ou mais arquivos. 2. O sistema recusa o que passar de 5 MB ou a extensão fora da lista. Office pode chegar como ZIP e é aceito. 3. Grava o arquivo com nome aleatório. 4. Registra nome original, caminho, MIME e tamanho.</td></tr>
     <tr><th>Alternativos</th><td>FA01. Remover anexo marcado na edição: apaga o arquivo e a linha. FA02. Falha de um arquivo não cancela os demais; o erro é informado.</td></tr>
     <tr><th>Requisitos</th><td>RF15, RNF07</td></tr>
   </tbody>
@@ -663,8 +707,8 @@
 <h4>UC10 — Concluir atividade no âmbito da turma</h4>
 <table>
   <tbody>
-    <tr><th style="width:34mm">Ator</th><td>Professor</td></tr>
-    <tr><th>Fluxo principal</th><td>1. O professor aciona concluir numa atividade sua. 2. O sistema inverte <span class="mono">eventos.concluido</span>. 3. Retorna à lista ou à página de origem, se ela for da área do professor.</td></tr>
+    <tr><th style="width:34mm">Ator</th><td>Representante</td></tr>
+    <tr><th>Fluxo principal</th><td>1. O representante aciona concluir numa atividade sua. 2. O sistema inverte <span class="mono">eventos.concluido</span>. 3. Retorna à lista ou à página de origem, se ela for da área do representante.</td></tr>
     <tr><th>Pós-condição</th><td>A marca da turma muda. Os registros em <span class="mono">aluno_eventos</span> permanecem.</td></tr>
     <tr><th>Requisitos</th><td>RF16, RN09</td></tr>
   </tbody>
@@ -673,9 +717,9 @@
 <h4>UC11 — Manter horários</h4>
 <table>
   <tbody>
-    <tr><th style="width:34mm">Ator</th><td>Professor</td></tr>
-    <tr><th>Fluxo principal</th><td>1. O professor abre a grade. 2. Informa turma, matéria, dia (segunda a sábado), início e fim opcional. 3. O sistema valida a ordem dos horários e grava <span class="mono">horarios_aula</span>. 4. A grade do aluno daquela turma passa a exibir o slot.</td></tr>
-    <tr><th>Alternativos</th><td>FA01. Remover: só o horário da turma e, quando a ação é do professor, só o horário daquele professor.</td></tr>
+    <tr><th style="width:34mm">Ator</th><td>Representante</td></tr>
+    <tr><th>Fluxo principal</th><td>1. O representante abre a grade. 2. Informa turma, matéria, dia (segunda a sábado), início e fim opcional. 3. O sistema valida a ordem dos horários e grava <span class="mono">horarios_aula</span>. 4. A grade do aluno daquela turma passa a exibir o slot.</td></tr>
+    <tr><th>Alternativos</th><td>FA01. Remover: só o horário da turma e, quando a ação é do representante, só o horário daquele representante.</td></tr>
     <tr><th>Requisitos</th><td>RF19, RN12</td></tr>
   </tbody>
 </table>
@@ -683,8 +727,8 @@
 <h4>UC12 — Consultar turmas</h4>
 <table>
   <tbody>
-    <tr><th style="width:34mm">Ator</th><td>Professor</td></tr>
-    <tr><th>Fluxo principal</th><td>1. O professor abre Turmas. 2. O sistema lista só as turmas do vínculo, com as matérias agrupadas. 3. Na ficha, mostra alunos e o que aquele professor publicou.</td></tr>
+    <tr><th style="width:34mm">Ator</th><td>Representante</td></tr>
+    <tr><th>Fluxo principal</th><td>1. O representante abre Turmas. 2. O sistema lista só as turmas do vínculo, com as matérias agrupadas. 3. Na ficha, mostra alunos e o que aquele representante publicou.</td></tr>
     <tr><th>Requisitos</th><td>RF18</td></tr>
   </tbody>
 </table>
@@ -693,7 +737,7 @@
 <table>
   <tbody>
     <tr><th style="width:34mm">Ator</th><td>Aluno</td></tr>
-    <tr><th>Fluxo principal</th><td>1. O aluno abre o painel. 2. O sistema conta atividades da turma e as já marcadas como concluídas no âmbito da turma, e calcula o percentual. 3. Monta uma agenda com as próximas atividades da turma e as pessoais ainda não concluídas. 4. Mostra a próxima aula de hoje, se houver horário.</td></tr>
+    <tr><th>Fluxo principal</th><td>1. O aluno abre o mural. 2. O sistema mostra o feed da turma, o cartão com publicações, salas e pendências, e o percentual das atividades encerradas na turma. 3. Na lateral, monta as próximas atividades da turma e as pessoais, a próxima aula de hoje e salas sugeridas.</td></tr>
     <tr><th>Requisitos</th><td>RF20</td></tr>
   </tbody>
 </table>
@@ -741,24 +785,84 @@
 <h4>UC18 — Consultar notificações</h4>
 <table>
   <tbody>
-    <tr><th style="width:34mm">Ator</th><td>Aluno. O professor dispara a criação ao publicar (UC08).</td></tr>
-    <tr><th>Pré-condição</th><td>Existe ao menos a estrutura de notificações. Avisos nascem só na publicação, não na edição.</td></tr>
-    <tr><th>Fluxo principal</th><td>1. O cabeçalho mostra a contagem de não lidas do aluno. 2. A lista traz até 40 avisos, não lidos primeiro. 3. Ao abrir um aviso, o sistema confere se ele pertence ao aluno, marca como lido e segue para a atividade.</td></tr>
+    <tr><th style="width:34mm">Ator</th><td>Aluno. O representante dispara a criação ao publicar (UC08).</td></tr>
+    <tr><th>Pré-condição</th><td>Avisos internos nascem só na publicação, não na edição. O push depende de inscrição prévia neste aparelho e de HTTPS.</td></tr>
+    <tr><th>Fluxo principal</th><td>1. O cabeçalho mostra a contagem de não lidas do aluno. 2. A lista traz até 40 avisos, não lidos primeiro. 3. Ao abrir um aviso, o sistema confere se ele pertence ao aluno, marca como lido e segue para a atividade. 4. Se houver inscrição push da turma, o service worker exibe o aviso no aparelho e, ao toque, abre a atividade.</td></tr>
     <tr><th>Alternativos</th><td>FA01. Aviso de outro aluno ou id inválido: nada é marcado.</td></tr>
     <tr><th>Requisitos</th><td>RF17, RF26</td></tr>
   </tbody>
 </table>
 
 <h3>9.5 Fluxo de publicação</h3>
-<p>O caminho que cruza professor e aluno é o da atividade nova. Os passos abaixo são a sequência implementada, sem serviço intermediário.</p>
+<p>O caminho que cruza representante e aluno é o da atividade nova. Os passos abaixo são a sequência implementada.</p>
 <ol>
-  <li>Professor autenticado envia o formulário para <span class="mono">professor/adicionar_evento.php</span>.</li>
+  <li>Representante autenticado envia o formulário para <span class="mono">professor/adicionar_evento.php</span>.</li>
   <li><span class="mono">validarEvento()</span> devolve erros ou o pacote já normalizado (hora com segundos, descrição filtrada, matéria com no máximo 100 caracteres).</li>
   <li>A inserção em <span class="mono">eventos</span> usa o <span class="mono">professor_id</span> da sessão, nunca um id vindo do formulário como autor.</li>
   <li><span class="mono">salvarAnexosEvento()</span> grava os arquivos aceitos.</li>
-  <li><span class="mono">notificarAlunosNovaAtividade()</span> insere uma linha em <span class="mono">notificacoes</span> para cada aluno de <span class="mono">listarAlunosDaTurma()</span>.</li>
+  <li><span class="mono">notificarAlunosNovaAtividade()</span> insere uma linha em <span class="mono">notificacoes</span> para cada aluno da turma e chama <span class="mono">enviarPushNovaAtividade()</span>. Falha no push não desfaz a atividade nem o aviso interno.</li>
   <li>No próximo carregamento de página do aluno, o cabeçalho conta as não lidas. O calendário e a lista passam a incluir o evento porque filtram por <span class="mono">turma_id</span>.</li>
 </ol>
+
+<h3>9.6 Perfil, mural, salas e aviso no aparelho</h3>
+<figure>
+<svg viewBox="0 0 760 280" role="img" aria-label="Casos de uso de perfil, mural e salas">
+  <rect class="sys" x="180" y="12" width="500" height="252" rx="8"/>
+  <text class="st" x="430" y="34" text-anchor="middle">Agenda Acadêmica</text>
+  <ellipse class="uc" cx="360" cy="72" rx="120" ry="20"/><text class="ut" x="360" y="76" text-anchor="middle">UC19 Meu perfil</text>
+  <ellipse class="uc" cx="360" cy="124" rx="120" ry="20"/><text class="ut" x="360" y="128" text-anchor="middle">UC20 Mural da turma</text>
+  <ellipse class="uc" cx="560" cy="176" rx="100" ry="20"/><text class="ut" x="560" y="180" text-anchor="middle">UC21 Salas</text>
+  <ellipse class="uc" cx="360" cy="228" rx="120" ry="20"/><text class="ut" x="360" y="232" text-anchor="middle">UC22 Avisos no aparelho</text>
+  <circle class="actor" cx="48" cy="120" r="13"/><line class="actor" x1="48" y1="133" x2="48" y2="168"/><line class="actor" x1="28" y1="148" x2="68" y2="148"/><line class="actor" x1="48" y1="168" x2="32" y2="194"/><line class="actor" x1="48" y1="168" x2="64" y2="194"/>
+  <text class="an" x="48" y="212" text-anchor="middle">Aluno</text>
+  <line class="ln" x1="70" y1="110" x2="240" y2="72"/>
+  <line class="ln" x1="70" y1="124" x2="240" y2="124"/>
+  <line class="ln" x1="70" y1="140" x2="240" y2="228"/>
+  <polyline class="ln" points="70,150 140,176 460,176"/>
+</svg>
+<figcaption>Figura 4b. Casos de uso acrescentados na versão 2.0. O representante também usa perfil, mural das suas turmas e salas.</figcaption>
+</figure>
+
+<h4>UC19 — Manter perfil</h4>
+<table>
+  <tbody>
+    <tr><th style="width:34mm">Ator</th><td>Conselheiro, representante ou aluno</td></tr>
+    <tr><th>Fluxo principal</th><td>1. A pessoa abre Meu perfil. 2. Para a foto, envia JPG, PNG, GIF ou WebP de até 5 MB. 3. O sistema confere o conteúdo real da imagem, recorta em quadrado quando o GD existe e grava em <span class="mono">uploads/perfil/</span>. 4. Para a senha, informa a atual, a nova e a confirmação. 5. O sistema confere a atual, exige ao menos 6 caracteres e recusa a senha padrão. 6. Grava o novo hash e zera <span class="mono">senha_provisoria</span>.</td></tr>
+    <tr><th>Alternativos</th><td>FA01. Token do formulário inválido: nada é gravado. FA02. Remover foto: apaga o arquivo e deixa a coluna nula. FA03. Senha atual errada ou confirmação diferente: o formulário volta com o erro.</td></tr>
+    <tr><th>Requisitos</th><td>RF29, RF30, RN17, RN20</td></tr>
+  </tbody>
+</table>
+
+<h4>UC20 — Publicar e comentar no mural</h4>
+<table>
+  <tbody>
+    <tr><th style="width:34mm">Ator</th><td>Aluno da turma e representante vinculado. O representante modera.</td></tr>
+    <tr><th>Fluxo principal</th><td>1. A pessoa escreve um texto de até 4000 caracteres e pode anexar arquivos. 2. <span class="mono">aluno/social.php</span> confere se ela pode acessar aquele mural. 3. Grava <span class="mono">mural_posts</span> e os anexos. 4. Outro membro comenta, até 1000 caracteres. 5. O autor apaga o próprio post ou comentário. O representante da turma apaga também os dos outros.</td></tr>
+    <tr><th>Alternativos</th><td>FA01. Texto vazio: nada é gravado. FA02. Pessoa de outra turma: a ação é recusada. FA03. Um anexo inválido não apaga o texto já salvo; a tela avisa.</td></tr>
+    <tr><th>Requisitos</th><td>RF31, RN18</td></tr>
+  </tbody>
+</table>
+
+<h4>UC21 — Manter salas de estudo</h4>
+<table>
+  <tbody>
+    <tr><th style="width:34mm">Ator</th><td>Aluno ou representante</td></tr>
+    <tr><th>Fluxo principal</th><td>1. A pessoa informa título, tema e descrição e cria a sala. 2. O sistema grava <span class="mono">salas_estudo</span> e inscreve o criador. 3. Outra pessoa da escola se inscreve, de qualquer turma. 4. Inscritos publicam e comentam como no mural. 5. O criador modera.</td></tr>
+    <tr><th>Alternativos</th><td>FA01. Título vazio: a sala não é criada. FA02. Quem não está inscrito não publica. FA03. Inscrição repetida não duplica a linha.</td></tr>
+    <tr><th>Requisitos</th><td>RF32, RN19</td></tr>
+  </tbody>
+</table>
+
+<h4>UC22 — Ativar avisos no aparelho</h4>
+<table>
+  <tbody>
+    <tr><th style="width:34mm">Ator</th><td>Aluno</td></tr>
+    <tr><th>Pré-condição</th><td>HTTPS e navegador com service worker e Push. No iOS, o site aberto pelo ícone da Tela de Início.</td></tr>
+    <tr><th>Fluxo principal</th><td>1. O aluno abre Notificações. 2. Toca em Ativar avisos neste aparelho e permite no navegador. 3. O script registra <span class="mono">sw.js</span> e envia endpoint e chaves para <span class="mono">aluno/push_salvar.php</span>. 4. O botão de teste dispara um push só para esse aluno. 5. Desativar remove a inscrição.</td></tr>
+    <tr><th>Alternativos</th><td>FA01. Sem suporte ou sem HTTPS: os botões não oferecem a ativação. FA02. O serviço de push responde 404 ou 410: a inscrição é apagada.</td></tr>
+    <tr><th>Requisitos</th><td>RF17, RF33, RN11</td></tr>
+  </tbody>
+</table>
 
 <h2>10. Modelo entidade-relacionamento (MER)</h2>
 <p>O MER é conceitual. Ainda não decide nomes de tabela, chaves substitutas nem o tipo SQL. Entidade vira retângulo, relacionamento vira losango, e a cardinalidade fica nas pontas. Atributos estão nas tabelas desta seção, para o diagrama caber na página sem dezenas de elipses.</p>
@@ -827,13 +931,18 @@
 <table>
   <thead><tr><th>Entidade</th><th>Atributos</th><th>Identificador</th></tr></thead>
   <tbody>
-    <tr><td>Usuário</td><td>nome, e-mail (único), senha, tipo, data de criação</td><td>identificador próprio</td></tr>
+    <tr><td>Usuário</td><td>nome, e-mail (único), senha, tipo, foto, senha provisória, data de criação</td><td>identificador próprio</td></tr>
     <tr><td>Turma</td><td>nome, ano, data de criação</td><td>identificador próprio</td></tr>
     <tr><td>Atividade</td><td>título, descrição, tipo, data, hora, matéria, concluída pela turma, data de criação</td><td>identificador próprio</td></tr>
     <tr><td>Anexo</td><td>nome original, caminho, tipo MIME, tamanho, data de criação</td><td>identificador próprio</td></tr>
     <tr><td>Atividade pessoal</td><td>título, descrição, data, hora, matéria, concluída, data de conclusão, data de criação</td><td>identificador próprio</td></tr>
     <tr><td>Horário</td><td>matéria, dia da semana, hora de início, hora de fim</td><td>identificador próprio na implementação; no MER é relacionamento ternário</td></tr>
     <tr><td>Notificação</td><td>lida, data de criação</td><td>no MER é o relacionamento “avisado sobre”, entre aluno e atividade</td></tr>
+    <tr><td>Inscrição push</td><td>endpoint, chave p256dh, segredo auth</td><td>identificador próprio; endpoint único</td></tr>
+    <tr><td>Post do mural</td><td>texto, data de criação</td><td>identificador próprio</td></tr>
+    <tr><td>Comentário</td><td>texto, data de criação</td><td>identificador próprio. Vale para mural e para sala.</td></tr>
+    <tr><td>Sala de estudo</td><td>título, tema, descrição, data de criação</td><td>identificador próprio</td></tr>
+    <tr><td>Post da sala</td><td>texto, data de criação</td><td>identificador próprio</td></tr>
   </tbody>
 </table>
 
@@ -851,6 +960,13 @@
     <tr><td>registra</td><td>Aluno, Atividade pessoal</td><td>1 : N</td><td>—</td></tr>
     <tr><td>ocorre (ternário)</td><td>Turma, Professor, Horário</td><td>um horário liga uma turma a um professor</td><td>matéria, dia, início, fim</td></tr>
     <tr><td>avisado sobre</td><td>Aluno, Atividade</td><td>N : N</td><td>lida, data de criação</td></tr>
+    <tr><td>recebe push</td><td>Aluno, Inscrição push</td><td>1 : N</td><td>endpoint único</td></tr>
+    <tr><td>publica no mural</td><td>Usuário, Turma, Post do mural</td><td>o post tem um autor e uma turma</td><td>texto</td></tr>
+    <tr><td>comenta</td><td>Usuário, Post</td><td>1 autor, N comentários por post</td><td>texto</td></tr>
+    <tr><td>cria sala</td><td>Usuário, Sala</td><td>1 : N</td><td>—</td></tr>
+    <tr><td>inscreve-se</td><td>Usuário, Sala</td><td>N : N</td><td>data de inscrição</td></tr>
+    <tr><td>publica na sala</td><td>Usuário, Sala, Post da sala</td><td>o post tem um autor e uma sala</td><td>texto</td></tr>
+    <tr><td>anexa ao post</td><td>Post, Anexo</td><td>1 : N</td><td>o anexo do mural e o da sala repetem a estrutura do anexo de atividade</td></tr>
   </tbody>
 </table>
 
@@ -861,8 +977,36 @@
 <ul>
   <li>Especialização com tabela pai e tabelas filhas só onde há relacionamento. <span class="mono">usuarios</span> guarda o tipo. <span class="mono">professores</span> e <span class="mono">alunos</span> existem para serem alvo de chave estrangeira. Administrador não ganha tabela.</li>
   <li>Relacionamento N:N vira tabela associativa. <span class="mono">professor_turmas</span> realiza “leciona”. <span class="mono">aluno_eventos</span> realiza “conclui”. <span class="mono">notificacoes</span> realiza “avisado sobre”.</li>
-  <li>O horário ternário vira a entidade associativa <span class="mono">horarios_aula</span>, com chaves para turma e professor. A notificação poderia ser só o relacionamento, mas a lista precisa de identificador e de ordenação, então também virou tabela.</li>
+  <li>O horário ternário vira a entidade associativa <span class="mono">horarios_aula</span>, com chaves para turma e representante. A notificação poderia ser só o relacionamento, mas a lista precisa de identificador e de ordenação, então também virou tabela.</li>
+  <li>Mural e sala repetem o mesmo desenho: post com autor, comentário com autor, anexo do post e, na sala, a inscrição N:N. As tabelas são separadas (<span class="mono">mural_*</span> e <span class="mono">salas_*</span>) para a exclusão da turma não apagar salas, que atravessam turmas.</li>
+  <li>A foto e a marca de senha provisória ficam em <span class="mono">usuarios</span>, porque valem para os três perfis. A inscrição de push fica no aluno, porque só ele recebe o aviso da atividade.</li>
 </ul>
+
+<h3>10.4 Comunidade</h3>
+<figure>
+<svg viewBox="0 0 760 220" role="img" aria-label="MER do mural e das salas">
+  <rect class="ent" x="20" y="24" width="120" height="32"/><text class="at" x="80" y="45" text-anchor="middle" font-weight="700">TURMA</text>
+  <rect class="ent" x="210" y="24" width="140" height="32"/><text class="at" x="280" y="45" text-anchor="middle" font-weight="700">POST MURAL</text>
+  <rect class="ent" x="430" y="24" width="120" height="32"/><text class="at" x="490" y="45" text-anchor="middle" font-weight="700">USUÁRIO</text>
+  <rect class="ent" x="610" y="24" width="130" height="32"/><text class="at" x="675" y="45" text-anchor="middle" font-weight="700">SALA</text>
+  <polygon class="dia" points="175,40 198,56 175,72 152,56"/><text class="dt" x="175" y="60" text-anchor="middle" font-size="9">de</text>
+  <line class="ln" x1="140" y1="40" x2="152" y2="50"/><line class="ln" x1="198" y1="50" x2="210" y2="40"/>
+  <polygon class="dia" points="390,40 414,56 390,72 366,56"/><text class="dt" x="390" y="60" text-anchor="middle" font-size="9">escreve</text>
+  <line class="ln" x1="350" y1="40" x2="366" y2="50"/><line class="ln" x1="414" y1="50" x2="430" y2="40"/>
+  <polygon class="dia" points="575,40 600,56 575,72 550,56"/><text class="dt" x="575" y="60" text-anchor="middle" font-size="9">cria</text>
+  <line class="ln" x1="550" y1="40" x2="550" y2="56"/><line class="ln" x1="600" y1="50" x2="610" y2="40"/>
+  <rect class="ent" x="210" y="130" width="150" height="32"/><text class="at" x="285" y="151" text-anchor="middle" font-weight="700">COMENTÁRIO</text>
+  <rect class="ent" x="430" y="130" width="140" height="32"/><text class="at" x="500" y="151" text-anchor="middle" font-weight="700">INSCRIÇÃO</text>
+  <rect class="ent" x="610" y="130" width="130" height="32"/><text class="at" x="675" y="151" text-anchor="middle" font-weight="700">POST SALA</text>
+  <line class="ln" x1="280" y1="56" x2="280" y2="130"/>
+  <line class="ln" x1="490" y1="56" x2="500" y2="130"/>
+  <line class="ln" x1="675" y1="56" x2="675" y2="130"/>
+  <text class="lb" x="288" y="100">1:N</text>
+  <text class="lb" x="430" y="110">N:N</text>
+  <text class="lb" x="688" y="100">1:N</text>
+</svg>
+<figcaption>Figura 6b. Mural depende da turma. Sala depende do criador e da inscrição, não de uma turma. Comentário e post da sala seguem o mesmo autor usuário.</figcaption>
+</figure>
 
 <h2>11. Diagrama entidade-relacionamento (DER)</h2>
 <p>O DER abaixo é o modelo lógico: cada retângulo é uma tabela do MySQL, o atributo sublinhado é a chave primária e o atributo em itálico é chave estrangeira. A cardinalidade usa a notação mínima e máxima. Os atributos completos estão no dicionário da seção 12; o diagrama mostra as chaves e o atributo que dá sentido ao relacionamento.</p>
@@ -893,7 +1037,7 @@
   <text class="at pk" x="282" y="56">id</text>
   <text class="at" x="282" y="72">nome</text>
   <text class="at" x="282" y="88">email</text>
-  <text class="at" x="282" y="104">senha, tipo, data_criacao</text>
+  <text class="at" x="282" y="104">senha, tipo, foto, senha_provisoria</text>
   <rect class="ent" x="30" y="168" width="200" height="94"/>
   <rect class="hd" x="30" y="168" width="200" height="24"/>
   <text class="ht" x="130" y="185" text-anchor="middle">PROFESSORES</text>
@@ -906,7 +1050,7 @@
   <text class="at pk" x="292" y="210">id</text>
   <text class="at fk" x="292" y="228">usuario_id</text>
   <text class="at fk" x="292" y="246">turma_id</text>
-  <text class="at" x="292" y="264">uma turma obrigatória</text>
+  <text class="at" x="292" y="264">turma obrigatória, representante</text>
   <rect class="ent" x="590" y="168" width="150" height="94"/>
   <rect class="hd" x="590" y="168" width="150" height="24"/>
   <text class="ht" x="665" y="185" text-anchor="middle">TURMAS</text>
@@ -1007,12 +1151,57 @@
 <figcaption>Figura 8. DER da agenda. Linhas à direita de ALUNO_EVENTOS e de NOTIFICACOES sobem até EVENTOS (N:1). HORARIOS_AULA liga-se a TURMAS pela vertical e guarda professor_id para PROFESSORES.</figcaption>
 </figure>
 
-<p class="leg">Leitura das pontas: ao lado de EVENTOS, “1” em PROFESSORES significa que cada atividade tem um autor; “N” em EVENTOS significa que o professor publica várias. O mesmo vale para turma, anexo, conclusão, agenda pessoal e notificação.</p>
+<p class="leg">Leitura das pontas: ao lado de EVENTOS, “1” em PROFESSORES significa que cada atividade tem um autor representante; “N” em EVENTOS significa que ele publica várias. O mesmo vale para turma, anexo, conclusão, agenda pessoal e notificação. O nome da tabela permanece <span class="mono">professores</span>.</p>
+
+<h3>11.3 Mural, salas e push</h3>
+<figure>
+<svg viewBox="0 0 760 250" role="img" aria-label="DER de mural, salas e push">
+  <rect class="ent" x="16" y="16" width="168" height="88"/>
+  <rect class="hd" x="16" y="16" width="168" height="22"/>
+  <text class="ht" x="100" y="32" text-anchor="middle">MURAL_POSTS</text>
+  <text class="at pk" x="28" y="54">id</text>
+  <text class="at fk" x="28" y="72">turma_id, autor_id</text>
+  <text class="at" x="28" y="90">texto</text>
+  <rect class="ent" x="200" y="16" width="168" height="72"/>
+  <rect class="hd" x="200" y="16" width="168" height="22"/>
+  <text class="ht" x="284" y="32" text-anchor="middle">MURAL_ANEXOS</text>
+  <text class="at pk" x="212" y="54">id</text>
+  <text class="at fk" x="212" y="72">post_id</text>
+  <rect class="ent" x="384" y="16" width="180" height="72"/>
+  <rect class="hd" x="384" y="16" width="180" height="22"/>
+  <text class="ht" x="474" y="32" text-anchor="middle">MURAL_COMENTARIOS</text>
+  <text class="at pk" x="396" y="54">id</text>
+  <text class="at fk" x="396" y="72">post_id, autor_id</text>
+  <rect class="ent" x="16" y="130" width="168" height="100"/>
+  <rect class="hd" x="16" y="130" width="168" height="22"/>
+  <text class="ht" x="100" y="146" text-anchor="middle">SALAS_ESTUDO</text>
+  <text class="at pk" x="28" y="168">id</text>
+  <text class="at fk" x="28" y="186">criador_id</text>
+  <text class="at" x="28" y="204">titulo, tema</text>
+  <rect class="ent" x="200" y="130" width="190" height="88"/>
+  <rect class="hd" x="200" y="130" width="190" height="22"/>
+  <text class="ht" x="295" y="146" text-anchor="middle">SALAS_INSCRICOES</text>
+  <text class="at pk" x="212" y="168">sala_id + usuario_id</text>
+  <text class="at" x="212" y="186">data_criacao</text>
+  <rect class="ent" x="406" y="130" width="168" height="88"/>
+  <rect class="hd" x="406" y="130" width="168" height="22"/>
+  <text class="ht" x="490" y="146" text-anchor="middle">SALAS_POSTS</text>
+  <text class="at pk" x="418" y="168">id</text>
+  <text class="at fk" x="418" y="186">sala_id, autor_id</text>
+  <rect class="ent" x="590" y="16" width="154" height="100"/>
+  <rect class="hd" x="590" y="16" width="154" height="22"/>
+  <text class="ht" x="667" y="32" text-anchor="middle">PUSH</text>
+  <text class="at pk" x="602" y="54">id</text>
+  <text class="at fk" x="602" y="72">aluno_id</text>
+  <text class="at" x="602" y="90">endpoint único</text>
+</svg>
+<figcaption>Figura 9. DER da comunidade e do push. <span class="mono">salas_anexos</span> e <span class="mono">salas_comentarios</span> repetem o desenho do mural, com chave para o post da sala. <span class="mono">autor_id</span> e <span class="mono">criador_id</span> apontam para <span class="mono">usuarios</span>.</figcaption>
+</figure>
 
 <h2>12. Modelo relacional e dicionário de dados</h2>
 <p>Notação: sublinhado conceitual na chave primária, e a chave estrangeira indicada por referência. Todas as tabelas usam <span class="mono">InnoDB</span> implícito do MySQL atual, chave substituta inteira autoincrementada e exclusão em cascata nas estrangeiras, salvo a trava de aplicação que impede excluir turma com alunos.</p>
 
-<pre class="mono" style="white-space:pre-wrap;background:#f6f8fb;padding:10px;border:1px solid #d5deea;font-size:9pt;line-height:1.4;">usuarios(<u>id</u>, nome, email, senha, tipo, data_criacao)
+<pre class="mono" style="white-space:pre-wrap;background:#f6f8fb;padding:10px;border:1px solid #d5deea;font-size:9pt;line-height:1.4;">usuarios(<u>id</u>, nome, email, senha, tipo, foto, senha_provisoria, data_criacao)
   UK email
   tipo ∈ {professor, aluno, administrador}
 
@@ -1020,7 +1209,7 @@ turmas(<u>id</u>, nome, ano, data_criacao)
 
 professores(<u>id</u>, usuario_id → usuarios)
 
-alunos(<u>id</u>, usuario_id → usuarios, turma_id → turmas)
+alunos(<u>id</u>, usuario_id → usuarios, turma_id → turmas, representante)
 
 professor_turmas(<u>id</u>, professor_id → professores, turma_id → turmas, materia)
   UK (professor_id, turma_id, materia)
@@ -1029,8 +1218,7 @@ eventos(<u>id</u>, professor_id → professores, turma_id → turmas, titulo, de
         tipo, concluido, data_evento, hora, materia, data_criacao)
   tipo ∈ {prova, trabalho, atividade, reuniao}
 
-evento_anexos(<u>id</u>, evento_id → eventos, nome_original, caminho, tipo_mime,
-               tamanho, data_criacao)
+evento_anexos(<u>id</u>, evento_id → eventos, nome_original, caminho, tipo_mime, tamanho, data_criacao)
 
 aluno_eventos(<u>id</u>, aluno_id → alunos, evento_id → eventos, concluido, data_conclusao)
   UK (aluno_id, evento_id)
@@ -1038,12 +1226,29 @@ aluno_eventos(<u>id</u>, aluno_id → alunos, evento_id → eventos, concluido, 
 aluno_atividades(<u>id</u>, aluno_id → alunos, titulo, descricao, data_evento, hora,
                   materia, concluido, data_conclusao, data_criacao)
 
+aluno_atividade_anexos(<u>id</u>, atividade_id → aluno_atividades, nome_original, caminho, tipo_mime, tamanho)
+
 horarios_aula(<u>id</u>, turma_id → turmas, professor_id → professores, materia,
               dia_semana, hora_inicio, hora_fim)
 
-notificacoes(<u>id</u>, aluno_id → alunos, evento_id → eventos, lida, data_criacao)</pre>
+notificacoes(<u>id</u>, aluno_id → alunos, evento_id → eventos, lida, data_criacao)
 
-<p>As tabelas <span class="mono">aluno_atividades</span>, <span class="mono">horarios_aula</span> e <span class="mono">notificacoes</span>, e a coluna <span class="mono">eventos.materia</span>, nascem no script de runtime quando a base antiga não as tem. O script <span class="mono">database/calendario_estudantil.sql</span> já traz o núcleo importável, e a primeira conexão completa o restante.</p>
+push_inscricoes(<u>id</u>, aluno_id → alunos, endpoint, p256dh, auth)
+  UK endpoint
+
+mural_posts(<u>id</u>, turma_id → turmas, autor_id → usuarios, texto, data_criacao)
+mural_anexos(<u>id</u>, post_id → mural_posts, nome_original, caminho, tipo_mime, tamanho)
+mural_comentarios(<u>id</u>, post_id → mural_posts, autor_id → usuarios, texto, data_criacao)
+
+salas_estudo(<u>id</u>, titulo, tema, descricao, criador_id → usuarios, data_criacao)
+salas_inscricoes(<u>sala_id → salas_estudo, usuario_id → usuarios</u>, data_criacao)
+salas_posts(<u>id</u>, sala_id → salas_estudo, autor_id → usuarios, texto, data_criacao)
+salas_anexos(<u>id</u>, post_id → salas_posts, nome_original, caminho, tipo_mime, tamanho)
+salas_comentarios(<u>id</u>, post_id → salas_posts, autor_id → usuarios, texto, data_criacao)
+
+migracoes(<u>nome</u>, executada_em)</pre>
+
+<p>Tabelas e colunas que uma base antiga não tenha nascem na conexão: agenda do aluno, horários, notificações, matéria, flag de representante, foto, senha provisória, anexos pessoais, mural, salas e push. O script <span class="mono">database/calendario_estudantil.sql</span> traz o núcleo importável, e a execução completa o restante. <span class="mono">migracoes</span> guarda o nome da rotina de produção que já rodou.</p>
 
 <h3>12.1 usuarios</h3>
 <table>
@@ -1053,7 +1258,9 @@ notificacoes(<u>id</u>, aluno_id → alunos, evento_id → eventos, lida, data_c
     <tr><td>nome</td><td>VARCHAR(100)</td><td>não</td><td>Nome exibido no menu e nas listas.</td></tr>
     <tr><td>email</td><td>VARCHAR(150), UK</td><td>não</td><td>Credencial de login.</td></tr>
     <tr><td>senha</td><td>VARCHAR(255)</td><td>não</td><td>Hash. Nunca a senha em claro.</td></tr>
-    <tr><td>tipo</td><td>ENUM</td><td>não</td><td>professor, aluno ou administrador.</td></tr>
+    <tr><td>tipo</td><td>ENUM</td><td>não</td><td>professor (representante), aluno ou administrador (conselheiro).</td></tr>
+    <tr><td>foto</td><td>VARCHAR(255)</td><td>sim</td><td>Caminho relativo em <span class="mono">uploads/perfil/</span>. Nulo sem foto.</td></tr>
+    <tr><td>senha_provisoria</td><td>TINYINT(1)</td><td>não</td><td>1 quando o cadastro usou a senha padrão. Default 0. A troca em Meu perfil zera.</td></tr>
     <tr><td>data_criacao</td><td>TIMESTAMP</td><td>não</td><td>Default: momento da inserção.</td></tr>
   </tbody>
 </table>
@@ -1073,8 +1280,8 @@ notificacoes(<u>id</u>, aluno_id → alunos, evento_id → eventos, lida, data_c
 <table>
   <thead><tr><th>Tabela</th><th>Coluna</th><th>Regra</th></tr></thead>
   <tbody>
-    <tr><td>professores</td><td>id, usuario_id → usuarios</td><td>Uma linha por usuário professor. Apagar o usuário apaga o professor e, em cascata, vínculos, eventos e horários dele.</td></tr>
-    <tr><td>alunos</td><td>id, usuario_id → usuarios, turma_id → turmas</td><td>Uma linha por usuário aluno. <span class="mono">turma_id</span> é obrigatório. Apagar a turma apagaria os alunos por cascata; a aplicação impede essa exclusão antes.</td></tr>
+    <tr><td>professores</td><td>id, usuario_id → usuarios</td><td>Uma linha por representante. Apagar o usuário apaga essa linha e, em cascata, vínculos, eventos e horários dele. O nome da tabela não mudou com o rótulo da interface.</td></tr>
+    <tr><td>alunos</td><td>id, usuario_id → usuarios, turma_id → turmas, representante</td><td>Uma linha por usuário aluno. <span class="mono">turma_id</span> é obrigatório. <span class="mono">representante</span> é 0 ou 1; sozinho não concede o menu de gestão — a autorização também exige linha em <span class="mono">professores</span>. Apagar a turma apagaria os alunos por cascata; a aplicação impede essa exclusão antes.</td></tr>
   </tbody>
 </table>
 
@@ -1083,19 +1290,19 @@ notificacoes(<u>id</u>, aluno_id → alunos, evento_id → eventos, lida, data_c
   <thead><tr><th>Coluna</th><th>Tipo</th><th>Nulo</th><th>Descrição</th></tr></thead>
   <tbody>
     <tr><td>id</td><td>INT AI, PK</td><td>não</td><td>Identificador do vínculo.</td></tr>
-    <tr><td>professor_id</td><td>INT, FK</td><td>não</td><td>Professor que leciona.</td></tr>
+    <tr><td>professor_id</td><td>INT, FK</td><td>não</td><td>Representante do vínculo. A coluna conserva o nome antigo.</td></tr>
     <tr><td>turma_id</td><td>INT, FK</td><td>não</td><td>Turma atendida.</td></tr>
     <tr><td>materia</td><td>VARCHAR(100)</td><td>não</td><td>Nome da disciplina. Vazio quando o vínculo não nomeia matéria. Default ''. </td></tr>
   </tbody>
 </table>
-<p>A chave única <span class="mono">professor_turma_materia</span> impede o mesmo trio duas vezes e permite duas linhas do mesmo professor na mesma turma quando as matérias diferem.</p>
+<p>A chave única <span class="mono">professor_turma_materia</span> impede o mesmo trio duas vezes e permite duas linhas do mesmo representante na mesma turma quando as matérias diferem.</p>
 
 <h3>12.5 eventos</h3>
 <table>
   <thead><tr><th>Coluna</th><th>Tipo</th><th>Nulo</th><th>Descrição</th></tr></thead>
   <tbody>
     <tr><td>id</td><td>INT AI, PK</td><td>não</td><td>Identificador da atividade.</td></tr>
-    <tr><td>professor_id</td><td>INT, FK</td><td>não</td><td>Autor. Não vem do formulário como campo livre de autoria.</td></tr>
+    <tr><td>professor_id</td><td>INT, FK</td><td>não</td><td>Autor representante. Não vem do formulário como campo livre de autoria.</td></tr>
     <tr><td>turma_id</td><td>INT, FK</td><td>não</td><td>Turma de destino.</td></tr>
     <tr><td>titulo</td><td>VARCHAR(150)</td><td>não</td><td>Nome exibido na agenda.</td></tr>
     <tr><td>descricao</td><td>TEXT</td><td>sim</td><td>Texto simples ou HTML já filtrado.</td></tr>
@@ -1158,7 +1365,7 @@ notificacoes(<u>id</u>, aluno_id → alunos, evento_id → eventos, lida, data_c
   <tbody>
     <tr><td>id</td><td>INT AI, PK</td><td>não</td><td>Identificador do slot.</td></tr>
     <tr><td>turma_id</td><td>INT, FK</td><td>não</td><td>Turma da aula.</td></tr>
-    <tr><td>professor_id</td><td>INT, FK</td><td>não</td><td>Professor da aula.</td></tr>
+    <tr><td>professor_id</td><td>INT, FK</td><td>não</td><td>Representante que lançou a aula.</td></tr>
     <tr><td>materia</td><td>VARCHAR(100)</td><td>não</td><td>Disciplina do slot. Default ''. </td></tr>
     <tr><td>dia_semana</td><td>TINYINT</td><td>não</td><td>1 segunda … 6 sábado.</td></tr>
     <tr><td>hora_inicio</td><td>TIME</td><td>não</td><td>Início.</td></tr>
@@ -1178,7 +1385,23 @@ notificacoes(<u>id</u>, aluno_id → alunos, evento_id → eventos, lida, data_c
   </tbody>
 </table>
 
-<h3>12.11 Formas normais</h3>
+<h3>12.11 Comunidade, push e migração</h3>
+<table>
+  <thead><tr><th>Tabela</th><th>Colunas principais</th><th>Regra</th></tr></thead>
+  <tbody>
+    <tr><td>aluno_atividade_anexos</td><td>atividade_id → aluno_atividades, nome, caminho, MIME, tamanho</td><td>Some com a atividade pessoal.</td></tr>
+    <tr><td>mural_posts</td><td>turma_id → turmas, autor_id → usuarios, texto</td><td>Some com a turma ou com o autor.</td></tr>
+    <tr><td>mural_anexos</td><td>post_id → mural_posts</td><td>Mesma forma de <span class="mono">evento_anexos</span>.</td></tr>
+    <tr><td>mural_comentarios</td><td>post_id, autor_id, texto</td><td>Some com o post ou com o autor.</td></tr>
+    <tr><td>salas_estudo</td><td>titulo, tema, descricao, criador_id → usuarios</td><td>Não tem turma. Apagar o criador apaga a sala.</td></tr>
+    <tr><td>salas_inscricoes</td><td>sala_id, usuario_id, data_criacao</td><td>Chave primária composta. Uma inscrição por pessoa e sala.</td></tr>
+    <tr><td>salas_posts, salas_anexos, salas_comentarios</td><td>espelham o mural, com <span class="mono">sala_id</span> no post</td><td>A moderação é do <span class="mono">criador_id</span>, não de um representante de turma.</td></tr>
+    <tr><td>push_inscricoes</td><td>aluno_id, endpoint, p256dh, auth</td><td><span class="mono">endpoint</span> é único. Some com o aluno. Resposta 404 ou 410 do serviço apaga a linha.</td></tr>
+    <tr><td>migracoes</td><td>nome (PK), executada_em</td><td>Marca rotinas que só podem rodar uma vez, como a limpeza das contas de demonstração.</td></tr>
+  </tbody>
+</table>
+
+<h3>12.12 Formas normais</h3>
 <p>O esquema está na terceira forma normal no que depende de fato da chave: nenhum atributo não chave depende de parte da chave, e não há dependência transitiva entre atributos não chave dentro da mesma tabela. A repetição do texto da matéria em quatro tabelas não é redundância de atualização no sentido da normalização, porque cada ocorrência tem significado local (vínculo, atividade, aula, compromisso pessoal). É, porém, ausência de uma entidade Disciplina, e por isso o nome pode divergir por grafia.</p>
 
 <h2>13. Rastreabilidade</h2>
@@ -1207,65 +1430,74 @@ notificacoes(<u>id</u>, aluno_id → alunos, evento_id → eventos, lida, data_c
     <tr><td>RF26</td><td>UC18</td><td>RN11</td></tr>
     <tr><td>RF27</td><td>UC09, UC15, UC16</td><td>RN06, RN10</td></tr>
     <tr><td>RF28</td><td>provisionamento na conexão</td><td>—</td></tr>
+    <tr><td>RF29, RF30</td><td>UC19</td><td>RN17, RN20</td></tr>
+    <tr><td>RF31</td><td>UC20</td><td>RN15, RN18</td></tr>
+    <tr><td>RF32</td><td>UC21</td><td>RN15, RN19</td></tr>
+    <tr><td>RF33</td><td>UC22</td><td>RN11</td></tr>
+    <tr><td>RF34, RF35</td><td>UC01</td><td>—</td></tr>
   </tbody>
 </table>
 
 <h2>14. Segurança</h2>
-<p>O controle de acesso é a peça que sustenta o produto: um aluno não pode ler a agenda de outra turma, e um professor não pode editar a atividade de outro. Isso está nas funções de guarda e nas consultas, não só no menu escondido.</p>
+<p>O controle de acesso é a peça que sustenta o produto: um aluno não lê o mural de outra turma, e um representante não edita a atividade de outro. Isso está nas funções de guarda e nas consultas, não só no menu escondido.</p>
 <ul>
-  <li><strong>Autenticação.</strong> Senha com hash de <span class="mono">password_hash</span>. Mensagem de erro única. Sessão regenerada no login.</li>
-  <li><strong>Autorização.</strong> <span class="mono">exigirAdministrador</span>, <span class="mono">exigirProfessor</span> e <span class="mono">exigirAluno</span> antes do conteúdo. Consultas de evento filtram por autor ou por turma. Atividade pessoal filtra pelo aluno dono. O retorno pós-POST só aceita endereço da própria área, para evitar redirecionamento aberto.</li>
+  <li><strong>Autenticação.</strong> Senha com hash de <span class="mono">password_hash</span>. Mensagem de erro única. Sessão regenerada no login. Troca de senha exige a senha atual.</li>
+  <li><strong>Autorização.</strong> <span class="mono">exigirAdministrador</span>, <span class="mono">exigirProfessor</span>, <span class="mono">exigirAluno</span> e <span class="mono">exigirEscola</span> antes do conteúdo. Consultas de evento filtram por autor ou por turma. Mural usa <span class="mono">podeAcessarMural()</span>. Sala exige inscrição para publicar. Atividade pessoal filtra pelo aluno dono. O retorno pós-POST só aceita endereço da própria área.</li>
   <li><strong>Injeção de SQL.</strong> PDO com parâmetros nomeados nas consultas que recebem entrada.</li>
-  <li><strong>XSS.</strong> <span class="mono">e()</span> aplica <span class="mono">htmlspecialchars</span>. A descrição do professor passa por <span class="mono">htmlSeguro()</span>, que mantém um conjunto pequeno de tags e remove atributos de evento e esquemas perigosos.</li>
-  <li><strong>Upload.</strong> Tamanho, extensão e MIME conferidos; nome no disco é aleatório. A imagem do editor é recusada se não for imagem, e o arquivo inválido é apagado.</li>
-  <li><strong>Sessão.</strong> Cookie <span class="mono">HttpOnly</span>, <span class="mono">SameSite=Lax</span>, vida até fechar o navegador. Dois nomes de sessão separam o administrador do restante.</li>
+  <li><strong>XSS.</strong> <span class="mono">e()</span> aplica <span class="mono">htmlspecialchars</span>. A descrição da atividade passa por <span class="mono">htmlSeguro()</span>, que mantém um conjunto pequeno de tags e remove atributos de evento e esquemas perigosos. Texto de mural e sala passa por limite de tamanho e escape na saída.</li>
+  <li><strong>Upload.</strong> Tamanho, extensão e MIME conferidos; nome no disco é aleatório. A foto é conferida com <span class="mono">getimagesize</span> e, com GD, regravada, o que descarta metadados.</li>
+  <li><strong>Sessão.</strong> Cookie <span class="mono">HttpOnly</span>, <span class="mono">SameSite=Lax</span> e Secure em HTTPS. Dois nomes de sessão separam o administrador do restante. O perfil envia um token de sessão comparado com <span class="mono">hash_equals</span>.</li>
+  <li><strong>Push.</strong> A carga vai cifrada para o endpoint do navegador com as chaves da inscrição. A chave privada VAPID fica no servidor.</li>
   <li><strong>Integridade.</strong> Chaves estrangeiras e unicidades descritas no dicionário. O último administrador é protegido na aplicação.</li>
 </ul>
-<div class="aviso">O cookie de sessão não usa a flag Secure, porque o ambiente previsto é HTTP local. Não há token anti-CSRF nos formulários. Não há política de senha além do mínimo de 5 caracteres, nem bloqueio após tentativas. Esses pontos estão na seção de limitações e não devem ser lidos como controles já entregues.</div>
+<div class="aviso">Em HTTP local a flag Secure do cookie fica desligada. Os formulários da agenda, do mural e das salas não enviam o token que o perfil já usa. Não há bloqueio após tentativas de senha. A senha do cadastro ainda aceita 5 caracteres quando o conselheiro a informa. Esses pontos continuam na seção de limitações.</div>
 
 <h2>15. Limitações e evolução</h2>
 
 <h3>15.1 Limitações atuais</h3>
 <ul>
-  <li><strong>Ambiente.</strong> O desenho assume XAMPP na máquina local: um Apache, um MySQL e a pasta <span class="mono">uploads</span> no mesmo disco. Não há balanceamento, backup automatizado nem HTTPS de fábrica.</li>
-  <li><strong>Credencial de banco.</strong> O padrão é <span class="mono">root</span> sem senha. Serve ao laboratório e é inadequado em qualquer máquina exposta à rede.</li>
-  <li><strong>Conta.</strong> Não há auto-cadastro, recuperação de senha, expiração nem segundo fator. Quem esquece a senha depende do administrador para gravar outra.</li>
-  <li><strong>CSRF.</strong> Formulários POST não enviam um token vinculado à sessão.</li>
-  <li><strong>Senha curta.</strong> O mínimo de 5 caracteres é uma trava fraca.</li>
+  <li><strong>Ambiente.</strong> Um Apache, um MySQL e a pasta <span class="mono">uploads</span> no mesmo hospedeiro. Não há balanceamento nem backup automatizado. HTTPS existe em produção; o laboratório local pode continuar em HTTP.</li>
+  <li><strong>Credencial de banco.</strong> Sem <span class="mono">.env</span>, o padrão é <span class="mono">root</span> sem senha. Serve ao laboratório e é inadequado em qualquer máquina exposta à rede.</li>
+  <li><strong>Conta.</strong> A pessoa troca a própria senha e envia foto. Não há auto-cadastro, recuperação por e-mail, expiração nem segundo fator. Quem esquece a senha ainda depende do conselheiro para gravar outra.</li>
+  <li><strong>CSRF.</strong> Meu perfil envia token de sessão. Os demais POST da agenda, do mural e das salas não enviam.</li>
+  <li><strong>Senha curta.</strong> A troca pelo usuário pede 6 caracteres. O cadastro feito pelo conselheiro ainda aceita 5 quando a senha é informada. Não há bloqueio após tentativas.</li>
   <li><strong>Matéria textual.</strong> Não existe tabela de disciplinas. Grafias diferentes não se unem no filtro.</li>
-  <li><strong>Dois significados de concluído.</strong> <span class="mono">eventos.concluido</span> e <span class="mono">aluno_eventos.concluido</span> convivem. O painel do aluno usa a marca da turma no percentual. Quem lê o número precisa saber que ele não é a soma das conclusões individuais.</li>
-  <li><strong>Notificação parcial.</strong> O aviso nasce na criação da atividade, não na edição nem na exclusão lógica. Não sai do sistema: não há e-mail nem push. A lista corta em 40 itens.</li>
-  <li><strong>Um aluno, uma turma.</strong> Não há histórico de enturmação nem aluno em duas turmas.</li>
-  <li><strong>Exclusão em cascata.</strong> Apagar usuário ou evento remove filhos. Não há lixeira.</li>
-  <li><strong>Arquivos.</strong> O vínculo é o caminho gravado. Se o disco e o banco divergirem, o link quebra. Não há antivírus nem varredura de conteúdo além do MIME.</li>
-  <li><strong>Editor.</strong> A sanitização por lista de tags não substitui uma biblioteca dedicada de HTML. É uma redução de risco, não uma prova formal contra XSS em todo markup.</li>
-  <li><strong>Migração.</strong> O esquema evolui na primeira conexão, com <span class="mono">ALTER</span> e <span class="mono">CREATE</span> condicionais, em vez de migrações numeradas. Uma falha é engolida para não derrubar a tela.</li>
+  <li><strong>Dois significados de concluído.</strong> <span class="mono">eventos.concluido</span> e <span class="mono">aluno_eventos.concluido</span> convivem. O cartão do mural usa a marca da turma no percentual. Quem lê o número precisa saber que ele não é a soma das conclusões individuais.</li>
+  <li><strong>Notificação.</strong> O aviso interno e o push nascem na criação da atividade, não na edição. Não há e-mail nem SMS. A lista interna corta em 40 itens. Sem HTTPS, ou sem o atalho no iOS, o push não chega.</li>
+  <li><strong>Representante aluno.</strong> A coluna <span class="mono">alunos.representante</span> e a guarda existem. O formulário de cadastro cria o representante como perfil <span class="mono">professor</span> e não marca essa coluna sozinho.</li>
+  <li><strong>Um aluno, uma turma.</strong> Não há histórico de enturmação nem aluno em duas turmas. A sala de estudo é o caminho para misturar turmas, sem mudar a matrícula.</li>
+  <li><strong>Exclusão em cascata.</strong> Apagar usuário, turma, evento, post ou sala remove filhos. Não há lixeira. Apagar o criador de uma sala apaga a sala.</li>
+  <li><strong>Arquivos.</strong> O vínculo é o caminho gravado. Se o disco e o banco divergirem, o link quebra. Não há antivírus nem varredura além do MIME e, na foto, do conteúdo de imagem.</li>
+  <li><strong>Editor.</strong> A sanitização por lista de tags não substitui uma biblioteca dedicada de HTML.</li>
+  <li><strong>Migração.</strong> O esquema evolui na conexão, com <span class="mono">ALTER</span> e <span class="mono">CREATE</span> condicionais. Só a limpeza de contas de teste usa a tabela <span class="mono">migracoes</span>. Uma falha de esquema é engolida para não derrubar a tela.</li>
   <li><strong>Testes.</strong> Não há suíte automatizada. A verificação é manual, nas telas.</li>
-  <li><strong>Concorrência e escala.</strong> Não há requisito de centenas de usuários simultâneos, cache ou fila. Índices são os da chave primária, das estrangeiras e das unicidades.</li>
+  <li><strong>Concorrência e escala.</strong> Não há requisito de centenas de usuários simultâneos, cache ou fila. O push é síncrono na publicação da atividade.</li>
   <li><strong>Fuso e calendário.</strong> Datas usam o relógio do servidor PHP e do MySQL. Não há fuso configurável por escola.</li>
   <li><strong>Idioma e acessibilidade.</strong> A interface é só em português. Há rótulos e alguns atributos ARIA; não houve auditoria de acessibilidade.</li>
-  <li><strong>Produto.</strong> Fora do escopo continuam notas, frequência, entrega de arquivo pelo aluno, multi-escola e aplicativo nativo.</li>
+  <li><strong>Produto.</strong> Fora do escopo continuam notas, frequência, correção de entrega, multi-escola e aplicativo nativo de loja. O atalho PWA não substitui um app nativo.</li>
 </ul>
 
 <h3>15.2 Evolução possível</h3>
-<p>Se o sistema sair do laboratório, a ordem que protege o que já existe é: senha de banco e HTTPS, token de CSRF, política de senha, entidade Disciplina no lugar do texto solto, e separar no painel do aluno o percentual individual do percentual da turma. Notificação por e-mail, recuperação de senha e testes dos fluxos UC02, UC08 e UC15 viriam em seguida. Nada disso está implementado; a lista só ordena o que as limitações acima tornam visível.</p>
+<p>O que já saiu do laboratório — senha própria, foto, HTTPS de produção, mural, salas e push — não volta para esta lista. O que ainda protege o que existe é: token de CSRF nos demais formulários, a mesma política de senha no cadastro e na troca, recuperação de senha, entidade Disciplina no lugar do texto solto, e separar no mural o percentual individual do percentual da turma. Testes dos fluxos UC02, UC08, UC19, UC20 e UC22 viriam em seguida.</p>
 
 <h2>16. Considerações finais</h2>
-<p>O Calendário Escolar é um monólito PHP e MySQL com três perfis, uma agenda da turma e uma agenda pessoal. A modelagem guarda a decisão que o produto precisa: a atividade pertence à turma e ao professor, e a conclusão de cada aluno é outra relação, N:N, com data própria. Horário, anexo e notificação completam a rotina sem transformar o sistema num diário de classe.</p>
-<p>O MER mostra essa ideia sem tipos de coluna. O DER e o dicionário mostram como ela ficou no MySQL, inclusive a especialização parcial em tabelas filhas e a matéria como atributo. Os requisitos e os casos de uso nomeiam o que as telas já fazem, e a seção de limitações separa isso do que o sistema ainda não promete.</p>
+<p>A Agenda Acadêmica é um monólito PHP e MySQL com três perfis gravados, uma agenda da turma, uma agenda pessoal, um mural e salas de estudo. A modelagem guarda a decisão que a agenda precisa: a atividade pertence à turma e ao representante, e a conclusão de cada aluno é outra relação, N:N, com data própria. O mural fica preso à turma. A sala não fica, porque a inscrição é o que autoriza a conversa entre turmas.</p>
+<p>O MER mostra essa ideia sem tipos de coluna. O DER e o dicionário mostram como ela ficou no MySQL, inclusive tabelas que ainda se chamam <span class="mono">professores</span> enquanto a tela diz representante. Os requisitos e os casos de uso nomeiam o que as telas já fazem em novembro de 2026, e a seção de limitações separa isso do que o sistema ainda não promete.</p>
 
 <h2>17. Referências</h2>
 <ul>
   <li>ELMASRI, R.; NAVATHE, S. B. <em>Sistemas de banco de dados</em>. Modelo entidade-relacionamento, mapeamento para o relacional e normalização.</li>
   <li>SOMMERVILLE, I. <em>Engenharia de software</em>. Requisitos de usuário e de sistema, casos de uso e requisitos não funcionais.</li>
   <li>PRESSMAN, R. S.; MAXIM, B. R. <em>Engenharia de software: uma abordagem profissional</em>. Processo de requisitos e modelagem de análise.</li>
-  <li>PHP. Manual de <span class="mono">password_hash</span>, <span class="mono">password_verify</span>, sessões e PDO. Disponível em php.net.</li>
+  <li>PHP. Manual de <span class="mono">password_hash</span>, <span class="mono">password_verify</span>, sessões, OpenSSL e PDO. Disponível em php.net.</li>
   <li>MySQL. Manual de referência: tipos de data, chaves estrangeiras e <span class="mono">utf8mb4</span>. Disponível em dev.mysql.com.</li>
+  <li>IETF. RFC 8030, <em>Generic Event Delivery Using HTTP Push</em>, e RFC 8291, <em>Message Encryption for Web Push</em>. Base do aviso no navegador e no celular.</li>
+  <li>W3C. <em>Web App Manifest</em> e Service Workers. Base do atalho instalável e do <span class="mono">sw.js</span>.</li>
   <li>OWASP. <em>Session Management Cheat Sheet</em> e <em>File Upload Cheat Sheet</em>. Referência para os controles da seção 14 e para as lacunas da seção 15.</li>
-  <li>Repositório do próprio sistema: <span class="mono">database/calendario_estudantil.sql</span>, <span class="mono">config/database.php</span>, <span class="mono">includes/auth.php</span> e <span class="mono">includes/functions.php</span>.</li>
+  <li>Repositório do próprio sistema: <span class="mono">config/database.php</span>, <span class="mono">config/env.php</span>, <span class="mono">includes/auth.php</span>, <span class="mono">includes/functions.php</span>, <span class="mono">includes/comunidade.php</span>, <span class="mono">includes/perfil.php</span>, <span class="mono">includes/push.php</span> e <span class="mono">includes/qr.php</span>.</li>
 </ul>
 
-<p class="pequena" style="margin-top:16px;color:#6b7a90;">Documento DES-CE-001, versão 1.0, 26 de outubro de 2026. Descreve o Calendário Escolar (c-estudantil) conforme o código e o esquema dessa data.</p>
+<p class="pequena" style="margin-top:16px;color:#6b7a90;">Documento DES-CE-001, versão 2.0, 21 de novembro de 2026. Descreve a Agenda Acadêmica (c-estudantil) conforme o código e o esquema dessa data. A versão 1.0, de 26 de outubro de 2026, descrevia o mesmo sistema ainda sob o nome Calendário Escolar.</p>
 
 
 </body>

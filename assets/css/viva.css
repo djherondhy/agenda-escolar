@@ -44,8 +44,7 @@ h3,
 }
 
 .app-sidebar .brand-text small,
-.app-sidebar .side-user-role,
-.app-sidebar .side-user-out {
+.app-sidebar .side-user-role {
     color: #f3e8ff;
 }
 
@@ -67,11 +66,34 @@ h3,
 .app-sidebar .side-nav a:nth-child(4n + 4).is-active { background: var(--violet); color: #fff; }
 
 .app-sidebar .side-user {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
-.app-sidebar .side-user-out:hover {
-    color: var(--sun);
+.app-sidebar .side-user-name {
+    color: #fff;
+}
+
+.app-sidebar .side-user-ident .avatar {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85), 0 6px 14px rgba(18, 8, 36, 0.28);
+}
+
+.app-sidebar .side-user-btn {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: transparent;
+    color: #fff;
+}
+
+.app-sidebar .side-user-perfil:hover,
+.app-sidebar .side-user-perfil.is-active {
+    background: #fff;
+    color: #3b1d6e;
+}
+
+.app-sidebar .side-user-sair:hover {
+    background: var(--coral);
+    color: #fff;
 }
 
 .brand-mark {

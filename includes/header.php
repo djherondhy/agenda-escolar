@@ -178,11 +178,25 @@ $linkBarra = static function (array $item, bool $centro = false): string {
             </nav>
 
             <?php if ($usuario): ?>
+                <?php $perfilAtivo = $menuAtivo === 'perfil'; ?>
                 <div class="side-user">
-                    <span class="side-user-name"><?= e($usuario['nome']) ?></span>
-                    <span class="side-user-role"><?= e($ehRepresentante && $tipoUsuario === 'aluno' ? 'Representante de turma' : rotuloPerfil($tipoUsuario)) ?></span>
-                    <a class="side-user-out side-user-perfil" href="<?= e($urlPerfil) ?>">Meu perfil e senha</a>
-                    <a class="side-user-out" href="<?= BASE_URL ?>/logout.php?contexto=<?= $tipoUsuario === 'administrador' ? 'administrador' : 'usuario' ?>">Sair</a>
+                    <a class="side-user-ident<?= $perfilAtivo ? ' is-active' : '' ?>" href="<?= e($urlPerfil) ?>">
+                        <?= avatarSocial((int) $usuario['id'], (string) $usuario['nome']) ?>
+                        <span class="side-user-texto">
+                            <span class="side-user-name"><?= e($usuario['nome']) ?></span>
+                            <span class="side-user-role"><?= e($ehRepresentante && $tipoUsuario === 'aluno' ? 'Representante de turma' : rotuloPerfil($tipoUsuario)) ?></span>
+                        </span>
+                    </a>
+                    <div class="side-user-acoes">
+                        <a class="side-user-btn side-user-perfil<?= $perfilAtivo ? ' is-active' : '' ?>" href="<?= e($urlPerfil) ?>"<?= $perfilAtivo ? ' aria-current="page"' : '' ?>>
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5.2 19.2c.9-3 3-4.6 6.8-4.6s5.9 1.6 6.8 4.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                            Meu perfil
+                        </a>
+                        <a class="side-user-btn side-user-sair" href="<?= BASE_URL ?>/logout.php?contexto=<?= $tipoUsuario === 'administrador' ? 'administrador' : 'usuario' ?>">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 7V5H5v14h5v-2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 12h9M16 8.5 19.5 12 16 15.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            Sair
+                        </a>
+                    </div>
                 </div>
             <?php endif; ?>
         </aside>
