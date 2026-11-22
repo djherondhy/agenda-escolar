@@ -68,9 +68,8 @@ $errosSala = [
 <?php endif; ?>
 
 <section class="social-card grupo-head">
-    <div class="grupo-capa <?= capaSala($salaId) ?>">
-        <a class="grupo-voltar" href="<?= BASE_URL ?>/aluno/salas.php">← Todas as salas</a>
-    </div>
+    <div class="grupo-capa <?= capaSala($salaId) ?>"></div>
+    <a class="grupo-voltar" href="<?= BASE_URL ?>/aluno/salas.php">← Todas as salas</a>
     <div class="grupo-info">
         <?= htmlIconeSala($sala, 'xl') ?>
         <div class="grupo-texto">
