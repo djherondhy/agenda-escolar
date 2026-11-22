@@ -1,4 +1,4 @@
-/* Avisos (Web Push) para alunos: navegador no computador e celular (Android e iPhone). */
+/* Avisos (Web Push): navegador no computador e celular (Android e iPhone). */
 (function () {
     'use strict';
 
@@ -152,8 +152,9 @@
     if (suportado) {
         // Em todas as páginas: mantém o service worker pronto e a inscrição em dia no servidor.
         registrar().then(async (registro) => {
-            if (Notification.permission === 'granted' && !sessionStorage.getItem('push-sync-' + config.alunoId)) {
-                sessionStorage.setItem('push-sync-' + config.alunoId, '1');
+            const conta = config.usuarioId || config.alunoId || '0';
+            if (Notification.permission === 'granted' && !sessionStorage.getItem('push-sync-' + conta)) {
+                sessionStorage.setItem('push-sync-' + conta, '1');
                 await assinar(registro).catch(() => {});
             }
         }).catch(() => {}).finally(atualizarTela);

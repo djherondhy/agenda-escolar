@@ -8,11 +8,8 @@ $menuAtivo = $menuAtivo ?? '';
 $tipoUsuario = $usuario['tipo'] ?? '';
 $ehRepresentante = $usuario ? usuarioEhRepresentante() : false;
 $notificacoesNaoLidas = 0;
-if ($tipoUsuario === 'aluno' && $usuario) {
-    $alunoAvisos = obterAlunoPorUsuario(getPDO(), (int) $usuario['id']);
-    if ($alunoAvisos) {
-        $notificacoesNaoLidas = contarNotificacoesNaoLidas(getPDO(), (int) $alunoAvisos['id']);
-    }
+if (in_array($tipoUsuario, ['aluno', 'professor'], true) && $usuario) {
+    $notificacoesNaoLidas = contarNotificacoesNaoLidas(getPDO(), (int) $usuario['id']);
 }
 
 $urlPerfil = BASE_URL . ($tipoUsuario === 'administrador' ? '/admin/perfil.php' : '/aluno/perfil.php');
@@ -247,7 +244,7 @@ $linkBarra = static function (array $item, bool $centro = false): string {
                     <?php if ($usuario): ?>
                         <a class="topbar-perfil" href="<?= e($urlPerfil) ?>" aria-label="Meu perfil" title="Meu perfil"><?= avatarSocial((int) $usuario['id'], (string) $usuario['nome'], 'sm') ?></a>
                     <?php endif; ?>
-                    <?php if ($tipoUsuario === 'aluno'): ?>
+                    <?php if (in_array($tipoUsuario, ['aluno', 'professor'], true)): ?>
                         <a class="notif-bell<?= $notificacoesNaoLidas ? ' has-alert' : '' ?>" href="<?= BASE_URL ?>/aluno/notificacoes.php" aria-label="Notificações<?= $notificacoesNaoLidas ? ', ' . $notificacoesNaoLidas . ' não lidas' : '' ?>">
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9a6 6 0 1 1 12 0c0 7 3 7 3 9H3c0-2 3-2 3-9Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 20a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
                             <?php if ($notificacoesNaoLidas): ?>

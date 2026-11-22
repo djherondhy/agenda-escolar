@@ -1168,6 +1168,9 @@ button.agenda-item:hover {
 .chip-ok { background: var(--ok-soft); color: var(--ok); }
 .chip-wait { background: var(--warn-soft); color: var(--tarefa); }
 .chip-aluno { background: var(--warn-soft); color: var(--tarefa); }
+.chip-lembrete { background: var(--warn-soft); color: var(--tarefa); }
+.chip-post { background: var(--accent-soft); color: var(--trabalho); }
+.chip-comentario { background: var(--input); color: var(--outro); }
 .chip-professor { background: var(--accent-soft); color: var(--trabalho); }
 .chip-administrador { background: var(--accent-soft); color: var(--accent-hover); }
 

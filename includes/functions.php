@@ -62,6 +62,16 @@ function rotuloTipo(string $tipo): string
     };
 }
 
+function rotuloAviso(string $tipo): string
+{
+    return match ($tipo) {
+        'post'       => 'Publicação',
+        'comentario' => 'Comentário',
+        'lembrete'   => 'Amanhã',
+        default      => rotuloTipo($tipo),
+    };
+}
+
 function rotuloPerfil(string $tipo): string
 {
     return match ($tipo) {
@@ -254,68 +264,93 @@ function listarProfessores(PDO $pdo): array
 
 function notificarAlunosNovaAtividade(PDO $pdo, int $eventoId, int $turmaId): void
 {
-    $stmt = $pdo->prepare('INSERT INTO notificacoes (aluno_id, evento_id) VALUES (:aluno_id, :evento_id)');
-    foreach (listarAlunosDaTurma($pdo, $turmaId) as $aluno) {
-        $stmt->execute([
-            'aluno_id'  => (int) $aluno['id'],
-            'evento_id' => $eventoId,
-        ]);
+    require_once __DIR__ . '/avisos.php';
+
+    $evento = $pdo->prepare(
+        'SELECT e.titulo, e.tipo, e.hora, p.usuario_id AS autor_id
+         FROM eventos e
+         INNER JOIN professores p ON p.id = e.professor_id
+         WHERE e.id = :id
+         LIMIT 1'
+    );
+    $evento->execute(['id' => $eventoId]);
+    $linha = $evento->fetch();
+    if (!$linha) {
+        return;
     }
 
-    require_once __DIR__ . '/push.php';
-    try {
-        enviarPushNovaAtividade($pdo, $eventoId, $turmaId);
-    } catch (Throwable $e) {
-        // O aviso dentro do sistema continua mesmo se o push do celular falhar.
+    $hora = $linha['hora'] ? ' · ' . formatarHora($linha['hora']) : '';
+    $pessoas = destinatariosDaTurma($pdo, $turmaId, true);
+    foreach ($pessoas as &$pessoa) {
+        $pessoa['caminho'] = '/aluno/atividade.php?id=' . $eventoId;
     }
+    unset($pessoa);
+
+    avisarPessoas($pdo, $pessoas, (int) $linha['autor_id'], [
+        'tipo'      => 'atividade',
+        'evento_id' => $eventoId,
+        'titulo'    => $linha['titulo'],
+        'mensagem'  => rotuloTipo($linha['tipo']) . $hora,
+        'caminho'   => '/aluno/atividade.php?id=' . $eventoId,
+        'tag'       => 'atividade-' . $eventoId,
+    ]);
 }
 
-function contarNotificacoesNaoLidas(PDO $pdo, int $alunoId): int
+function contarNotificacoesNaoLidas(PDO $pdo, int $usuarioId): int
 {
-    $stmt = $pdo->prepare('SELECT COUNT(*) FROM notificacoes WHERE aluno_id = :aluno_id AND lida = 0');
-    $stmt->execute(['aluno_id' => $alunoId]);
+    $stmt = $pdo->prepare('SELECT COUNT(*) FROM notificacoes WHERE usuario_id = :usuario_id AND lida = 0');
+    $stmt->execute(['usuario_id' => $usuarioId]);
 
     return (int) $stmt->fetchColumn();
 }
 
-function listarNotificacoesAluno(PDO $pdo, int $alunoId): array
+function listarNotificacoesUsuario(PDO $pdo, int $usuarioId): array
 {
     $stmt = $pdo->prepare(
-        'SELECT n.id, n.lida, n.data_criacao, e.id AS evento_id, e.titulo, e.tipo, e.data_evento, u.nome AS professor_nome
+        'SELECT n.id, n.lida, n.tipo, n.titulo, n.mensagem, n.caminho, n.data_criacao,
+                e.id AS evento_id, e.titulo AS evento_titulo, e.tipo AS evento_tipo, e.data_evento,
+                u.nome AS professor_nome
          FROM notificacoes n
-         INNER JOIN eventos e ON e.id = n.evento_id
-         INNER JOIN professores p ON p.id = e.professor_id
-         INNER JOIN usuarios u ON u.id = p.usuario_id
-         WHERE n.aluno_id = :aluno_id
+         LEFT JOIN eventos e ON e.id = n.evento_id
+         LEFT JOIN professores p ON p.id = e.professor_id
+         LEFT JOIN usuarios u ON u.id = p.usuario_id
+         WHERE n.usuario_id = :usuario_id
          ORDER BY n.lida ASC, n.data_criacao DESC
          LIMIT 40'
     );
-    $stmt->execute(['aluno_id' => $alunoId]);
+    $stmt->execute(['usuario_id' => $usuarioId]);
 
     return $stmt->fetchAll();
 }
 
-function marcarNotificacaoLida(PDO $pdo, int $notificacaoId, int $alunoId): ?int
+function marcarNotificacaoLida(PDO $pdo, int $notificacaoId, int $usuarioId): ?string
 {
     $stmt = $pdo->prepare(
-        'SELECT evento_id FROM notificacoes WHERE id = :id AND aluno_id = :aluno_id LIMIT 1'
+        'SELECT caminho, evento_id FROM notificacoes WHERE id = :id AND usuario_id = :usuario_id LIMIT 1'
     );
     $stmt->execute([
-        'id'       => $notificacaoId,
-        'aluno_id' => $alunoId,
+        'id'         => $notificacaoId,
+        'usuario_id' => $usuarioId,
     ]);
-    $eventoId = $stmt->fetchColumn();
-    if (!$eventoId) {
+    $linha = $stmt->fetch();
+    if (!$linha) {
         return null;
     }
 
-    $atualizar = $pdo->prepare('UPDATE notificacoes SET lida = 1 WHERE id = :id AND aluno_id = :aluno_id');
+    $atualizar = $pdo->prepare('UPDATE notificacoes SET lida = 1 WHERE id = :id AND usuario_id = :usuario_id');
     $atualizar->execute([
-        'id'       => $notificacaoId,
-        'aluno_id' => $alunoId,
+        'id'         => $notificacaoId,
+        'usuario_id' => $usuarioId,
     ]);
 
-    return (int) $eventoId;
+    if ($linha['caminho'] !== '') {
+        return (string) $linha['caminho'];
+    }
+    if ($linha['evento_id']) {
+        return '/aluno/atividade.php?id=' . (int) $linha['evento_id'];
+    }
+
+    return '/aluno/notificacoes.php';
 }
 
 function listarAlunosDaTurma(PDO $pdo, int $turmaId): array

@@ -88,11 +88,14 @@ function getPDO(): PDO
             garantirConclusaoEvento($pdo);
             garantirNotificacoes($pdo);
             garantirPush($pdo);
+            garantirAvisos($pdo);
             garantirRepresentanteAluno($pdo);
             garantirPerfilUsuario($pdo);
             require_once dirname(__DIR__) . '/includes/comunidade.php';
             garantirComunidade($pdo);
             prepararProducao($pdo);
+            require_once dirname(__DIR__) . '/includes/avisos.php';
+            enviarLembretesVespera($pdo);
         } catch (Throwable $e) {
             // Migração incompleta não pode derrubar login, filtros nem o restante do sistema.
         }
@@ -332,14 +335,103 @@ function garantirPush(PDO $pdo): void
     $pdo->exec(
         'CREATE TABLE IF NOT EXISTS push_inscricoes (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            aluno_id INT NOT NULL,
+            aluno_id INT NULL,
+            usuario_id INT NULL,
             endpoint VARCHAR(500) NOT NULL,
             p256dh VARCHAR(255) NOT NULL,
             auth VARCHAR(255) NOT NULL,
             UNIQUE KEY push_endpoint (endpoint),
+            KEY push_usuario (usuario_id),
             FOREIGN KEY (aluno_id) REFERENCES alunos(id) ON DELETE CASCADE
         )'
     );
+}
+
+/**
+ * Avisos de post, comentário e lembrete da véspera.
+ * A tabela antiga só guardava atividade; as colunas novas convivem com ela.
+ */
+function garantirAvisos(PDO $pdo): void
+{
+    $coluna = static function (PDO $pdo, string $tabela, string $nome): bool {
+        return (bool) $pdo->query('SHOW COLUMNS FROM ' . $tabela . ' LIKE ' . $pdo->quote($nome))->fetch();
+    };
+    $tentar = static function (PDO $pdo, string $sql): void {
+        try {
+            $pdo->exec($sql);
+        } catch (Throwable $e) {
+            // Uma coluna que já existe não pode impedir os outros avisos.
+        }
+    };
+
+    $tornarNulo = static function (PDO $pdo, string $tabela, string $coluna, string $definicao, string $referencia) use ($tentar): void {
+        $info = $pdo->query('SHOW COLUMNS FROM ' . $tabela . ' LIKE ' . $pdo->quote($coluna))->fetch();
+        if (!$info || strtoupper((string) $info['Null']) === 'YES') {
+            return;
+        }
+
+        $tentar($pdo, 'ALTER TABLE ' . $tabela . ' MODIFY ' . $definicao);
+        $info = $pdo->query('SHOW COLUMNS FROM ' . $tabela . ' LIKE ' . $pdo->quote($coluna))->fetch();
+        if ($info && strtoupper((string) $info['Null']) === 'YES') {
+            return;
+        }
+
+        $fks = [];
+        try {
+            $fks = $pdo->query(
+                'SELECT CONSTRAINT_NAME
+                 FROM information_schema.KEY_COLUMN_USAGE
+                 WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ' . $pdo->quote($tabela) . '
+                   AND COLUMN_NAME = ' . $pdo->quote($coluna) . ' AND REFERENCED_TABLE_NAME IS NOT NULL'
+            )->fetchAll();
+        } catch (Throwable $e) {
+            $fks = [];
+        }
+        foreach ($fks as $fk) {
+            $nome = str_replace('`', '', (string) $fk['CONSTRAINT_NAME']);
+            $tentar($pdo, 'ALTER TABLE `' . $tabela . '` DROP FOREIGN KEY `' . $nome . '`');
+        }
+        $tentar($pdo, 'ALTER TABLE ' . $tabela . ' MODIFY ' . $definicao);
+        if ($referencia !== '' && $fks) {
+            $tentar(
+                $pdo,
+                'ALTER TABLE `' . $tabela . '` ADD CONSTRAINT `' . $tabela . '_' . $coluna . '_fk` FOREIGN KEY (`' . $coluna . '`) REFERENCES ' . $referencia . ' ON DELETE CASCADE'
+            );
+        }
+    };
+
+    if (!$coluna($pdo, 'notificacoes', 'usuario_id')) {
+        $tentar($pdo, 'ALTER TABLE notificacoes ADD COLUMN usuario_id INT NULL AFTER id');
+        $tentar($pdo, 'ALTER TABLE notificacoes ADD KEY notificacoes_usuario (usuario_id)');
+    }
+    if (!$coluna($pdo, 'notificacoes', 'tipo')) {
+        $tentar($pdo, "ALTER TABLE notificacoes ADD COLUMN tipo VARCHAR(20) NOT NULL DEFAULT 'atividade' AFTER usuario_id");
+    }
+    if (!$coluna($pdo, 'notificacoes', 'titulo')) {
+        $tentar($pdo, "ALTER TABLE notificacoes ADD COLUMN titulo VARCHAR(180) NOT NULL DEFAULT ''");
+    }
+    if (!$coluna($pdo, 'notificacoes', 'mensagem')) {
+        $tentar($pdo, "ALTER TABLE notificacoes ADD COLUMN mensagem VARCHAR(300) NOT NULL DEFAULT ''");
+    }
+    if (!$coluna($pdo, 'notificacoes', 'caminho')) {
+        $tentar($pdo, "ALTER TABLE notificacoes ADD COLUMN caminho VARCHAR(255) NOT NULL DEFAULT ''");
+    }
+
+    $tornarNulo($pdo, 'notificacoes', 'evento_id', 'evento_id INT NULL', 'eventos(id)');
+    $tornarNulo($pdo, 'notificacoes', 'aluno_id', 'aluno_id INT NULL', 'alunos(id)');
+
+    $tentar($pdo, 'UPDATE notificacoes n INNER JOIN alunos a ON a.id = n.aluno_id SET n.usuario_id = a.usuario_id WHERE n.usuario_id IS NULL');
+
+    if (!$coluna($pdo, 'eventos', 'lembrete_vespera_em')) {
+        $tentar($pdo, 'ALTER TABLE eventos ADD COLUMN lembrete_vespera_em DATETIME NULL');
+    }
+
+    if (!$coluna($pdo, 'push_inscricoes', 'usuario_id')) {
+        $tentar($pdo, 'ALTER TABLE push_inscricoes ADD COLUMN usuario_id INT NULL AFTER id');
+        $tentar($pdo, 'ALTER TABLE push_inscricoes ADD KEY push_usuario (usuario_id)');
+    }
+    $tornarNulo($pdo, 'push_inscricoes', 'aluno_id', 'aluno_id INT NULL', 'alunos(id)');
+    $tentar($pdo, 'UPDATE push_inscricoes s INNER JOIN alunos a ON a.id = s.aluno_id SET s.usuario_id = a.usuario_id WHERE s.usuario_id IS NULL');
 }
 
 function garantirNotificacoes(PDO $pdo): void

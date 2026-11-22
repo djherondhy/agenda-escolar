@@ -234,6 +234,9 @@ html[data-tema="escuro"] .chip-tarefa,
 html[data-tema="escuro"] .chip-aluno,
 html[data-tema="escuro"] .chip-wait { background: #7c2d12; color: #ffedd5; }
 html[data-tema="escuro"] .chip-prova { background: #7f1d1d; color: #fecaca; }
+html[data-tema="escuro"] .chip-lembrete { background: #7c2d12; color: #ffedd5; }
+html[data-tema="escuro"] .chip-post { background: #134e4a; color: #99f6e4; }
+html[data-tema="escuro"] .chip-comentario { background: #3b2660; color: #ddd6fe; }
 html[data-tema="escuro"] .chip-ok { background: #14532d; color: #bbf7d0; }
 
 html[data-tema="escuro"] .cal-event.is-done,

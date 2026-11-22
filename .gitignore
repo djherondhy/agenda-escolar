@@ -5,6 +5,9 @@ uploads/*
 # Chaves VAPID: cada ambiente gera as próprias na primeira execução
 config/vapid.php
 
+# Token do cron de lembretes (gerado no servidor)
+config/cron.php
+
 # Sistema / IDE
 .DS_Store
 Thumbs.db

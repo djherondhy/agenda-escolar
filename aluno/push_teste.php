@@ -4,7 +4,7 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 require_once __DIR__ . '/../includes/push.php';
 
-exigirAluno();
+exigirEscola();
 header('Content-Type: application/json; charset=utf-8');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -14,14 +14,17 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $pdo = getPDO();
-$aluno = obterAlunoPorUsuario($pdo, (int) $_SESSION['usuario_id']);
-if (!$aluno) {
-    http_response_code(400);
-    echo json_encode(['ok' => false, 'mensagem' => 'Conta de aluno não encontrada.']);
-    exit;
+$usuarioId = (int) $_SESSION['usuario_id'];
+$inscricoes = inscricoesDoUsuario($pdo, $usuarioId);
+if (!$inscricoes) {
+    $aluno = obterAlunoPorUsuario($pdo, $usuarioId);
+    if ($aluno) {
+        $stmt = $pdo->prepare('SELECT id, endpoint, p256dh, auth FROM push_inscricoes WHERE aluno_id = :aluno_id');
+        $stmt->execute(['aluno_id' => (int) $aluno['id']]);
+        $inscricoes = $stmt->fetchAll();
+    }
 }
 
-$inscricoes = inscricoesDoAluno($pdo, (int) $aluno['id']);
 if (!$inscricoes) {
     echo json_encode(['ok' => false, 'mensagem' => 'Nenhum aparelho ativado. Toque em "Ativar avisos" primeiro.']);
     exit;

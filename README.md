@@ -42,13 +42,36 @@ Altere a senha após o primeiro acesso. Alunos e representantes são cadastrados
 
 Ao cadastrar um usuário **sem senha**, ela fica como `ifam2026` e aparece um aviso para a pessoa criar a própria senha em **Meu perfil** (ícone no topo da tela). Lá também dá para enviar a foto de perfil.
 
-## Notificações (navegador e celular)
+## Notificações
 
-Funcionam por Web Push e exigem **HTTPS** (já ativo em produção). O aluno abre **Notificações** (sino) e toca em **Ativar avisos neste aparelho**; o botão **Enviar aviso de teste** confirma que está tudo certo.
+O sino (aluno e representante) guarda estes avisos:
+
+- atividade nova na turma
+- publicação ou comentário no mural e nas salas de estudo (quem escreveu não recebe o próprio aviso)
+- lembrete no dia anterior de cada atividade ainda pendente
+
+O mesmo texto pode chegar no celular por Web Push. É preciso **HTTPS** (já ativo em produção). Em **Notificações**, toque em **Ativar avisos neste aparelho**; **Enviar aviso de teste** confirma o aparelho.
 
 - Android e computador: Chrome, Edge ou Firefox, basta permitir.
 - iPhone/iPad (iOS 16.4+): abrir no Safari, **Compartilhar → Adicionar à Tela de Início**, abrir pelo ícone e ativar os avisos.
-- O QR Code da página inicial usa o `APP_URL` do `.env`.
+- O QR Code da página inicial usa o `APP_URL` do `.env`. Deixe `APP_URL=https://academico.wararadev.com` para o link do aviso no celular apontar para o site certo, inclusive quando o lembrete sai pelo cron.
+
+### Lembrete da véspera na Hostinger
+
+O lembrete sai sozinho na primeira visita do dia. Para garantir o envio mesmo sem ninguém no site, crie um Cron Job no hPanel, tipo **PHP**, uma vez por dia (por exemplo 08:00, horário de Manaus):
+
+```text
+php /home/SEU_USUARIO/domains/academico.wararadev.com/public_html/cron/lembretes.php
+```
+
+Troque `SEU_USUARIO` e a pasta pelo caminho real (Gerenciador de arquivos do hPanel mostra o caminho). Se o painel só aceitar uma URL:
+
+```text
+https://academico.wararadev.com/cron/lembretes.php?token=O_TOKEN
+```
+
+O token é criado em `config/cron.php` na primeira execução do comando PHP acima. Cada atividade é avisada uma vez só.
+
 ## Funcionalidades
 
 ### Representante de turma

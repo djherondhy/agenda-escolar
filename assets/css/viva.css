@@ -250,6 +250,9 @@ button.cal-day:hover {
 .chip-aluno,
 .chip-wait { background: #ffedd5; color: #c2410c; }
 .chip-prova { background: #ffe4e6; color: #be123c; }
+.chip-lembrete { background: #ffedd5; color: #c2410c; }
+.chip-post { background: #d9f6f2; color: #0f766e; }
+.chip-comentario { background: #f3e8ff; color: #6d28d9; }
 
 .filter-bar .is-active {
     background: linear-gradient(120deg, var(--coral), var(--violet));

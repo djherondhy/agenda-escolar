@@ -164,6 +164,12 @@ if ($acao === 'publicar') {
     $postId = (int) $pdo->lastInsertId();
     $erros = [];
     salvarAnexosNaTabela($pdo, $tabela, 'post_id', $postId, $pasta . '/' . $postId, $_FILES['anexos'] ?? [], $erros);
+    try {
+        require_once __DIR__ . '/../includes/avisos.php';
+        avisarNovaPublicacao($pdo, $contexto, $alvo, $usuarioId, (string) ($_SESSION['usuario_nome'] ?? ''), $texto);
+    } catch (Throwable $e) {
+        // A publicação permanece mesmo se o aviso falhar.
+    }
     $post = autorSocial($pdo, $usuarioId) + [
         'id'           => $postId,
         'texto'        => $texto,
@@ -196,6 +202,12 @@ if ($acao === 'comentar') {
         'texto' => $texto,
     ]);
     $comentarioIdNovo = (int) $pdo->lastInsertId();
+    try {
+        require_once __DIR__ . '/../includes/avisos.php';
+        avisarNovoComentario($pdo, $contexto, $alvo, $usuarioId, (string) ($_SESSION['usuario_nome'] ?? ''), $texto);
+    } catch (Throwable $e) {
+        // O comentário permanece mesmo se o aviso falhar.
+    }
     $comentario = autorSocial($pdo, $usuarioId) + [
         'id'           => $comentarioIdNovo,
         'texto'        => $texto,

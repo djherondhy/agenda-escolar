@@ -139,12 +139,28 @@ function dispararPush(PDO $pdo, array $lista, array $payload): array
     return $statuses;
 }
 
-function inscricoesDoAluno(PDO $pdo, int $alunoId): array
+function inscricoesDoUsuario(PDO $pdo, int $usuarioId): array
 {
-    $stmt = $pdo->prepare('SELECT id, endpoint, p256dh, auth FROM push_inscricoes WHERE aluno_id = :aluno_id');
-    $stmt->execute(['aluno_id' => $alunoId]);
+    $stmt = $pdo->prepare('SELECT id, endpoint, p256dh, auth FROM push_inscricoes WHERE usuario_id = :usuario_id');
+    $stmt->execute(['usuario_id' => $usuarioId]);
 
     return $stmt->fetchAll();
+}
+
+function enviarPushParaUsuarios(PDO $pdo, array $usuarioIds, array $payload): array
+{
+    $ids = array_values(array_unique(array_filter(array_map('intval', $usuarioIds))));
+    if (!$ids) {
+        return [];
+    }
+
+    $marcas = implode(',', array_fill(0, count($ids), '?'));
+    $stmt = $pdo->prepare(
+        "SELECT id, endpoint, p256dh, auth FROM push_inscricoes WHERE usuario_id IN ({$marcas})"
+    );
+    $stmt->execute($ids);
+
+    return dispararPush($pdo, $stmt->fetchAll(), $payload);
 }
 
 function enviarUmPush(array $inscricao, string $payload, array $chaves): int
@@ -253,7 +269,7 @@ function criptografarPush(string $payload, string $publicaUsuario, string $auth)
     return $sal . pack('N', 4096) . "\x41" . $publicaLocal . $cifrado . $tag;
 }
 
-function salvarInscricaoPush(PDO $pdo, int $alunoId, array $dados): bool
+function salvarInscricaoPush(PDO $pdo, int $usuarioId, array $dados): bool
 {
     $endpoint = $dados['endpoint'] ?? '';
     $p256dh = $dados['keys']['p256dh'] ?? '';
@@ -262,16 +278,18 @@ function salvarInscricaoPush(PDO $pdo, int $alunoId, array $dados): bool
         return false;
     }
 
+    $aluno = obterAlunoPorUsuario($pdo, $usuarioId);
     $stmt = $pdo->prepare(
-        'INSERT INTO push_inscricoes (aluno_id, endpoint, p256dh, auth)
-         VALUES (:aluno_id, :endpoint, :p256dh, :auth)
-         ON DUPLICATE KEY UPDATE aluno_id = VALUES(aluno_id), p256dh = VALUES(p256dh), auth = VALUES(auth)'
+        'INSERT INTO push_inscricoes (aluno_id, usuario_id, endpoint, p256dh, auth)
+         VALUES (:aluno_id, :usuario_id, :endpoint, :p256dh, :auth)
+         ON DUPLICATE KEY UPDATE aluno_id = VALUES(aluno_id), usuario_id = VALUES(usuario_id), p256dh = VALUES(p256dh), auth = VALUES(auth)'
     );
 
     return $stmt->execute([
-        'aluno_id' => $alunoId,
-        'endpoint' => $endpoint,
-        'p256dh'   => $p256dh,
-        'auth'     => $auth,
+        'aluno_id'   => $aluno ? (int) $aluno['id'] : null,
+        'usuario_id' => $usuarioId,
+        'endpoint'   => $endpoint,
+        'p256dh'     => $p256dh,
+        'auth'       => $auth,
     ]);
 }

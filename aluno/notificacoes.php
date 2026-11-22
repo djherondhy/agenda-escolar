@@ -4,17 +4,11 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 require_once __DIR__ . '/../includes/push.php';
 
-exigirAluno();
+exigirEscola();
 
 $pdo = getPDO();
-$aluno = obterAlunoPorUsuario($pdo, (int) $_SESSION['usuario_id']);
-
-if (!$aluno) {
-    encerrarSessao();
-    redirecionar('/login.php');
-}
-
-$notificacoes = listarNotificacoesAluno($pdo, (int) $aluno['id']);
+$usuarioId = (int) $_SESSION['usuario_id'];
+$notificacoes = listarNotificacoesUsuario($pdo, $usuarioId);
 try {
     $chavePush = garantirChavesVapid()['public'];
 } catch (Throwable $e) {
@@ -28,8 +22,8 @@ require __DIR__ . '/../includes/header.php';
 ?>
 
 <section class="panel">
-    <h2>Avisos da turma</h2>
-    <p class="panel-lead">Quando um representante cadastra uma atividade, ela aparece aqui e, se você ativar, também como aviso no navegador e no celular.</p>
+    <h2>Avisos</h2>
+    <p class="panel-lead">Atividades da turma, publicações, comentários e o lembrete do dia anterior aparecem aqui. Com os avisos ativados, o mesmo recado chega no navegador e no celular.</p>
     <?php if ($chavePush !== ''): ?>
         <div class="push-caixa">
             <p class="push-status" id="push-status" role="status">Verificando…</p>
@@ -67,10 +61,24 @@ require __DIR__ . '/../includes/header.php';
     <?php else: ?>
         <div class="notif-list">
             <?php foreach ($notificacoes as $aviso): ?>
+                <?php
+                $tipoChip = (string) ($aviso['tipo'] ?: 'atividade');
+                if ($tipoChip === 'atividade' && !empty($aviso['evento_tipo'])) {
+                    $tipoChip = (string) $aviso['evento_tipo'];
+                }
+                $tituloAviso = $aviso['titulo'] !== '' ? $aviso['titulo'] : (string) ($aviso['evento_titulo'] ?? 'Aviso');
+                if ($aviso['mensagem'] !== '') {
+                    $detalheAviso = (string) $aviso['mensagem'];
+                } elseif (!empty($aviso['data_evento'])) {
+                    $detalheAviso = trim((string) ($aviso['professor_nome'] ?? '') . ' · ' . formatarData($aviso['data_evento']), ' ·');
+                } else {
+                    $detalheAviso = formatarData(substr((string) $aviso['data_criacao'], 0, 10));
+                }
+                ?>
                 <a class="notif-item <?= $aviso['lida'] ? 'is-read' : '' ?>" href="<?= BASE_URL ?>/aluno/notificacao.php?id=<?= (int) $aviso['id'] ?>">
-                    <span class="chip chip-<?= e($aviso['tipo']) ?>"><?= e(rotuloTipo($aviso['tipo'])) ?></span>
-                    <strong><?= e($aviso['titulo']) ?></strong>
-                    <span><?= e($aviso['professor_nome']) ?> · <?= formatarData($aviso['data_evento']) ?></span>
+                    <span class="chip chip-<?= e($tipoChip) ?>"><?= e(rotuloAviso($tipoChip)) ?></span>
+                    <strong><?= e($tituloAviso) ?></strong>
+                    <span><?= e($detalheAviso) ?></span>
                 </a>
             <?php endforeach; ?>
         </div>

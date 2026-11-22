@@ -80,7 +80,7 @@
     <script src="<?= asset('assets/js/viva.js') ?>"></script>
     <script src="<?= asset('assets/js/tema.js') ?>"></script>
     <?php
-    if (($tipoUsuario ?? '') === 'aluno' && !empty($alunoModal)) {
+    if (in_array(($tipoUsuario ?? ''), ['aluno', 'professor'], true) && !empty($usuario['id'])) {
         try {
             require_once __DIR__ . '/push.php';
             $chavePushRodape = garantirChavesVapid()['public'];
@@ -88,7 +88,12 @@
             $chavePushRodape = '';
         }
         if ($chavePushRodape !== '') {
-            echo '<script>window.APP_PUSH = ' . json_encode(['vapid' => $chavePushRodape, 'alunoId' => (int) $alunoModal['id']]) . ';</script>' . "\n";
+            $alunoPushId = isset($alunoModal['id']) ? (int) $alunoModal['id'] : 0;
+            echo '<script>window.APP_PUSH = ' . json_encode([
+                'vapid' => $chavePushRodape,
+                'usuarioId' => (int) $usuario['id'],
+                'alunoId' => $alunoPushId,
+            ], JSON_UNESCAPED_UNICODE) . ';</script>' . "\n";
             echo '    <script src="' . asset('assets/js/push.js') . '"></script>' . "\n";
         }
     }
