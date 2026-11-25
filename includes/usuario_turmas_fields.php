@@ -1,6 +1,6 @@
 <?php
 $turmas = $turmas ?? [];
-$dados = $dados ?? ['turma_id' => '', 'turma_ids' => [], 'turma_materias' => []];
+$dados = $dados ?? ['turma_id' => '', 'turma_ids' => [], 'turma_materias' => [], 'representante' => 0];
 $tipoAtual = $dados['tipo'] ?? 'aluno';
 $turmaIds = array_map('intval', $dados['turma_ids'] ?? []);
 $turmaMaterias = $dados['turma_materias'] ?? [];
@@ -20,6 +20,20 @@ $turmaMaterias = $dados['turma_materias'] ?? [];
                 </option>
             <?php endforeach; ?>
         </select>
+        <label class="check-list opcao-representante">
+            <input
+                class="js-representante"
+                type="checkbox"
+                name="representante"
+                value="1"
+                <?= !empty($dados['representante']) ? 'checked' : '' ?>
+                <?= $tipoAtual === 'aluno' ? '' : 'disabled' ?>
+            >
+            <span>
+                Representante desta turma
+                <small>Cada turma tem um representante. Se já houver outro, este aluno assume o lugar.</small>
+            </span>
+        </label>
     <?php endif; ?>
 </div>
 

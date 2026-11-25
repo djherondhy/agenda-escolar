@@ -6,20 +6,26 @@ require_once __DIR__ . '/../includes/functions.php';
 exigirAdministrador();
 
 $pdo = getPDO();
-$tipos = ['aluno', 'professor', 'administrador'];
+$tipos = ['aluno', 'representante', 'administrador'];
 $filtro = $_GET['tipo'] ?? 'todos';
+
+if ($filtro === 'professor') {
+    $filtro = 'representante';
+}
 
 if (!in_array($filtro, $tipos, true)) {
     $filtro = 'todos';
 }
 
-$sql = 'SELECT u.id, u.nome, u.email, u.tipo, t.nome AS turma_nome
+$sql = 'SELECT u.id, u.nome, u.email, u.tipo, t.nome AS turma_nome, COALESCE(a.representante, 0) AS representante
         FROM usuarios u
         LEFT JOIN alunos a ON a.usuario_id = u.id
         LEFT JOIN turmas t ON t.id = a.turma_id';
 $params = [];
 
-if ($filtro !== 'todos') {
+if ($filtro === 'representante') {
+    $sql .= ' WHERE a.representante = 1 AND u.tipo = \'aluno\'';
+} elseif ($filtro !== 'todos') {
     $sql .= ' WHERE u.tipo = :tipo';
     $params['tipo'] = $filtro;
 }
@@ -50,7 +56,7 @@ $base = BASE_URL . '/admin/usuarios.php';
 <nav class="filter-bar" aria-label="Filtrar usuários">
     <a class="<?= $filtro === 'todos' ? 'is-active' : '' ?>" href="<?= $base ?>">Todos</a>
     <a class="<?= $filtro === 'aluno' ? 'is-active' : '' ?>" href="<?= $base ?>?tipo=aluno">Alunos</a>
-    <a class="<?= $filtro === 'professor' ? 'is-active' : '' ?>" href="<?= $base ?>?tipo=professor">Representantes</a>
+    <a class="<?= $filtro === 'representante' ? 'is-active' : '' ?>" href="<?= $base ?>?tipo=representante">Representantes</a>
     <a class="<?= $filtro === 'administrador' ? 'is-active' : '' ?>" href="<?= $base ?>?tipo=administrador">Administradores</a>
 </nav>
 
@@ -77,7 +83,12 @@ $base = BASE_URL . '/admin/usuarios.php';
                         <tr>
                             <td data-label="Nome"><?= e($usuario['nome']) ?></td>
                             <td data-label="E-mail"><?= e($usuario['email']) ?></td>
-                            <td data-label="Perfil"><span class="chip chip-<?= e($usuario['tipo']) ?>"><?= e(rotuloPerfil($usuario['tipo'])) ?></span></td>
+                            <td data-label="Perfil">
+                                <span class="chip chip-<?= e($usuario['tipo']) ?>"><?= e(rotuloPerfil($usuario['tipo'])) ?></span>
+                                <?php if ((int) $usuario['representante'] === 1): ?>
+                                    <span class="chip chip-ok">Representante</span>
+                                <?php endif; ?>
+                            </td>
                             <td data-label="Turma"><?= $usuario['tipo'] === 'aluno' ? e($usuario['turma_nome'] ?: '—') : '—' ?></td>
                             <td data-label="Ações">
                                 <div class="row-actions">

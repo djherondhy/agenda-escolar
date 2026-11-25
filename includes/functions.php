@@ -91,6 +91,16 @@ function contarAdministradores(PDO $pdo): int
     return (int) $pdo->query("SELECT COUNT(*) FROM usuarios WHERE tipo = 'administrador'")->fetchColumn();
 }
 
+function contarRepresentantes(PDO $pdo): int
+{
+    return (int) $pdo->query(
+        "SELECT COUNT(*)
+         FROM alunos a
+         INNER JOIN usuarios u ON u.id = a.usuario_id
+         WHERE a.representante = 1 AND u.tipo = 'aluno'"
+    )->fetchColumn();
+}
+
 function emailEmUso(PDO $pdo, string $email, ?int $ignorarId = null): bool
 {
     $sql = 'SELECT id FROM usuarios WHERE email = :email';
@@ -210,7 +220,7 @@ function obterProfessorPorUsuario(PDO $pdo, int $usuarioId): ?array
 
 function obterAlunoPorUsuario(PDO $pdo, int $usuarioId): ?array
 {
-    $sql = 'SELECT a.id, a.usuario_id, a.turma_id, u.nome, u.email, t.nome AS turma_nome, t.ano AS turma_ano
+    $sql = 'SELECT a.id, a.usuario_id, a.turma_id, a.representante, u.nome, u.email, t.nome AS turma_nome, t.ano AS turma_ano
             FROM alunos a
             INNER JOIN usuarios u ON u.id = a.usuario_id
             INNER JOIN turmas t ON t.id = a.turma_id
@@ -436,6 +446,17 @@ function garantirContaDoRepresentante(PDO $pdo, int $usuarioId, int $turmaId): v
     ]);
 }
 
+function aplicarRepresentanteDaTurma(PDO $pdo, int $turmaId, ?array $aluno): void
+{
+    $pdo->prepare('UPDATE alunos SET representante = 0 WHERE turma_id = :turma')->execute(['turma' => $turmaId]);
+    $pdo->prepare('DELETE FROM professor_turmas WHERE turma_id = :turma')->execute(['turma' => $turmaId]);
+
+    if ($aluno) {
+        $pdo->prepare('UPDATE alunos SET representante = 1 WHERE id = :id')->execute(['id' => (int) $aluno['id']]);
+        garantirContaDoRepresentante($pdo, (int) $aluno['usuario_id'], $turmaId);
+    }
+}
+
 function definirRepresentanteDaTurma(PDO $pdo, int $turmaId, int $alunoId): bool
 {
     if ($alunoId > 0) {
@@ -457,14 +478,7 @@ function definirRepresentanteDaTurma(PDO $pdo, int $turmaId, int $alunoId): bool
 
     $pdo->beginTransaction();
     try {
-        $pdo->prepare('UPDATE alunos SET representante = 0 WHERE turma_id = :turma')->execute(['turma' => $turmaId]);
-        $pdo->prepare('DELETE FROM professor_turmas WHERE turma_id = :turma')->execute(['turma' => $turmaId]);
-
-        if ($aluno) {
-            $pdo->prepare('UPDATE alunos SET representante = 1 WHERE id = :id')->execute(['id' => (int) $aluno['id']]);
-            garantirContaDoRepresentante($pdo, (int) $aluno['usuario_id'], $turmaId);
-        }
-
+        aplicarRepresentanteDaTurma($pdo, $turmaId, $aluno);
         $pdo->commit();
     } catch (Throwable $e) {
         if ($pdo->inTransaction()) {
@@ -474,6 +488,30 @@ function definirRepresentanteDaTurma(PDO $pdo, int $turmaId, int $alunoId): bool
     }
 
     return true;
+}
+
+function sincronizarRepresentanteDoAluno(PDO $pdo, int $usuarioId, int $turmaId, bool $marcar): void
+{
+    $stmt = $pdo->prepare(
+        'SELECT a.id, a.usuario_id, a.representante
+         FROM alunos a
+         INNER JOIN usuarios u ON u.id = a.usuario_id
+         WHERE a.usuario_id = :usuario AND a.turma_id = :turma AND u.tipo = \'aluno\'
+         LIMIT 1'
+    );
+    $stmt->execute(['usuario' => $usuarioId, 'turma' => $turmaId]);
+    $aluno = $stmt->fetch();
+
+    if ($marcar) {
+        if ($aluno) {
+            aplicarRepresentanteDaTurma($pdo, $turmaId, $aluno);
+        }
+        return;
+    }
+
+    if ($aluno && (int) $aluno['representante'] === 1) {
+        aplicarRepresentanteDaTurma($pdo, $turmaId, null);
+    }
 }
 
 function listarVinculosDaTurma(PDO $pdo, int $turmaId): array

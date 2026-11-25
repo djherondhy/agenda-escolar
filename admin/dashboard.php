@@ -8,7 +8,7 @@ exigirAdministrador();
 $pdo = getPDO();
 
 $totalAdmins = contarAdministradores($pdo);
-$totalProfessores = (int) $pdo->query("SELECT COUNT(*) FROM usuarios WHERE tipo = 'professor'")->fetchColumn();
+$totalRepresentantes = contarRepresentantes($pdo);
 $totalAlunos = (int) $pdo->query("SELECT COUNT(*) FROM usuarios WHERE tipo = 'aluno'")->fetchColumn();
 $totalTurmas = (int) $pdo->query('SELECT COUNT(*) FROM turmas')->fetchColumn();
 
@@ -36,8 +36,8 @@ require __DIR__ . '/../includes/header.php';
         <span class="stat-value"><?= $totalAlunos ?></span>
         <span class="stat-label">Alunos</span>
     </a>
-    <a class="stat" href="<?= BASE_URL ?>/admin/usuarios.php?tipo=professor">
-        <span class="stat-value"><?= $totalProfessores ?></span>
+    <a class="stat" href="<?= BASE_URL ?>/admin/usuarios.php?tipo=representante">
+        <span class="stat-value"><?= $totalRepresentantes ?></span>
         <span class="stat-label">Representantes</span>
     </a>
     <a class="stat" href="<?= BASE_URL ?>/admin/usuarios.php?tipo=administrador">
@@ -52,7 +52,7 @@ require __DIR__ . '/../includes/header.php';
 
 <nav class="dash-shortcuts" aria-label="Cadastros">
     <a href="<?= BASE_URL ?>/admin/adicionar_usuario.php?tipo=aluno">Cadastrar aluno</a>
-    <a href="<?= BASE_URL ?>/admin/adicionar_usuario.php?tipo=professor">Cadastrar representante</a>
+    <a href="<?= BASE_URL ?>/admin/adicionar_usuario.php?tipo=aluno&representante=1">Cadastrar representante</a>
     <a href="<?= BASE_URL ?>/admin/adicionar_usuario.php?tipo=administrador">Cadastrar administrador</a>
 </nav>
 

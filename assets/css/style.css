@@ -188,6 +188,38 @@ form .btn-stamp {
     margin-bottom: 8px;
 }
 
+.field label.opcao-representante {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 4px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--input);
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.field label.opcao-representante input {
+    width: auto;
+    margin-top: 2px;
+    accent-color: var(--accent);
+}
+
+.field label.opcao-representante small {
+    display: block;
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.chip + .chip {
+    margin-left: 6px;
+}
+
 .field input,
 .field select,
 .field textarea {

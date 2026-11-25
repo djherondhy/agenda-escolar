@@ -16,6 +16,7 @@ $dados = [
     'turma_id'        => '',
     'turma_ids'       => [],
     'turma_materias'  => [],
+    'representante'   => (($_GET['representante'] ?? '') === '1') ? 1 : 0,
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -25,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $dados['turma_id'] = (int) ($_POST['turma_id'] ?? 0);
     $dados['turma_ids'] = array_map('intval', $_POST['turma_ids'] ?? []);
     $dados['turma_materias'] = $_POST['turma_materias'] ?? [];
+    $dados['representante'] = !empty($_POST['representante']) ? 1 : 0;
     $senha = $_POST['senha'] ?? '';
 
     $idsTurmas = array_map(static fn ($turma) => (int) $turma['id'], $turmas);
@@ -73,7 +75,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'provisoria' => $provisoria ? 1 : 0,
             ]);
 
-            sincronizarPerfilUsuario($pdo, (int) $pdo->lastInsertId(), $dados['tipo'], $dados);
+            $usuarioId = (int) $pdo->lastInsertId();
+            sincronizarPerfilUsuario($pdo, $usuarioId, $dados['tipo'], $dados);
+            if ($dados['tipo'] === 'aluno') {
+                sincronizarRepresentanteDoAluno($pdo, $usuarioId, (int) $dados['turma_id'], (bool) $dados['representante']);
+            }
             $pdo->commit();
             redirecionar('/admin/usuarios.php?ok=1');
         } catch (Throwable $e) {
@@ -116,7 +122,7 @@ require __DIR__ . '/../includes/header.php';
                     <option value="aluno" <?= $dados['tipo'] === 'aluno' ? 'selected' : '' ?>>Aluno</option>
                     <option value="administrador" <?= $dados['tipo'] === 'administrador' ? 'selected' : '' ?>>Desenvolvedor / Conselheiro</option>
                 </select>
-                <small class="field-help">O aluno entra em uma turma. O representante é um aluno escolhido na página da turma.</small>
+                <small class="field-help">O aluno entra em uma turma. Marque abaixo se ele já for o representante.</small>
             </div>
 
             <div class="field">

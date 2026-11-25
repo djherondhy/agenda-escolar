@@ -165,6 +165,10 @@ document.addEventListener('DOMContentLoaded', () => {
             selectAluno.required = ehAluno;
         }
 
+        formulario.querySelectorAll('.js-representante').forEach((caixa) => {
+            caixa.disabled = !ehAluno;
+        });
+
         formulario.querySelectorAll('.js-turma-check').forEach((caixa) => {
             caixa.disabled = !ehProfessor;
         });
